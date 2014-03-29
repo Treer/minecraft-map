@@ -133,21 +133,27 @@
 				
 			}
 
-			// Calculate scales
-			var scale = { 
-				'x' : (targetlvl.height() - viewport.height()) / (currentlvl.height() - viewport.height()),
-				'y' : (targetlvl.width() - viewport.width()) / (currentlvl.width() - viewport.width())
-			}
-			
 			
 			// Switch levels and rezoom to viewed position
 			currentlvl.removeClass('current-level');
 			targetlvl.addClass('current-level');
 			
 			var pos = map.position();
+			
+			var halfViewWidth = viewport.width()  / 2;
+			var halfViewHeight = viewport.height() / 2;
+			var viewportX = -map.position().left;
+			var viewportY = -map.position().top;
+			
+			var newViewportX = ((targetlvl.width()  / currentlvl.width())  * (viewportX + halfViewWidth)  - halfViewWidth);
+			var newViewportY = ((targetlvl.height() / currentlvl.height()) * (viewportY + halfViewHeight) - halfViewHeight);
+
+			if (newViewportX < 0) newViewportX = 0;
+			if (newViewportY < 0) newViewportY = 0;
+			
 			map.css({
-				left : pos.left * scale.x, 
-				top : pos.top * scale.y,
+				left : -newViewportX, 
+				top :  -newViewportY, 
 				width : targetlvl.width(),
 				height : targetlvl.height()
 			});
