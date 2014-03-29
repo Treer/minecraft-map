@@ -1,0 +1,10 @@
+.map-viewport{ position:relative; width:800px; height:800px; border:0px solid black; overflow:hidden; margin-left: auto; margin-right: auto }
+.level{ position:absolute; left:0; top:0; z-index:10; visibility: hidden}
+.current-level{ z-index:20; visibility: visible }
+.resources {visibility: hidden}
+
+#map-1{ width:2400px; height:2400px; position:absolute; left:0; top:0; cursor:move }
+img{ border:0; }
+
+.block{ float:center; margin-right:2%; margin-top:10px; }
+
