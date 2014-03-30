@@ -119,6 +119,7 @@ function getMapLocations() {
 	addOwnedLocation( 7500, -6200, "Adam b1", "Electrobrick?", "");
 	addOwnedLocation( 1148, -72,   "Map\nroom", "", "");
 	addOwnedLocation( 846,   86,   "", "", ""); // Orange house, built by??
+	addOwnedLocation( 2038, -1442, "", "pr0zak", "");
 
 	addLocation( 2244, -1271, LocationType.DesertVillage);
 	addLocation( 797,   153,  LocationType.DesertVillage);
@@ -174,9 +175,13 @@ function drawMapDetails(canvas, locations)
 	
 		var text = "";
 
-		if (!isEmpty(description)) text += description;
+		if (isEmpty(description)) {
+			if (!isEmpty(owner)) text += owner;
+		} else {
+			text += description;
+		}
 		
-		if (!isEmpty(owner) && description.indexOf(owner) == -1) {
+		if (!isEmpty(owner) && text.indexOf(owner) == -1) {
 			// The owner was specified, and is not named in the description, add in brackets at the bottom
 			text += '\n(' + owner + ')';
 		}
