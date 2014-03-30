@@ -189,30 +189,6 @@ function drawMapDetails(canvas, locations)
 		if (!isEmpty(text)) {
 			drawMultilineCenteredText(translateCoord(x), translateCoord(z) + cTextOffset, text);
 		}
-		/*
-			var descStr = new String(description);
-			var lines = descStr.split(/\r\n|\n|\r/);;
-			var lineNo;
-			for(lineNo = 0; lineNo < lines.length; lineNo++) {
-			
-				ctx.fillText(
-					lines[lineNo], 
-					translateCoord(x) - (ctx.measureText(lines[lineNo]).width / 2),
-					translateCoord(z) + textOffset
-				);
-				textOffset += 9;
-			}
-		}
-		
-		if (!isEmpty(owner) && description.indexOf(owner) == -1) {
-			// The owner was specified, and is not named in the description, add in brackets at the bottom
-			var ownerText = '(' + owner + ')';
-			ctx.fillText(
-				ownerText, 
-				translateCoord(x) - (ctx.measureText(ownerText).width / 2),
-				translateCoord(z) + textOffset
-			);
-		}		*/
 	}
 
 	function drawGeneratedLocation(x, z, locationType, label) {
