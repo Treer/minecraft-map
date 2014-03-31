@@ -137,7 +137,7 @@ function getMapLocations() {
 	return result;
 }
 
-function drawMapDetails(canvas, locations)
+function drawMapDetails(canvas, locations, iconsOnly)
 {
 	var ctx = canvas.getContext("2d");
 	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -154,7 +154,7 @@ function drawMapDetails(canvas, locations)
 
 		var textOffset = 0;
 		
-		if (!isEmpty(text)) {
+		if (!isEmpty(text) && !iconsOnly) {
 			var lines = text.split(/\r\n|\n|\r/);;
 			var lineNo;
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -235,13 +235,13 @@ function drawMapDetails(canvas, locations)
 	}	
 }
 
-function createMapImageInDiv(divElementName, aWidth, aHeight, locations) {
+function createMapImageInDiv(divElementName, aWidth, aHeight, locations, iconsOnly) {
 
 	var canvas = document.createElement('canvas');
 	canvas.width = aWidth;
 	canvas.height = aHeight;
 	
-	drawMapDetails(canvas, locations);	
+	drawMapDetails(canvas, locations, iconsOnly);	
 	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, locations);
 	
 	var newImage = document.createElement('img');
