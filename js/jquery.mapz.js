@@ -17,9 +17,10 @@
   $.fn.mapz = function(options) {
   
 		var settings = {
-			'zoom'			:	false,
-			'createmaps' 	:	false,
-			'mousewheel' 	: 	false
+			'zoom'       : false,
+			'createmaps' : false,
+			'mousewheel' : false,
+			'pinchzoom'  : false
 		};
 		
 		 if ( options ) { 
@@ -52,10 +53,58 @@
 				});
 			}
 			
+			if(settings.pinchzoom) {
+				// pinchzoom option requires jquery.hammer-full.js
+				if (typeof(Hammer) === "function") {
+					// threshold indicates how much scaling must happen between the positions of the two
+					// fingers before we register a map zoom... in theory - hard to tell how accurate the events are.
+					var cThreshold = 0.12;
+					
+					// Each time a zoom is triggered during a pinch, we change scaleAdjust to ensure that more
+					// pinching is required for the next zoom.
+					var scaleAdjust = 0;
+								
+					// Notes on hammer-related crapness
+					//  * the version from the official site doesn't work, dunno where the fuck http://solinitiative.com/demo/jquery.hammer.min.js came from, or what version it is, but it seems to work.		
+					//  * despite what others suggest, combining multiple events in one handler results in only the last event being hooked
+					//  * pinchin & pinchout might seem to be backwards (i.e. you move you fingers apart/out as a gesture to zoom in)
+					this.hammer().on(
+						'pinchin', 
+						function(ev) { 
+							if ((ev.gesture.scale + scaleAdjust) < (1 - cThreshold)) {
+								scaleAdjust += cThreshold;
+								zoom('out'); 
+							}
+						}
+					);
+
+					this.hammer().on(
+						'pinchout', 
+						function(ev) { 
+							if ((ev.gesture.scale + scaleAdjust) > (1 + cThreshold)) {
+								scaleAdjust -= cThreshold;
+								zoom('in'); 
+							}
+						}
+					);
+
+					// reset the scaleAdjust every time the pinch event ends, 'release' seems to
+					// be the closest event hammer provides to that.
+					this.hammer().on(
+						'release', 
+						function(ev) { scaleAdjust = 0; }
+					);				
+				} else {
+					// pinchzoom option requires jquery.hammer-full.js
+					alert('pinchzoom cannot be turned on without hammer library');
+				}
+			}
+			
+			
 			// Create HTML maps for zoomed levels?
 			if(settings.createmaps) createMaps();
-		}
-			
+		}		
+					
 		map.draggable({
 			 containment : constraint
 		});
