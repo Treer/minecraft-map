@@ -3,25 +3,84 @@ var cClickRadius = 12;   // How far from the center of the icon is clickable
 var cMapRange    = 6000; // measured in minecraft blocks from the center
 var cTextOffset  = 14;   // How far under the center of the icon should the text be drawn
 
+var gLocationInfo = parseURL(location);
 
+// Set any constants specified by the URL (instead of using the default value)
+if ('range' in gLocationInfo.params) {	
+	cMapRange = gLocationInfo.params.range;
+}
+
+// Code snippet
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
 
+// Code snippet
+function isFunction(item) {
+	return is("Function", item);
+}
+
+// Code snippet (http://james.padolsey.com/javascript/parsing-urls-with-the-dom/)
+// 
+// This function creates a new anchor element and uses location
+// properties (inherent) to get the desired URL data. Some String
+// operations are used (to normalize results across browsers). 
+//
+// Usage:
+//   var myURL = parseURL('http://abc.com:8080/dir/index.html?id=255&m=hello#top');
+//   gives: 
+//     myURL.file;     // = 'index.html'
+//     myURL.hash;     // = 'top'
+//     myURL.host;     // = 'abc.com'
+//     myURL.query;    // = '?id=255&m=hello'
+//     myURL.params;   // = Object = { id: 255, m: hello }
+//     myURL.path;     // = '/dir/index.html'
+//     myURL.segments; // = Array = ['dir', 'index.html']
+//     myURL.port;     // = '8080'
+//     myURL.protocol; // = 'http'
+//     myURL.source;   // = 'http://abc.com:8080/dir/index.html?id=255&m=hello#top'
+function parseURL(url) {
+    var a =  document.createElement('a');
+    a.href = url;
+    return {
+        source: url,
+        protocol: a.protocol.replace(':',''),
+        host: a.hostname,
+        port: a.port,
+        query: a.search,
+        params: (function(){
+            var ret = {},
+                seg = a.search.replace(/^\?/,'').split('&'),
+                len = seg.length, i = 0, s;
+            for (;i<len;i++) {
+                if (!seg[i]) { continue; }
+                s = seg[i].split('=');
+                ret[s[0]] = s[1];
+            }
+            return ret;
+        })(),
+        file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1],
+        hash: a.hash.replace('#',''),
+        path: a.pathname.replace(/^([^\/])/,'/$1'),
+        relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],
+        segments: a.pathname.replace(/^\//,'').split('/')
+    };
+}
+
 
 var LocationType = {
-  Village:       {value: 0, name: "Village",        href: "http://minecraft.gamepedia.com/Village"}, 
-  DesertVillage: {value: 1, name: "Desert village", href: "http://minecraft.gamepedia.com/Village"}, 
-  JungleTemple:  {value: 2, name: "Jungle temple",  href: "http://minecraft.gamepedia.com/Jungle_temple"},
-  DesertTemple:  {value: 3, name: "Desert temple",  href: "http://minecraft.gamepedia.com/Desert_temple"},
-  WitchHut:      {value: 4, name: "Witch's hut",    href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
-  NetherPortal:  {value: 5, name: "Portal",         href: "http://minecraft.gamepedia.com/Nether_Portal"},
+  Village:         {iconIndex: 0, name: "Village",        href: "http://minecraft.gamepedia.com/Village"}, 
+  DesertVillage:   {iconIndex: 1, name: "Desert village", href: "http://minecraft.gamepedia.com/Village"}, 
+  JungleTemple:    {iconIndex: 2, name: "Jungle temple",  href: "http://minecraft.gamepedia.com/Jungle_temple"},
+  DesertTemple:    {iconIndex: 3, name: "Desert temple",  href: "http://minecraft.gamepedia.com/Desert_temple"},
+  WitchHut:        {iconIndex: 4, name: "Witch's hut",    href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
+  NetherPortal:    {iconIndex: 5, name: "Portal",         href: "http://minecraft.gamepedia.com/Nether_Portal"},
   
-  Forest:        {value: 6, name: "Forest",         href: "http://minecraft.gamepedia.com/Biome#Forest"},
+  Forest:          {iconIndex: 6, name: "Forest",         href: "http://minecraft.gamepedia.com/Biome#Forest"},
   
-  Spawn:           {value: 7, name: "Spawn", href: ""},
-  PlayerStructure: {value: 8, name: "",      href: ""},  
-  Label:           {value: 9, name: "",      href: ""}  
+  Spawn:           {iconIndex: 7, name: "Spawn", href: ""},
+  PlayerStructure: {iconIndex: 8, name: "",      href: ""},  
+  Label:           {iconIndex: 9, name: "",      href: ""}  
 };
 
 
@@ -30,12 +89,14 @@ var LocationType = {
 
 // x, z: coords in Minecraft.
 // Type: should be an element of LocationType
-function Location (x, z, type) {
+function Location (x, z, type, description, owner, href, iconIndex) {
     this.x = x;
     this.z = z;
 	this.type = type;
-	this.hrefOverride = "";
-	this.labelOverride = "";
+	this.labelOverride = description;
+	this.hrefOverride = href;
+	this.iconIndexOverride = iconIndex;
+	this.owner = owner;
 }
 
 Location.prototype.getHref = function() {
@@ -46,49 +107,36 @@ Location.prototype.getLabel = function() {
     return isEmpty(this.labelOverride) ? this.type.name : this.labelOverride;
 };
 
+Location.prototype.getIconIndex = function() {
+    return (this.iconIndexOverride < 0) ? this.type.iconIndex : this.iconOverride;
+};
+
 Location.prototype.getAlt = function() {
-    return this.getLabel();
+
+    var result = this.getLabel();	
+	if (isEmpty(result) && !isEmpty(this.owner)) result = this.owner;
+
+    return result;
 };
 
 // --------
-
-function OwnedLocation(x, z, type, description, owner) {
-	Location.apply(this, [x, z, type]);
-	
-	this.description = description;
-	this.owner = owner;
-}
-
-OwnedLocation.prototype = new Location();
-
-OwnedLocation.prototype.getLabel = function() {
-    return isEmpty(this.description) ? Location.prototype.getLabel.apply(this) : this.description;
-};
-
-
-// --------
- 
 
 function getMapLocations() {
 
 	var result = [];
 
 	function addLocation(x, z, type) {
-		var newLocation = new Location(x, z, type);		
+		var newLocation = new Location(x, z, type, "", "", "", -1);		
 		result.push(newLocation);	
 	}
 
 	function addLabelledLocation(x, z, type, label, href) {
-		var newLocation = new Location(x, z, type);		
-		newLocation.labelOverride = label;
-		if (!isEmpty(href)) newLocation.hrefOverride = href;
+		var newLocation = new Location(x, z, type, label, "", href, -1);		
 		result.push(newLocation);		
 	}
 
 	function addOwnedLocation(x, z, label, owner, href) {
-	
-		var newLocation = new OwnedLocation(x, z, LocationType.PlayerStructure, label, owner);		
-		if (!isEmpty(href)) newLocation.hrefOverride = href;
+		var newLocation = new Location(x, z, LocationType.PlayerStructure, label, owner, href, -1);				
 		result.push(newLocation);
 	}
 
@@ -168,37 +216,30 @@ function drawMapDetails(canvas, locations, iconsOnly)
 			}
 		}
 	}
-	
-	function drawOwnedLocation(x, z, description, owner) {
+
+	function drawLocation(locationInstance) {
 		
-		drawGlyph(ctx, tilesImage, LocationType.PlayerStructure.value, translateCoord(x), translateCoord(z));
+		drawGlyph(ctx, tilesImage, locationInstance.getIconIndex(), translateCoord(locationInstance.x), translateCoord(locationInstance.z));
 	
 		var text = "";
 
-		if (isEmpty(description)) {
-			if (!isEmpty(owner)) text += owner;
+		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
+		if (isEmpty(locationInstance.labelOverride)) {
+			if (!isEmpty(locationInstance.owner)) text += locationInstance.owner;
 		} else {
-			text += description;
+			text += locationInstance.labelOverride;
 		}
 		
-		if (!isEmpty(owner) && text.indexOf(owner) == -1) {
+		if (!isEmpty(locationInstance.owner) && text.indexOf(locationInstance.owner) == -1) {
 			// The owner was specified, and is not named in the description, add in brackets at the bottom
-			text += '\n(' + owner + ')';
+			text += '\n(' + locationInstance.owner + ')';
 		}
 
 		if (!isEmpty(text)) {
-			drawMultilineCenteredText(translateCoord(x), translateCoord(z) + cTextOffset, text);
+			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + cTextOffset, text);
 		}
 	}
 
-	function drawGeneratedLocation(x, z, locationType, label) {
-	
-		drawGlyph(ctx, tilesImage, locationType.value, translateCoord(x), translateCoord(z));
-		
-		if (!isEmpty(label)) {
-			drawMultilineCenteredText(translateCoord(x), translateCoord(z) + cTextOffset, label);
-		}
-	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
 	ctx.mozImageSmoothingEnabled = false;
@@ -224,14 +265,8 @@ function drawMapDetails(canvas, locations, iconsOnly)
 
 	var index;
 	for (index = 0; index < locations.length; ++index) {
-	
-		var location = locations[index];
-		
-		if (location instanceof OwnedLocation) {
-			drawOwnedLocation(location.x, location.z, location.getLabel(), location.owner);
-		} else {
-			drawGeneratedLocation(location.x, location.z, location.type, location.labelOverride);
-		}
+
+		drawLocation(locations[index]);
 	}	
 }
 
