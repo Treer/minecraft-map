@@ -9,34 +9,18 @@
 <![endif]-->
 
 <link rel="stylesheet" href="style.css">
-<script src="js/jquery-1.11.0.min.js"           type="text/javascript"></script>
-<script src="js/jquery-ui-1.10.4.min.js"        type="text/javascript"></script>
-<script src="js/jquery.ui.touch-punch.min.js"   type="text/javascript"></script>
-<script src="js/jquery.hammer.min-unknown.js"   type='text/javascript'></script><!-- I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does??? -->
-<script src="js/jquery.mousewheel-3.1.9.min.js" type="text/javascript"></script>
-<script src="js/jquery.mapz.js"                 type="text/javascript"></script>
-<script src="minecraftmap.js"                   type="text/javascript"></script>
+
+<script src="js/head.min.js"></script>
 <script type="text/javascript">
-$(window).load(
-	function() {
-	
-		var locations = getMapLocations();
-	
-		createMapImageInDiv("zoomlevel1", 800,  800,  locations, false);
-		createMapImageInDiv("zoomlevel2", 1200, 1200, locations, false);
-		createMapImageInDiv("zoomlevel3", 1800, 1800, locations, false);
-		createMapImageInDiv("zoomlevel4", 2700, 2700, locations, false);		
-		
-		$("#map-1").mapz({
-			zoom       : true,
-			mousewheel : true,
-			pinchzoom  : true,
-			createmaps : false
-		});
-	}
+head.js(
+   {jquery:            "js/jquery-1.11.0.min.js"},
+   {jquery_ui:         "js/jquery-ui-1.10.4.min.js"},
+   {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
+   {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
+   {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
+   {jquery_mapz:       "js/jquery.mapz.js"},
+   {minecraftmap:      "minecraftmap.js"}
 );
-
-
 </script>
 
 </head>
@@ -48,19 +32,74 @@ $(window).load(
 Use up/down or mousewheel to zoom, drag to scroll</p>
 </center>
 
-<div class="map-viewport">
-  <div id="map-1">
-	<div id="zoomlevel1" class="current-level level" ></div>
-	<div id="zoomlevel2" class="level" ></div>
-	<div id="zoomlevel3" class="level" ></div>
-	<div id="zoomlevel4" class="level" ></div>
-  </div>
+<div id=hud" style="position: absolute; left: 50%; z-index: 40;">
+	<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center">
+		<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
+		<i><b>Mining locations...</b></i>
+	</div>
+	
+	<div style="position:absolute; top: 360px; width: 128px; right: 400px; text-align: center">
+		<img src="img/sunset.png" /><br/>
+		Sun sets in<br/>this direction
+	</div>
+	<div style="position:absolute; top: 360px; width: 128px; left: 400px; text-align: center">
+		<img src="img/sunrise.png" /><br/>
+		Sun rises from<br/>this direction
+	</div>
+
 </div>
 
+<main>
+	<div class="map-viewport">
+	  <div id="map-1">
+		<div id="zoomlevel1" class="current-level level" ></div>
+		<div id="zoomlevel2" class="level" ></div>
+		<div id="zoomlevel3" class="level" ></div>
+		<div id="zoomlevel4" class="level" ></div>
+	  </div>
+	</div>
+</main>
+		
+	
 <div class="resources">
 	<img id="map-background" src="img/map64.png"/>
 	<img id="map-tileset" src="img/glyphs.png"/>
 </div>
 
 </body>
+
+<script type="text/javascript">
+head.ready(
+	function() {
+	
+		// if "labelslevel" is specified on the URL, then only display labels when
+		// the map is zoomed in more levels than the value of labelslevel.
+		// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
+		var labelsLevel = 0;
+		if ('labelslevel' in gLocationInfo.params) {
+			labelsLevel = gLocationInfo.params.labelslevel;
+		}	
+			
+		var locations = getMapLocations();
+
+		//createMapImageInDiv("zoomlevel-1", 355,  355, locations, true);
+		//createMapImageInDiv("zoomlevel0", 533,  533,  locations, true);		
+		createMapImageInDiv("zoomlevel1", 800,  800,  locations, labelsLevel > 0);
+		createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
+		createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
+		createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
+				
+		$("#map-1").mapz({
+			zoom       : true,
+			mousewheel : true,
+			pinchzoom  : true,
+			createmaps : false
+		});
+				
+		// hide the loading screen
+		$('#loading').hide();
+	}
+);
+</script>
+
 </html>
