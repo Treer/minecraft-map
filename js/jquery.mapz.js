@@ -184,8 +184,8 @@
 
 			
 			// Switch levels and rezoom to viewed position
-			currentlvl.removeClass('current-level');
 			targetlvl.addClass('current-level');
+			currentlvl.removeClass('current-level');
 			
 			var pos = map.position();
 			
