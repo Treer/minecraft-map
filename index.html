@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-<title>Minecraft Map</title>
+<title>Map of the Overworld</title>
 <!--[if IE]>
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -16,35 +16,33 @@ head.js(
    {jquery:            "js/jquery-1.11.0.min.js"},
    {jquery_ui:         "js/jquery-ui-1.10.4.min.js"},
    {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
-   {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
    {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
+   {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
    {jquery_mapz:       "js/jquery.mapz.js"},
    {minecraftmap:      "minecraftmap.js"}
 );
 </script>
 
 </head>
-<body style="background-image:url('img/superflat.png'); background-size: cover; background-repeat: no-repeat; background-color:rgb(77,100,47); font-family: sans-serif;')">
+<body style="background-image:url('img/superflat.png'); background-size: cover; background-repeat: no-repeat; font-family: sans-serif;')">
 
 <center>
-<h1>Minecraft Map</h1>
+<h1 id="mainTitle">Map of the Overworld</h1>
 
 Use up/down or mousewheel to zoom, drag to scroll</p>
 </center>
 
-<div id=hud" style="position: absolute; left: 50%; z-index: 40;">
-	<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center">
+<div id=hud" style="position: absolute; left: 50%;">
+	<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center; z-index: 40">
 		<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
 		<i><b>Mining locations...</b></i>
 	</div>
 	
-	<div style="position:absolute; top: 360px; width: 128px; right: 400px; text-align: center">
-		<img src="img/sunset.png" /><br/>
-		Sun sets in<br/>this direction
+	<div class="sunsign hidden-sunsign" style="top: 352px; width: 192px; right: 410px">
+		<img src="img/sunsetsign.png" width="192" height="96" /><br/>
 	</div>
-	<div style="position:absolute; top: 360px; width: 128px; left: 400px; text-align: center">
-		<img src="img/sunrise.png" /><br/>
-		Sun rises from<br/>this direction
+	<div class="sunsign hidden-sunsign" style="top: 352px; width: 192px; left: 410px">
+		<img src="img/sunrisesign.png" width="192" height="96"/><br/>
 	</div>
 
 </div>
@@ -71,7 +69,11 @@ Use up/down or mousewheel to zoom, drag to scroll</p>
 <script type="text/javascript">
 head.ready(
 	function() {
-	
+		// Everything has loaded, which means the background image is loaded. Update
+		// the background colour so that screens taller than the background texture
+		// are still the right colour at the bottom.
+		$('body').css({ 'background-color': 'rgb(77,100,47)' });
+		
 		// if "labelslevel" is specified on the URL, then only display labels when
 		// the map is zoomed in more levels than the value of labelslevel.
 		// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
@@ -98,6 +100,7 @@ head.ready(
 				
 		// hide the loading screen
 		$('#loading').hide();
+		$('.sunsign').removeClass('hidden-sunsign');
 	}
 );
 </script>

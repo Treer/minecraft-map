@@ -10,9 +10,22 @@ if ('range' in gLocationInfo.params) {
 	cMapRange = gLocationInfo.params.range;
 }
 
+// if "title" is specified on the URL then relabel the page
+if ('title' in gLocationInfo.params  && isString(gLocationInfo.params.title)) {
+	labelsLevel = gLocationInfo.params.labelslevel;
+	$("#mainTitle").text(gLocationInfo.params.title);
+	document.title = gLocationInfo.params.title;
+}	
+
+
 // Code snippet
 function isEmpty(str) {
     return (!str || 0 === str.length);
+}
+
+// Code snippet
+function isString(str) {
+	return (typeof str == 'string' || str instanceof String);
 }
 
 // Code snippet

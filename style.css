@@ -7,4 +7,5 @@
 img{ border:0; }
 
 .block{ float:center; margin-right:2%; margin-top:10px; }
-
+.sunsign { position:absolute; }
+.hidden-sunsign { visibility: hidden; } 
