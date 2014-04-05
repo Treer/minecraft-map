@@ -48,7 +48,7 @@ Use up/down or mousewheel to zoom, drag to scroll</p>
 </div>
 
 <main>
-	<div class="map-viewport">
+	<div class="map-viewport large-viewport">
 	  <div id="map-1">
 		<div id="zoomlevel1" class="current-level level" ></div>
 		<div id="zoomlevel2" class="level" ></div>
@@ -91,12 +91,27 @@ head.ready(
 							labelsLevel = gLocationInfo.params.labelslevel;
 						}	
 					
-						//createMapImageInDiv("zoomlevel-1", 355,  355, locations, true);
-						//createMapImageInDiv("zoomlevel0", 533,  533,  locations, true);		
-						createMapImageInDiv("zoomlevel1", 800,  800,  locations, labelsLevel > 0);
-						createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
-						createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
-						createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
+						if (head.screen.height < 640 || head.screen.width < 640) {
+							$('.map-viewport').removeClass('large-viewport');
+							$('.map-viewport').addClass('tiny-viewport');
+							createMapImageInDiv("zoomlevel1",  400,  400, locations, true);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel2",  708,  708, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1253, 1253, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+					
+						} else if (head.screen.height < 800 || head.screen.width < 800) {
+							$('.map-viewport').removeClass('large-viewport');
+							$('.map-viewport').addClass('small-viewport');
+							createMapImageInDiv("zoomlevel1",  640,  640, locations, true);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel2",  960,  960, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1440, 1440, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+						} else {
+							createMapImageInDiv("zoomlevel1",  800,  800, locations, labelsLevel > 0);
+							createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
+						}
 								
 						$("#map-1").mapz({
 							zoom       : true,

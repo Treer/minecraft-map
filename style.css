@@ -1,4 +1,7 @@
-.map-viewport{ position:relative; width:800px; height:800px; border:0px solid black; overflow:hidden; margin-left: auto; margin-right: auto }
+.map-viewport{ position:relative; border:0px solid black; overflow:hidden; margin-left: auto; margin-right: auto }
+.tiny-viewport{ width:400px; height:400px; }
+.small-viewport{ width:640px; height:640px; }
+.large-viewport{ width:800px; height:800px; }
 .level{ position:absolute; left:0; top:0; z-index:10; visibility: hidden}
 .current-level{ z-index:20; visibility: visible }
 .resources {visibility: hidden}
