@@ -121,7 +121,7 @@ Location.prototype.getLabel = function() {
 };
 
 Location.prototype.getIconIndex = function() {
-    return (this.iconIndexOverride < 0) ? this.type.iconIndex : this.iconOverride;
+    return (isNaN(this.iconIndexOverride) || this.iconIndexOverride < 0) ? this.type.iconIndex : this.iconOverride;
 };
 
 Location.prototype.getAlt = function() {
@@ -132,9 +132,141 @@ Location.prototype.getAlt = function() {
     return result;
 };
 
-// --------
+// -----------------------------
+ 
 
-function getMapLocations() {
+// Format for commaSeperatedValues:
+//   type, x, z, "description", "owner", "href", iconIndex
+//
+// The first 3 values are required, and determine whether a location
+// will be returned.
+function createLocationFromRow(commaSeperatedValues) {
+	
+	var result = null;
+	
+	var values = commaSeperatedValues.split(',');
+	
+	var i = 0;
+	for(i = 0; i < values.length; i++) {
+		values[i] = values[i].trim();
+	}		
+	// The wiki treats camelcase words like "PlayerStructure" as wikiwords and 
+	// puts a questionmark after them so remove any trailing questionmark, and 
+	// also try unquoting it incase the wikipage editors put some in.
+	var typeName = unquoteString(values[0]);
+	if (typeName[typeName.length - 1] == '?') typeName = typeName.substring(0, typeName.length - 1);
+			
+	if (typeName in LocationType) {
+		var new_type      = LocationType[typeName];
+		var new_x         = parseInt(values[1]);
+		var new_z         = parseInt(values[2]);
+		var new_iconIndex = parseInt(values[6]);		
+		
+		if (!isNaN(new_x) && !isNaN(new_z)) {
+			// type and coords check out, can return a real location.
+			result = new Location(new_x, new_z, new_type, unquoteString(values[3]), unquoteString(values[4]), unquoteString(values[5]), new_iconIndex);			
+		}
+	}
+	return result;
+}
+ 
+// Strings may be surrounded in doublequotes (") to allow leading or trailing 
+// whitespace and inclusion of newlines etc, if they are then the quotes are 
+// removed and the string is parsed into a string
+function unquoteString(str) {
+	
+	var result = str;
+	
+	if (isString(str) && str.length >= 2) {
+		if (str[0] == '"' && str[str.length - 1] == '"') {
+			var parsedStr = jQuery.parseJSON( '{"value":' + str + '}' );
+			result = parsedStr.value;
+		}	
+	}
+	return result;
+}
+ 
+function parseTextLocations(data, callback) {
+
+	var locationList = [];
+
+	lines = data.split('\n');
+	var i = 0;
+	for(i = 0; i < lines.length; i++) {
+		var newLocation = createLocationFromRow(lines[i]);	
+		if (newLocation instanceof Location) locationList.push(newLocation);		
+	}
+	callback(locationList);
+}
+
+function parseHtmlLocations(data, callback) {
+	
+	var locationList = [];
+	
+	var htmlDom = jQuery.parseHTML( data );
+	
+	// scrape any locations contained in tables
+	$(htmlDom).find('tr').each(
+		function() {
+	
+			var rowString = "";
+		
+			$(this).find('td').each(
+				function() {
+					rowString += this.textContent + ',';
+				}
+			);
+			
+			var newLocation = createLocationFromRow(rowString);	
+			if (newLocation instanceof Location) locationList.push(newLocation);					
+		}
+	);
+
+	// scrape any locations contained in unordered lists and ordered lists
+	$(htmlDom).find('ul, ol').each(
+		function() {
+			$(this).find('li').each(
+				function() {			
+					var newLocation = createLocationFromRow(this.textContent);	
+					if (newLocation instanceof Location) locationList.push(newLocation);					
+				}
+			);			
+		}
+	);
+	
+	callback(locationList);
+}
+ 
+// callback will be given one argument - an array of Location instances
+function getMapLocations(callback) {
+	
+	if ('src' in gLocationInfo.params && isString(gLocationInfo.params.src)) {	
+		var dataUrl = decodeURIComponent(gLocationInfo.params.src);
+		var dataTypeIsText = dataUrl.match(/\.txt$|\.csv$/); // Assume HTML unless the dataUrl ends in .txt or .csv
+				
+		$.ajax({
+			 url: dataUrl,
+			 dataType: (dataTypeIsText ? 'text' : 'html'),
+			 success: function(data, textStatus, jqXHR) {
+				if (dataTypeIsText) {
+					parseTextLocations(data, callback);
+				} else {
+					parseHtmlLocations(data, callback);
+				}
+			 },
+			 error:function(jqXHR, textStatus, errorThrown){
+				alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
+            }
+		});
+				
+	} else {
+		// alert('no "src" url was specified in the URL');
+		callback(getHardCodedLocations());
+	}	
+}
+
+
+function getHardCodedLocations() {
 
 	var result = [];
 
@@ -153,11 +285,11 @@ function getMapLocations() {
 		result.push(newLocation);
 	}
 
-	addLabelledLocation(960,  -1096, LocationType.Spawn, "Main spawn", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Spawn_Point");
-	addLabelledLocation(1872, -1168, LocationType.Spawn, "Forest\nspawn");
-	addLabelledLocation(1144, -2048, LocationType.Spawn, "Taiga spawn");
+	addLabelledLocation(966,  -1090, LocationType.Spawn, "Main spawn", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Spawn_Point");
+	addLabelledLocation(1865, -1172, LocationType.Spawn, "Forest\nspawn");
+	addLabelledLocation(1093, -2079, LocationType.Spawn, "Taiga spawn");
 	addLabelledLocation(984,  -48,   LocationType.Spawn, "Desert\nspawn");
-	addLabelledLocation(256,  -1168, LocationType.Spawn, "Plain spawn");
+	addLabelledLocation(258,  -1163, LocationType.Spawn, "Plain spawn");
 
 	addLabelledLocation(1268,  -2410, LocationType.Forest, "fairy forest");
 	addLabelledLocation(-1700, -700,  LocationType.Forest, "Dark oak");
@@ -190,7 +322,10 @@ function getMapLocations() {
 	addLocation(-4056, -2487, LocationType.DesertTemple);
 	addLocation(-3391,  1552, LocationType.WitchHut);
 	addLocation(-3903, -4393, LocationType.WitchHut);
-
+	
+	addLocation( 1016, -2040, LocationType.NetherPortal);
+	addLocation( 1007, -3002, LocationType.NetherPortal);
+	
 	// test locations
 	//addLocation(-3903, -3393, LocationType.JungleTemple);
 	//addLocation(-3903, -3000, LocationType.NetherPortal);
@@ -252,7 +387,6 @@ function drawMapDetails(canvas, locations, iconsOnly)
 			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + cTextOffset, text);
 		}
 	}
-
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
 	ctx.mozImageSmoothingEnabled = false;

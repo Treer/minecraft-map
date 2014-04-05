@@ -74,39 +74,42 @@ head.ready(
 		$(document).ready(
 			function() {
 				// All DOM and images and CSS etc has been loaded
-		
+	
 				// Everything has loaded, which means the background image is loaded. Update
 				// the background colour so that screens taller than the background texture
 				// are still the right colour at the bottom.
 				$('body').css({ 'background-color': 'rgb(77,100,47)' });
-				
-				// if "labelslevel" is specified on the URL, then only display labels when
-				// the map is zoomed in more levels than the value of labelslevel.
-				// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
-				var labelsLevel = 0;
-				if ('labelslevel' in gLocationInfo.params) {
-					labelsLevel = gLocationInfo.params.labelslevel;
-				}	
+							
+				getMapLocations(
+					function(locations) {
 					
-				var locations = getMapLocations();
-
-				//createMapImageInDiv("zoomlevel-1", 355,  355, locations, true);
-				//createMapImageInDiv("zoomlevel0", 533,  533,  locations, true);		
-				createMapImageInDiv("zoomlevel1", 800,  800,  locations, labelsLevel > 0);
-				createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
-				createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
-				createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
-						
-				$("#map-1").mapz({
-					zoom       : true,
-					mousewheel : true,
-					pinchzoom  : true,
-					createmaps : false
-				});
-						
-				// hide the loading screen
-				$('#loading').hide();
-				$('.sunsign').removeClass('hidden-sunsign');
+						// if "labelslevel" is specified on the URL, then only display labels when
+						// the map is zoomed in more levels than the value of labelslevel.
+						// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
+						var labelsLevel = 0;
+						if ('labelslevel' in gLocationInfo.params) {
+							labelsLevel = gLocationInfo.params.labelslevel;
+						}	
+					
+						//createMapImageInDiv("zoomlevel-1", 355,  355, locations, true);
+						//createMapImageInDiv("zoomlevel0", 533,  533,  locations, true);		
+						createMapImageInDiv("zoomlevel1", 800,  800,  locations, labelsLevel > 0);
+						createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
+						createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
+						createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
+								
+						$("#map-1").mapz({
+							zoom       : true,
+							mousewheel : true,
+							pinchzoom  : true,
+							createmaps : false
+						});
+								
+						// hide the loading screen
+						$('#loading').hide();
+						$('.sunsign').removeClass('hidden-sunsign');
+					}
+				);
 			}
 		);
 	}
