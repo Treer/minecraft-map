@@ -5,6 +5,9 @@ var cTextOffset  = 14;   // How far under the center of the icon should the text
 
 var gLocationInfo = parseURL(location);
 
+var gCustomIcons = new Image();
+var gCustomIconsLoaded = false;
+
 // Set any constants specified by the URL (instead of using the default value)
 if ('range' in gLocationInfo.params) {	
 	cMapRange = gLocationInfo.params.range;
@@ -12,9 +15,13 @@ if ('range' in gLocationInfo.params) {
 
 // if "title" is specified on the URL then relabel the page
 if ('title' in gLocationInfo.params  && isString(gLocationInfo.params.title)) {
-	labelsLevel = gLocationInfo.params.labelslevel;
 	$("#mainTitle").text(gLocationInfo.params.title);
 	document.title = gLocationInfo.params.title;
+}	
+
+// if "blurb" is specified on the URL then change the tag line
+if ('blurb' in gLocationInfo.params  && isString(gLocationInfo.params.blurb)) {
+	$("#tagline").text(gLocationInfo.params.blurb);
 }	
 
 
@@ -121,7 +128,7 @@ Location.prototype.getLabel = function() {
 };
 
 Location.prototype.getIconIndex = function() {
-    return (isNaN(this.iconIndexOverride) || this.iconIndexOverride < 0) ? this.type.iconIndex : this.iconOverride;
+    return (isNaN(this.iconIndexOverride) || this.iconIndexOverride < 0) ? this.type.iconIndex : this.iconIndexOverride;
 };
 
 Location.prototype.getAlt = function() {
@@ -240,29 +247,55 @@ function parseHtmlLocations(data, callback) {
 // callback will be given one argument - an array of Location instances
 function getMapLocations(callback) {
 	
-	if ('src' in gLocationInfo.params && isString(gLocationInfo.params.src)) {	
-		var dataUrl = decodeURIComponent(gLocationInfo.params.src);
-		var dataTypeIsText = dataUrl.match(/\.txt$|\.csv$/); // Assume HTML unless the dataUrl ends in .txt or .csv
-				
-		$.ajax({
-			 url: dataUrl,
-			 dataType: (dataTypeIsText ? 'text' : 'html'),
-			 success: function(data, textStatus, jqXHR) {
-				if (dataTypeIsText) {
-					parseTextLocations(data, callback);
-				} else {
-					parseHtmlLocations(data, callback);
+	if ('icons' in gLocationInfo.params && isString(gLocationInfo.params.icons) && !gCustomIconsLoaded) {
+		// Load the custom icons
+
+		// I'm getting the impression there is no reliable way to wait for
+		// an image to load, see caveats in http://api.jquery.com/load-event/		
+		// If that's the case then custom icons won't work on browsers with broken
+		// onload event.
+		$(gCustomIcons).bind({
+			load: function() {
+				gCustomIconsLoaded = true;			
+				continueGetMapLocations(callback);
+			},
+			error: function() {
+				// Image didn't load, probably a 404
+				continueGetMapLocations(callback);
+			}
+		});		
+		gCustomIcons.src = gLocationInfo.params.icons;
+		
+	} else {	
+		continueGetMapLocations(callback);
+	}
+	
+	
+	function continueGetMapLocations(callback) {
+		if ('src' in gLocationInfo.params && isString(gLocationInfo.params.src)) {	
+			var dataUrl = decodeURIComponent(gLocationInfo.params.src);
+			var dataTypeIsText = dataUrl.match(/\.txt$|\.csv$/); // Assume HTML unless the dataUrl ends in .txt or .csv
+					
+			$.ajax({
+				 url: dataUrl,
+				 dataType: (dataTypeIsText ? 'text' : 'html'),
+				 success: function(data, textStatus, jqXHR) {
+					if (dataTypeIsText) {
+						parseTextLocations(data, callback);
+					} else {
+						parseHtmlLocations(data, callback);
+					}
+				 },
+				 error:function(jqXHR, textStatus, errorThrown){
+					alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
 				}
-			 },
-			 error:function(jqXHR, textStatus, errorThrown){
-				alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
-            }
-		});
-				
-	} else {
-		// alert('no "src" url was specified in the URL');
-		callback(getHardCodedLocations());
-	}	
+			});
+					
+		} else {
+			// alert('no "src" url was specified in the URL');
+			callback(getHardCodedLocations());
+		}	
+	}
 }
 
 
@@ -280,8 +313,8 @@ function getHardCodedLocations() {
 		result.push(newLocation);		
 	}
 
-	function addOwnedLocation(x, z, label, owner, href) {
-		var newLocation = new Location(x, z, LocationType.PlayerStructure, label, owner, href, -1);				
+	function addOwnedLocation(x, z, label, owner, href, indexOverride) {
+		var newLocation = new Location(x, z, LocationType.PlayerStructure, label, owner, href, indexOverride);				
 		result.push(newLocation);
 	}
 
@@ -323,8 +356,8 @@ function getHardCodedLocations() {
 	addLocation(-3391,  1552, LocationType.WitchHut);
 	addLocation(-3903, -4393, LocationType.WitchHut);
 	
-	addLocation( 1016, -2040, LocationType.NetherPortal);
-	addLocation( 1007, -3002, LocationType.NetherPortal);
+	//addLocation( 1016, -2040, LocationType.NetherPortal);
+	//addLocation( 1007, -3002, LocationType.NetherPortal);
 	
 	// test locations
 	//addLocation(-3903, -3393, LocationType.JungleTemple);
@@ -365,10 +398,36 @@ function drawMapDetails(canvas, locations, iconsOnly)
 		}
 	}
 
-	function drawLocation(locationInstance) {
-		
-		drawGlyph(ctx, tilesImage, locationInstance.getIconIndex(), translateCoord(locationInstance.x), translateCoord(locationInstance.z));
+	function drawIcon(index, drawMask, x, z) {
 	
+		if (!isNaN(index) && index >= 0) {
+		
+			if (index >= 16) {
+				// it's a custom icon				
+				if (gCustomIconsLoaded) {
+					drawGlyph(ctx, gCustomIcons, index - 16, drawMask, translateCoord(x), translateCoord(z));			
+				}				
+			} else {			
+				drawGlyph(ctx, tilesImage, index, drawMask, translateCoord(x), translateCoord(z));			
+			}
+		}
+	}
+	
+	// Adjust this to adjust which pass the different map parts are rendered in
+	var RenderLayer = {
+		Masks:            0,
+		Captions:         1,
+		UncaptionedIcons: 2,
+		CaptionedIcons:   3,
+		
+		First:            0,
+		Last:             3
+	}
+		
+	
+	
+	function drawLocation(locationInstance, renderLayer) {
+			
 		var text = "";
 
 		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
@@ -383,9 +442,24 @@ function drawMapDetails(canvas, locations, iconsOnly)
 			text += '\n(' + locationInstance.owner + ')';
 		}
 
-		if (!isEmpty(text)) {
+		if (!isEmpty(text) && renderLayer == RenderLayer.Captions) {
 			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + cTextOffset, text);
 		}
+		
+		if (renderLayer == RenderLayer.Masks) {		
+			drawIcon(locationInstance.getIconIndex(), true, locationInstance.x, locationInstance.z);
+		}
+
+		if (isEmpty(text)) {
+			if (renderLayer == RenderLayer.UncaptionedIcons) {		
+				drawIcon(locationInstance.getIconIndex(), false, locationInstance.x, locationInstance.z);
+			}
+		} else {
+			if (renderLayer == RenderLayer.CaptionedIcons) {		
+				drawIcon(locationInstance.getIconIndex(), false, locationInstance.x, locationInstance.z);
+			}		
+		}
+		
 	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
@@ -410,11 +484,15 @@ function drawMapDetails(canvas, locations, iconsOnly)
 
 	ctx.font = "10px Arial";
 
-	var index;
-	for (index = 0; index < locations.length; ++index) {
+	var renderLayer;
+	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
+	
+		var index;
+		for (index = 0; index < locations.length; ++index) {
 
-		drawLocation(locations[index]);
-	}	
+			drawLocation(locations[index], renderLayer);
+		}	
+	}
 }
 
 function createMapImageInDiv(divElementName, aWidth, aHeight, locations, iconsOnly) {
@@ -470,17 +548,18 @@ function createMapImageInDiv(divElementName, aWidth, aHeight, locations, iconsOn
 	return result;
 }
 
-// Assumes tiles are square, arranged beside each other in the tileImage left to right, and should be drawn centered.
+// Assumes tiles are square, arranged beside each other in the tileImage left to right in two 
+// rows (top row icons, bottom row masks) and should be drawn centered.
 // This means user can change size of icons just by changing the images the tiles are in.
-function drawGlyph(canvasContext, tilesImage, tileIndex, x, y) {
+function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
 
-	var width = tilesImage.height;
+	var width = tilesImage.height / 2;
 	var halfWidth = width / 2;
 
 	canvasContext.drawImage(
 		tilesImage,
 		tileIndex * width,
-		0,
+		drawMask ? width : 0,
 		width,
 		width,
 		x - halfWidth,

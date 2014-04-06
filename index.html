@@ -32,17 +32,17 @@ head.js(
 Use up/down or mousewheel to zoom, drag to scroll</p>
 </center>
 
-<div id=hud" style="position: absolute; left: 50%;">
+<div style="position: absolute; left: 50%;">
 	<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center; z-index: 40">
 		<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
 		<i><b>Mining locations...</b></i>
 	</div>
 	
-	<div class="sunsign hidden-sunsign" style="top: 352px; width: 192px; right: 410px">
-		<img src="img/sunsetsign.png" width="192" height="96" /><br/>
+	<div id="sunsetsign" class="sunsign hidden-sunsign" style="top: 352px; width: 192px; right: 410px">
+		<img src="img/sunsetsign.png" width="192" height="96" />
 	</div>
-	<div class="sunsign hidden-sunsign" style="top: 352px; width: 192px; left: 410px">
-		<img src="img/sunrisesign.png" width="192" height="96"/><br/>
+	<div id="sunrisesign" class="sunsign hidden-sunsign" style="top: 352px; width: 192px; left: 410px">
+		<img src="img/sunrisesign.png" width="192" height="96"/>
 	</div>
 
 </div>
@@ -57,6 +57,10 @@ Use up/down or mousewheel to zoom, drag to scroll</p>
 	  </div>
 	</div>
 </main>
+<div id="signsunderneith" class="hidden-sunsign" width="100%">
+	<img src="img/sunsetsign_arrow.png" width="192" height="96" align="left"/>
+	<img src="img/sunrisesign_arrow.png" width="192" height="96" align="right"/>
+</div>
 		
 	
 <div class="resources">
@@ -82,11 +86,14 @@ head.ready(
 							
 				getMapLocations(
 					function(locations) {
+
+						// small or tiny viewports will have labelslevel set to 1 instead of 0, as
+						// they don't have room for captions at the most zoomed out level.
+						var labelsLevel = (head.screen.height < 800 || head.screen.width < 800) ? 1 : 0;
 					
 						// if "labelslevel" is specified on the URL, then only display labels when
 						// the map is zoomed in more levels than the value of labelslevel.
 						// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
-						var labelsLevel = 0;
 						if ('labelslevel' in gLocationInfo.params) {
 							labelsLevel = gLocationInfo.params.labelslevel;
 						}	
@@ -94,7 +101,7 @@ head.ready(
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapImageInDiv("zoomlevel1",  400,  400, locations, true);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel1",  390,  390, locations, labelsLevel > 0);            // don't label the top level view on a small screen
 							createMapImageInDiv("zoomlevel2",  708,  708, locations, labelsLevel > 1);
 							createMapImageInDiv("zoomlevel3", 1253, 1253, locations, labelsLevel > 2);
 							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
@@ -102,7 +109,7 @@ head.ready(
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapImageInDiv("zoomlevel1",  640,  640, locations, true);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel1",  630,  630, locations, labelsLevel > 0);            // don't label the top level view on a small screen
 							createMapImageInDiv("zoomlevel2",  960,  960, locations, labelsLevel > 1);
 							createMapImageInDiv("zoomlevel3", 1440, 1440, locations, labelsLevel > 2);
 							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
@@ -122,7 +129,13 @@ head.ready(
 								
 						// hide the loading screen
 						$('#loading').hide();
-						$('.sunsign').removeClass('hidden-sunsign');
+						if (head.screen.width >= 1000) {
+							// we only show the sunrise/sunset signs if they can fit on the screen.
+							$('.sunsign').removeClass('hidden-sunsign');
+						} else {
+							// show the signs underneith the map instead
+							$('#signsunderneith').removeClass('hidden-sunsign');
+						}
 					}
 				);
 			}

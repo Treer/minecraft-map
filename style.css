@@ -1,6 +1,6 @@
 .map-viewport{ position:relative; border:0px solid black; overflow:hidden; margin-left: auto; margin-right: auto }
-.tiny-viewport{ width:400px; height:400px; }
-.small-viewport{ width:640px; height:640px; }
+.tiny-viewport{ width:390px; height:390px; }
+.small-viewport{ width:630px; height:630px; }
 .large-viewport{ width:800px; height:800px; }
 .level{ position:absolute; left:0; top:0; z-index:10; visibility: hidden}
 .current-level{ z-index:20; visibility: visible }
