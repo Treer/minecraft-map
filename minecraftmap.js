@@ -100,7 +100,7 @@ var LocationType = {
   
   Spawn:           {iconIndex: 7, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex: 8, name: "",      href: ""},  
-  Label:           {iconIndex: 9, name: "",      href: ""}  
+  Label:           {iconIndex: -1, name: "",      href: ""}  
 };
 
 
@@ -320,6 +320,7 @@ function drawMapDetails(canvas, locations, iconsOnly)
 			var lineNo;
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
 			
+				// y value for filltext is the baseline of the text
 				ctx.fillText(
 					lines[lineNo], 
 					x - (ctx.measureText(lines[lineNo]).width / 2),
@@ -375,7 +376,12 @@ function drawMapDetails(canvas, locations, iconsOnly)
 		}
 
 		if (!isEmpty(text) && renderLayer == RenderLayer.Captions) {
-			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + cTextOffset, text);
+		
+			var iconIndex = locationInstance.getIconIndex();
+			var textOffset = cTextOffset;
+			if (isNaN(iconIndex) || iconIndex < 0) textOffset = 3; // Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+		
+			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + textOffset, text);
 		}
 		
 		if (renderLayer == RenderLayer.Masks) {		
