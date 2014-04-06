@@ -15,13 +15,13 @@ if ('range' in gLocationInfo.params) {
 
 // if "title" is specified on the URL then relabel the page
 if ('title' in gLocationInfo.params  && isString(gLocationInfo.params.title)) {
-	$("#mainTitle").text(gLocationInfo.params.title);
+	$("#mainTitle").text(decodeURIComponent(gLocationInfo.params.title));
 	document.title = gLocationInfo.params.title;
 }	
 
 // if "blurb" is specified on the URL then change the tag line
 if ('blurb' in gLocationInfo.params  && isString(gLocationInfo.params.blurb)) {
-	$("#tagline").text(gLocationInfo.params.blurb);
+	$("#tagline").text(decodeURIComponent(gLocationInfo.params.blurb));
 }	
 
 
