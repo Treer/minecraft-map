@@ -1,0 +1,22 @@
+type,             x,     z,    description,          owner,  href,                  iconIndex
+
+Spawn,            960,  -1096, "Main spawn",         "",     "http://whatever.etc"
+Spawn,            1872, -1168, "Forest\nspawn"       
+Spawn,            1144, -2048, "Taiga spawn"         
+Spawn,            984,  -48,   "Desert\nspawn"       
+Spawn,            256,  -1168, "Plain spawn"         
+Forest,           1268, -2410, "fairy forest"        
+Forest,          -1700, -700,  "Dark oak"            
+Forest,          -934,  -4676, "Dark oak"            
+PlayerStructure, -1667,  781,  "Ender Cathedral"
+PlayerStructure,  1148, -72,   "Map\nroom",          
+PlayerStructure,  846,   86,                         
+DesertVillage,    2244, -1271, 
+DesertVillage,    797,   153,  
+DesertVillage,   -207,   881,  
+Village,         -870,  -4489, 
+Village,          1236,  353,  "reanimated\nvillage"
+DesertTemple,    -4056, -2487, 
+WitchHut,        -3391,  1552, 
+WitchHut,        -3903, -4393, 
+             

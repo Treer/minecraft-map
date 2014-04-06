@@ -292,79 +292,11 @@ function getMapLocations(callback) {
 			});
 					
 		} else {
-			// alert('no "src" url was specified in the URL');
-			callback(getHardCodedLocations());
+			alert('no "src=" url was specified to scrape the location data from.');
 		}	
 	}
 }
 
-
-function getHardCodedLocations() {
-
-	var result = [];
-
-	function addLocation(x, z, type) {
-		var newLocation = new Location(x, z, type, "", "", "", -1);		
-		result.push(newLocation);	
-	}
-
-	function addLabelledLocation(x, z, type, label, href) {
-		var newLocation = new Location(x, z, type, label, "", href, -1);		
-		result.push(newLocation);		
-	}
-
-	function addOwnedLocation(x, z, label, owner, href, indexOverride) {
-		var newLocation = new Location(x, z, LocationType.PlayerStructure, label, owner, href, indexOverride);				
-		result.push(newLocation);
-	}
-
-	addLabelledLocation(966,  -1090, LocationType.Spawn, "Main spawn", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Spawn_Point");
-	addLabelledLocation(1865, -1172, LocationType.Spawn, "Forest\nspawn");
-	addLabelledLocation(1093, -2079, LocationType.Spawn, "Taiga spawn");
-	addLabelledLocation(984,  -48,   LocationType.Spawn, "Desert\nspawn");
-	addLabelledLocation(258,  -1163, LocationType.Spawn, "Plain spawn");
-
-	addLabelledLocation(1268,  -2410, LocationType.Forest, "fairy forest");
-	addLabelledLocation(-1700, -700,  LocationType.Forest, "Dark oak");
-	addLabelledLocation(-934,  -4676, LocationType.Forest, "Dark oak");
-	
-	addOwnedLocation( 1850, -1344, "Hamish", "Hamish", "");
-	addOwnedLocation( 1495, -1825, "Sir Colling of Woodaswel", "Sir Colling of Woodaswel", "");
-	addOwnedLocation( 1112, -2887, "Horfett Manor", "aeduna", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Horfett_Manor");
-	addOwnedLocation( 1445, -1324, "Temple of Tempest", "webseer", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Temple_Of_Tempest");
-	addOwnedLocation( 84,   -903,  "Small Lighthouse", "lex88", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Small_Light_House");
-	addOwnedLocation( 86,    610,  "Outpost Xisle", "solusxisle", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Outpost_Xisle"); // Glass portal, grrr
-
-	addOwnedLocation( 1017,  324,  "CookieMon's\nhovel", "CookieMon", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon");
-	addOwnedLocation(-800,  -1800, "CookieMon's mountain lair", "CookieMon", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon");
-	addOwnedLocation(-1048,  687,  "Crovexius", "Crovexius", "");
-	addOwnedLocation( 1480, -1186, "Seaspray City", "webseer", "");
-	addOwnedLocation(-1667,  781,  "Ender Cathedral", "", "");
-	addOwnedLocation( 3529,  4706, "Portower", "aeduna", "");
-	addOwnedLocation( 1200, -4400, "Ogdenville", "aeduna", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Ogdenville");
-	addOwnedLocation( 7500, -6200, "Adam b1", "Electrobrick?", "");
-	addOwnedLocation( 1148, -72,   "Map\nroom", "", "");
-	addOwnedLocation( 846,   86,   "", "", ""); // Orange house, built by??
-	addOwnedLocation( 2038, -1442, "", "pr0zak", "");
-
-	addLocation( 2244, -1271, LocationType.DesertVillage);
-	addLocation( 797,   153,  LocationType.DesertVillage);
-	addLocation(-207,   881,  LocationType.DesertVillage);
-	addLocation(-870,  -4489, LocationType.Village);
-	addLabelledLocation(1236, 353, LocationType.Village, "aeduna's\nreanimated\nvillage");
-	addLocation(-4056, -2487, LocationType.DesertTemple);
-	addLocation(-3391,  1552, LocationType.WitchHut);
-	addLocation(-3903, -4393, LocationType.WitchHut);
-	
-	//addLocation( 1016, -2040, LocationType.NetherPortal);
-	//addLocation( 1007, -3002, LocationType.NetherPortal);
-	
-	// test locations
-	//addLocation(-3903, -3393, LocationType.JungleTemple);
-	//addLocation(-3903, -3000, LocationType.NetherPortal);
-	
-	return result;
-}
 
 function drawMapDetails(canvas, locations, iconsOnly)
 {
