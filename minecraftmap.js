@@ -2,11 +2,14 @@
 var cClickRadius = 12;   // How far from the center of the icon is clickable
 var cMapRange    = 6000; // measured in minecraft blocks from the center
 var cTextOffset  = 14;   // How far under the center of the icon should the text be drawn
+var cCustomIconIndexStart = 32; // IconIndexes with this value or higher should be loaded from gCustomIcons
 
 var gLocationInfo = parseURL(location);
 
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
+var gXOffset     = 0;    // Sets the x coord for the center of the map
+var gZOffset     = 0;    // Sets the z coord for the center of the map
 
 // Set any constants specified by the URL (instead of using the default value)
 if ('range' in gLocationInfo.params) {	
@@ -22,6 +25,18 @@ if ('title' in gLocationInfo.params  && isString(gLocationInfo.params.title)) {
 // if "blurb" is specified on the URL then change the tag line
 if ('blurb' in gLocationInfo.params  && isString(gLocationInfo.params.blurb)) {
 	$("#tagline").text(decodeURIComponent(gLocationInfo.params.blurb));
+}	
+
+// if "x" is specified on the URL then change the center of the map
+if ('x' in gLocationInfo.params) {
+	var new_x = parseInt(gLocationInfo.params.x);
+	if (!isNaN(new_x)) gXOffset = new_x
+}
+
+// if "z" is specified on the URL then change the center of the map
+if ('z' in gLocationInfo.params) {
+	var new_z = parseInt(gLocationInfo.params.z);
+	if (!isNaN(new_z)) gZOffset = new_z
 }	
 
 
@@ -306,11 +321,16 @@ function drawMapDetails(canvas, locations, iconsOnly)
 
 	var tilesImage = document.getElementById('map-tileset');
 	
-	function translateCoord(coord)
+	function translateCoord_x(coord)
 	{
-		return (coord * halfMapSize / cMapRange) + halfMapSize;
+		return ((coord - gXOffset) * halfMapSize / cMapRange) + halfMapSize;
 	}
 
+	function translateCoord_z(coord)
+	{
+		return ((coord - gZOffset) * halfMapSize / cMapRange) + halfMapSize;
+	}
+	
 	function drawMultilineCenteredText(x, y, text) {
 
 		var textOffset = 0;
@@ -335,13 +355,13 @@ function drawMapDetails(canvas, locations, iconsOnly)
 	
 		if (!isNaN(index) && index >= 0) {
 		
-			if (index >= 16) {
+			if (index >= cCustomIconIndexStart) {
 				// it's a custom icon				
 				if (gCustomIconsLoaded) {
-					drawGlyph(ctx, gCustomIcons, index - 16, drawMask, translateCoord(x), translateCoord(z));			
+					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, translateCoord_x(x), translateCoord_z(z));			
 				}				
 			} else {			
-				drawGlyph(ctx, tilesImage, index, drawMask, translateCoord(x), translateCoord(z));			
+				drawGlyph(ctx, tilesImage, index, drawMask, translateCoord_x(x), translateCoord_z(z));			
 			}
 		}
 	}
@@ -381,7 +401,7 @@ function drawMapDetails(canvas, locations, iconsOnly)
 			var textOffset = cTextOffset;
 			if (isNaN(iconIndex) || iconIndex < 0) textOffset = 3; // Put the text where the icon would be. Text is 6px to 8px high, so add half of that
 		
-			drawMultilineCenteredText(translateCoord(locationInstance.x), translateCoord(locationInstance.z) + textOffset, text);
+			drawMultilineCenteredText(translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z) + textOffset, text);
 		}
 		
 		if (renderLayer == RenderLayer.Masks) {		
@@ -412,12 +432,14 @@ function drawMapDetails(canvas, locations, iconsOnly)
 		canvas.width, canvas.height);
 		
 	var crosshairSize = 10;
+	var originX = translateCoord_x(0);
+	var originZ = translateCoord_z(0);
 		
-	ctx.moveTo(halfMapSize, halfMapSize - crosshairSize);
-	ctx.lineTo(halfMapSize, halfMapSize + crosshairSize);
+	ctx.moveTo(originX, originZ - crosshairSize);
+	ctx.lineTo(originX, originZ + crosshairSize);
 	ctx.stroke();
-	ctx.moveTo(halfMapSize - crosshairSize, halfMapSize);
-	ctx.lineTo(halfMapSize + crosshairSize, halfMapSize);
+	ctx.moveTo(originX - crosshairSize, originZ);
+	ctx.lineTo(originX + crosshairSize, originZ);
 	ctx.stroke();
 
 	ctx.font = "10px Arial";
@@ -456,9 +478,14 @@ function createMapImageInDiv(divElementName, aWidth, aHeight, locations, iconsOn
 	var mapSize = aWidth > aHeight ? aWidth : aHeight;
 	var halfMapSize = mapSize / 2;
 
-	function translateCoord(coord)
+	function translateCoord_x(coord)
 	{
-		return (coord * halfMapSize / cMapRange) + halfMapSize;
+		return ((coord - gXOffset) * halfMapSize / cMapRange) + halfMapSize;
+	}
+
+	function translateCoord_z(coord)
+	{
+		return ((coord - gZOffset) * halfMapSize / cMapRange) + halfMapSize;
 	}
 	
 	var newmap = document.createElement('map')
@@ -474,7 +501,7 @@ function createMapImageInDiv(divElementName, aWidth, aHeight, locations, iconsOn
 		
 			var newArea = document.createElement('area');
 			newArea.shape = 'circle';
-			newArea.coords = [translateCoord(location.x), translateCoord(location.z), cClickRadius];
+			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
 			newArea.href = href;
 			newArea.alt = location.getAlt();
 			
