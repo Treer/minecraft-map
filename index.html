@@ -84,40 +84,33 @@ head.ready(
 				// are still the right colour at the bottom.
 				$('body').css({ 'background-color': 'rgb(77,100,47)' });
 							
-				getMapLocations(
-					function(locations) {
+				getSettingsAndMapLocations(
+					function(config, locations) {
 
 						// small or tiny viewports will have labelslevel set to 1 instead of 0, as
 						// they don't have room for captions at the most zoomed out level.
 						var labelsLevel = (head.screen.height < 800 || head.screen.width < 800) ? 1 : 0;
-					
-						// if "labelslevel" is specified on the URL, then only display labels when
-						// the map is zoomed in more levels than the value of labelslevel.
-						// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
-						if ('labelslevel' in gLocationInfo.params) {
-							labelsLevel = gLocationInfo.params.labelslevel;
-						}	
-					
+										
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapImageInDiv("zoomlevel1",  390,  390, locations, labelsLevel > 0);            // don't label the top level view on a small screen
-							createMapImageInDiv("zoomlevel2",  708,  708, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1253, 1253, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapImageInDiv("zoomlevel1",  390,  390, config, locations, labelsLevel > 0);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel2",  708,  708, config, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1253, 1253, config, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2236, 2236, config, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
 					
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapImageInDiv("zoomlevel1",  630,  630, locations, labelsLevel > 0);            // don't label the top level view on a small screen
-							createMapImageInDiv("zoomlevel2",  960,  960, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1440, 1440, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2236, 2236, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapImageInDiv("zoomlevel1",  630,  630, config, locations, labelsLevel > 0);            // don't label the top level view on a small screen
+							createMapImageInDiv("zoomlevel2",  960,  960, config, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1440, 1440, config, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2236, 2236, config, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
 						} else {
-							createMapImageInDiv("zoomlevel1",  800,  800, locations, labelsLevel > 0);
-							createMapImageInDiv("zoomlevel2", 1200, 1200, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1800, 1800, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2700, 2700, locations, labelsLevel > 3);		
+							createMapImageInDiv("zoomlevel1",  800,  800, config, locations, labelsLevel > 0);
+							createMapImageInDiv("zoomlevel2", 1200, 1200, config, locations, labelsLevel > 1);
+							createMapImageInDiv("zoomlevel3", 1800, 1800, config, locations, labelsLevel > 2);
+							createMapImageInDiv("zoomlevel4", 2700, 2700, config, locations, labelsLevel > 3);		
 						}
 								
 						$("#map-1").mapz({
