@@ -29,7 +29,7 @@ head.js(
 <center>
 <h1 id="mainTitle">Map of the Overworld</h1>
 
-Use up/down or mousewheel to zoom, drag to scroll</p>
+<p id="tagline">Use up/down or mousewheel to zoom, drag to scroll</p>
 </center>
 
 <div style="position: absolute; left: 50%;">
@@ -85,32 +85,32 @@ head.ready(
 				$('body').css({ 'background-color': 'rgb(77,100,47)' });
 							
 				getSettingsAndMapLocations(
+					head.screen.width,
+					head.screen.height,
 					function(config, locations) {
 
-						// small or tiny viewports will have labelslevel set to 1 instead of 0, as
-						// they don't have room for captions at the most zoomed out level.
-						var labelsLevel = (head.screen.height < 800 || head.screen.width < 800) ? 1 : 0;
-										
+						// Choose the size of the viewport and zoom resolutions based [very roughly] 
+						// on the display size of the device.
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapImageInDiv("zoomlevel1",  390,  390, config, locations, labelsLevel > 0);            // don't label the top level view on a small screen
-							createMapImageInDiv("zoomlevel2",  708,  708, config, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1253, 1253, config, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2236, 2236, config, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapImageInDiv(0, "zoomlevel1",  390,  390, config, locations);
+							createMapImageInDiv(1, "zoomlevel2",  708,  708, config, locations);
+							createMapImageInDiv(2, "zoomlevel3", 1253, 1253, config, locations);
+							createMapImageInDiv(3, "zoomlevel4", 2236, 2236, config, locations); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
 					
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapImageInDiv("zoomlevel1",  630,  630, config, locations, labelsLevel > 0);            // don't label the top level view on a small screen
-							createMapImageInDiv("zoomlevel2",  960,  960, config, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1440, 1440, config, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2236, 2236, config, locations, labelsLevel > 3); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapImageInDiv(0, "zoomlevel1",  630,  630, config, locations);
+							createMapImageInDiv(1, "zoomlevel2",  960,  960, config, locations);
+							createMapImageInDiv(2, "zoomlevel3", 1440, 1440, config, locations);
+							createMapImageInDiv(3, "zoomlevel4", 2236, 2236, config, locations); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
 						} else {
-							createMapImageInDiv("zoomlevel1",  800,  800, config, locations, labelsLevel > 0);
-							createMapImageInDiv("zoomlevel2", 1200, 1200, config, locations, labelsLevel > 1);
-							createMapImageInDiv("zoomlevel3", 1800, 1800, config, locations, labelsLevel > 2);
-							createMapImageInDiv("zoomlevel4", 2700, 2700, config, locations, labelsLevel > 3);		
+							createMapImageInDiv(0, "zoomlevel1",  800,  800, config, locations);
+							createMapImageInDiv(1, "zoomlevel2", 1200, 1200, config, locations);
+							createMapImageInDiv(2, "zoomlevel3", 1800, 1800, config, locations);
+							createMapImageInDiv(3, "zoomlevel4", 2700, 2700, config, locations);
 						}
 								
 						$("#map-1").mapz({
@@ -126,7 +126,7 @@ head.ready(
 							// we only show the sunrise/sunset signs if they can fit on the screen.
 							$('.sunsign').removeClass('hidden-sunsign');
 						} else {
-							// show the signs underneith the map instead
+							// show the signs underneath the map instead
 							$('#signsunderneith').removeClass('hidden-sunsign');
 						}
 					}

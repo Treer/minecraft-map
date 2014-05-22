@@ -18,7 +18,13 @@ Village,         -870,  -4489,
 Village,          1236,  353,  "reanimated\nvillage"
 DesertTemple,    -4056, -2487, 
 WitchHut,        -3391,  1552, 
-LabelsLevel = 2
+PlayerStructure,  846,   860, "custom icon", "glenn", "", 19                 
+LabelsLevel = 0
+x = 960
+z = -1096
+MapRange = 12000
 Title = "A new hope"
+Blurb = "test blurb"
+ShowOrigin = false
 WitchHut,        -3903, -4393, 
              

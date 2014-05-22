@@ -1,64 +1,29 @@
-var cClickRadius = 12;   // How far from the center of the icon is clickable
-var cMapRange    = 6000; // measured in minecraft blocks from the center
-var cTextOffset  = 14;   // How far under the center of the icon should the text be drawn
+var cMapRangeDefault = 6400; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 6400 gives map squares of a nice round scale of 200)
+var cClickRadius     = 12;   // How far from the center of the icon is clickable
+var cTextOffset      = 14;   // How far under the center of the icon should the text be drawn
+
 var cCustomIconIndexStart = 32; // IconIndexes with this value or higher should be loaded from gCustomIcons
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 
-var gXOffset     = 0;    // Sets the x coord for the center of the map
-var gZOffset     = 0;    // Sets the z coord for the center of the map
 
-
-/*
-
-var gLocationInfo = parseURL(location);
-
-
-// Set any constants specified by the URL (instead of using the default value)
-if ('range' in gLocationInfo.params) {	
-	cMapRange = gLocationInfo.params.range;
-}
-
-// if "title" is specified on the URL then relabel the page
-if ('title' in gLocationInfo.params  && isString(gLocationInfo.params.title)) {
-	$("#mainTitle").text(decodeURIComponent(gLocationInfo.params.title));
-	document.title = gLocationInfo.params.title;
-}	
-
-// if "blurb" is specified on the URL then change the tag line
-if ('blurb' in gLocationInfo.params  && isString(gLocationInfo.params.blurb)) {
-	$("#tagline").text(decodeURIComponent(gLocationInfo.params.blurb));
-}	
-
-// if "x" is specified on the URL then change the center of the map
-if ('x' in gLocationInfo.params) {
-	var new_x = parseInt(gLocationInfo.params.x);
-	if (!isNaN(new_x)) gXOffset = new_x
-}
-
-// if "z" is specified on the URL then change the center of the map
-if ('z' in gLocationInfo.params) {
-	var new_z = parseInt(gLocationInfo.params.z);
-	if (!isNaN(new_z)) gZOffset = new_z
-}	
-*/
-
-// Code snippet
+// ---------------------------------------------
+// Javascript helper functions for type checking
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
 
-// Code snippet
 function isString(str) {
 	return (typeof str == 'string' || str instanceof String);
 }
 
-// Code snippet
 function isFunction(item) {
 	return is("Function", item);
 }
+// ---------------------------------------------
 
-// Code snippet (http://james.padolsey.com/javascript/parsing-urls-with-the-dom/)
+
+// Code snippet (from http://james.padolsey.com/javascript/parsing-urls-with-the-dom/)
 // 
 // This function creates a new anchor element and uses location
 // properties (inherent) to get the desired URL data. Some String
@@ -126,20 +91,31 @@ var LocationType = {
 // ----------------------------
 
 function MapConfiguration() {
-
 	// Leave fields undefined unless specifically set (or call SetDefaults())
 }
 
-MapConfiguration.prototype.SetDefaults = function() {
+
+// screenWidth and screenHeight are optional parameters - provide them if you have them
+// and they will be used to pick a sensible default for LabelsLevel.
+MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
+
+	var labelsLevelDefault = 0;
+	if (screenWidth > 0 || screenHeight > 0) {
+		// small or tiny viewports will have labelslevel set to 1 instead of 0, as
+		// they don't have room for captions at the most zoomed out level.
+		labelsLevelDefault = (head.screen.height < 800 || head.screen.height < 800) ? 1 : 0;
+	}
 
 	// MapDataUri has no default - it MUST be set from the "src" param on the URL.
-	if (!('LabelsLevel'    in this)) this.LabelsLevel = 0;
-	if (!('MapRange'       in this)) this.MapRange = cMapRange;
+	if (!('LabelsLevel'    in this)) this.LabelsLevel = labelsLevelDefault;
+	if (!('MapRange'       in this)) this.MapRange = cMapRangeDefault;
 	if (!('Title'          in this)) this.Title = 'Map of the Overworld';
 	if (!('Blurb'          in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
 	if (!('CustomIconsUri' in this)) this.CustomIconsUri = '';
 	if (!('X'              in this)) this.X = 0;
 	if (!('Z'              in this)) this.Z = 0;
+	if (!('ShowOrigin'     in this)) this.ShowOrigin = true;
+	if (!('ShowScale'      in this)) this.ShowScale = true;
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -152,6 +128,8 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('CustomIconsUri' in sourceConfig) this.CustomIconsUri = sourceConfig.CustomIconsUri;
 	if ('X'              in sourceConfig) this.X              = sourceConfig.X;
 	if ('Z'              in sourceConfig) this.Z              = sourceConfig.Z;
+	if ('ShowOrigin'     in sourceConfig) this.ShowOrigin     = sourceConfig.ShowOrigin;
+	if ('ShowScale'      in sourceConfig) this.ShowScale      = sourceConfig.ShowScale;
 }
 
 MapConfiguration.prototype.GetXTranslationFunction = function(mapSize) {
@@ -160,7 +138,6 @@ MapConfiguration.prototype.GetXTranslationFunction = function(mapSize) {
 	var mapRange = this.MapRange;
 	
 	return function(coord) {
-		// this closure syntax doesn't work, fix it
 		return ((coord - mapX) * halfMapSize / mapRange) + halfMapSize;
 	}
 }
@@ -171,7 +148,6 @@ MapConfiguration.prototype.GetZTranslationFunction = function(mapSize) {
 	var mapRange = this.MapRange;
 
 	return function(coord) {
-		// this closure syntax doesn't work, fix it
 		return ((coord - mapZ) * halfMapSize / mapRange) + halfMapSize;
 	}
 }
@@ -195,7 +171,7 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 			var new_LabelsLevel = parseInt(value);
 			if (!isNaN(new_LabelsLevel)) this.LabelsLevel = new_LabelsLevel;
 		}
-		if (key == 'maprange') {
+		if (key == 'range') {
 			var new_MapRange = parseInt(value);
 			if (!isNaN(new_MapRange)) this.MapRange = new_MapRange;
 		}
@@ -207,6 +183,14 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		}
 		if (key == 'icons' && isString(value)) {
 			this.CustomIconsUri = unquoteString(value);
+		}
+		if (key == 'showorigin' && isString(value)) {
+			if (value.toLowerCase() == 'false') this.ShowOrigin = false;
+			if (value.toLowerCase() == 'true')  this.ShowOrigin = true;
+		}
+		if (key == 'showscale' && isString(value)) {
+			if (value.toLowerCase() == 'false') this.ShowScale = false;
+			if (value.toLowerCase() == 'true')  this.ShowScale = true;
 		}
 	}
 }
@@ -261,9 +245,9 @@ function createLocationFromRow(commaSeperatedValues) {
 	for(i = 0; i < values.length; i++) {
 		values[i] = values[i].trim();
 	}		
-	// The wiki treats camelcase words like "PlayerStructure" as wikiwords and 
-	// puts a questionmark after them so remove any trailing questionmark, and 
-	// also try unquoting it incase the wikipage editors put some in.
+	// Wikis can treat camelcase words like "PlayerStructure" as wikiwords and 
+	// put a questionmark after them so remove any trailing questionmark, and 
+	// also try unquoting it in case the wikipage editors put some in.
 	var typeName = unquoteString(values[0]);
 	if (typeName[typeName.length - 1] == '?') typeName = typeName.substring(0, typeName.length - 1);
 			
@@ -274,14 +258,14 @@ function createLocationFromRow(commaSeperatedValues) {
 		var new_iconIndex = parseInt(values[6]);		
 		
 		if (!isNaN(new_x) && !isNaN(new_z)) {
-			// type and coords check out, can return a real location.
+			// type and co-ords check out, can return a real location.
 			result = new Location(new_x, new_z, new_type, unquoteString(values[3]), unquoteString(values[4]), unquoteString(values[5]), new_iconIndex);			
 		}
 	}
 	return result;
 }
  
-// Strings may be surrounded in doublequotes (") to allow leading or trailing 
+// Strings may be surrounded in double-quotes (") to allow leading or trailing 
 // whitespace and inclusion of newlines etc, if they are then the quotes are 
 // removed and the string is parsed into a string
 function unquoteString(str) {
@@ -363,7 +347,7 @@ function parseHtmlLocations(data, callback) {
 }
  
 // callback will be given two arguments - a dictionary of settings and an array of Location instances
-function getSettingsAndMapLocations(callback) {
+function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 	var configFromUrl = getConfigurationFromUrl();
 	
@@ -373,9 +357,9 @@ function getSettingsAndMapLocations(callback) {
 			function(configFromAjax, locationsFromAjax) {
 			
 				var mapConfig = new MapConfiguration();
-				mapConfig.SetDefaults();
-				mapConfig.AssignFrom(configFromUrl);
+				mapConfig.SetDefaults(screenWidth, screenHeight);
 				mapConfig.AssignFrom(configFromAjax);
+				mapConfig.AssignFrom(configFromUrl);
 				
 				ApplyMapConfiguration(mapConfig);
 				
@@ -396,7 +380,7 @@ function getSettingsAndMapLocations(callback) {
 							callback(mapConfig, locationsFromAjax);
 						}
 					});		
-					gCustomIcons.src = gLocationInfo.params.icons;
+					gCustomIcons.src = mapConfig.CustomIconsUri;
 					
 				} else {	
 					callback(mapConfig, locationsFromAjax);
@@ -409,12 +393,9 @@ function getSettingsAndMapLocations(callback) {
 	
 	function ApplyMapConfiguration(config) {
 
-		gXOffset = config.X;
-		gZOffset = config.Z;
-				
 		document.title = config.Title;
 		$("#mainTitle").text(config.Title);
-		$("#tagline").text(config.blurb);
+		$("#tagline").text(config.Blurb);
 	}	
 
 		
@@ -489,69 +470,28 @@ function getSettingsAndMapLocations(callback) {
 			if (!isNaN(new_z)) result.Z = new_z
 		}	
 		
+		// if "hideorigin" or "hidescale" is on the url then set ShowOrigin to false, likewise with ShowScale
+		if ('hideorigin' in locationInfo.params) result.ShowOrigin = false;
+		if ('hidescale' in locationInfo.params)  result.ShowScale  = false;
+		// or showoroigin and showscale could be specified explicitly
+		if ('showorigin' in locationInfo.params && isString(locationInfo.params.showorigin)) {
+			if (locationInfo.params.showorigin.toLowerCase() == 'false') result.ShowOrigin = false;
+			if (locationInfo.params.showorigin.toLowerCase() == 'true')  result.ShowOrigin = true;
+		}
+		if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
+			if (locationInfo.params.showscale.toLowerCase() == 'false') result.ShowScale = false;
+			if (locationInfo.params.showscale.toLowerCase() == 'true')  result.ShowScale = true;
+		}
+
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
 			result.MapDataUri = decodeURIComponent(locationInfo.params.src);
 		}
-		
+
 		return result;
 	}
 }
  
- /*
-// callback will be given one argument - an array of Location instances
-function getMapLocations(callback) {
-	
-	if ('icons' in gLocationInfo.params && isString(gLocationInfo.params.icons) && !gCustomIconsLoaded) {
-		// Load the custom icons
-
-		// I'm getting the impression there is no reliable way to wait for
-		// an image to load, see caveats in http://api.jquery.com/load-event/		
-		// If that's the case then custom icons won't work on browsers with broken
-		// onload event.
-		$(gCustomIcons).bind({
-			load: function() {
-				gCustomIconsLoaded = true;			
-				continueGetMapLocations(callback);
-			},
-			error: function() {
-				// Image didn't load, probably a 404
-				continueGetMapLocations(callback);
-			}
-		});		
-		gCustomIcons.src = gLocationInfo.params.icons;
-		
-	} else {	
-		continueGetMapLocations(callback);
-	}
-	
-	
-	function continueGetMapLocations(callback) {
-		if ('src' in gLocationInfo.params && isString(gLocationInfo.params.src)) {	
-			var dataUrl = decodeURIComponent(gLocationInfo.params.src);
-			var dataTypeIsText = dataUrl.match(/\.txt$|\.csv$/); // Assume HTML unless the dataUrl ends in .txt or .csv
-					
-			$.ajax({
-				 url: dataUrl,
-				 dataType: (dataTypeIsText ? 'text' : 'html'),
-				 success: function(data, textStatus, jqXHR) {
-					if (dataTypeIsText) {
-						parseTextLocations(data, callback);
-					} else {
-						parseHtmlLocations(data, callback);
-					}
-				 },
-				 error:function(jqXHR, textStatus, errorThrown){
-					alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
-				}
-			});
-					
-		} else {
-			alert('no "src=" url was specified to scrape the location data from.');
-		}	
-	}
-}
-*/
-
+// if iconsOnly is set True then no captions will be rendered.
 function drawMapDetails(canvas, config, locations, iconsOnly)
 {
 	var ctx = canvas.getContext("2d");
@@ -562,16 +502,6 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	
 	var translateCoord_x = config.GetXTranslationFunction(mapSize);
 	var translateCoord_z = config.GetZTranslationFunction(mapSize);
-	/*	
-	function translateCoord_x(coord)
-	{
-		return ((coord - gXOffset) * halfMapSize / cMapRange) + halfMapSize;
-	}
-
-	function translateCoord_z(coord)
-	{
-		return ((coord - gZOffset) * halfMapSize / cMapRange) + halfMapSize;
-	}*/
 	
 	function drawMultilineCenteredText(x, y, text) {
 
@@ -661,6 +591,46 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 		}
 		
 	}
+	
+	function drawOrigin() {
+		var crosshairSize = 10;
+		var originX = translateCoord_x(0);
+		var originZ = translateCoord_z(0);
+			
+		ctx.moveTo(originX, originZ - crosshairSize);
+		ctx.lineTo(originX, originZ + crosshairSize);
+		ctx.stroke();
+		ctx.moveTo(originX - crosshairSize, originZ);
+		ctx.lineTo(originX + crosshairSize, originZ);
+		ctx.stroke();
+	}
+	
+	function drawScale() {
+		var pixelsInBackground = $('#map-background').width();
+		var blockDistance = (config.MapRange * 2) / pixelsInBackground;
+		var blockDistance_str = Math.round(blockDistance).toString();
+		var blockSize = canvas.width / pixelsInBackground;
+		var scaleLength_bl = 4;
+		var scaleStartX = 6 * blockSize;
+		var scaleStartY = ($('#map-background').height() - 7) * blockSize;
+
+		ctx.moveTo(scaleStartX, scaleStartY);
+		ctx.lineTo(scaleStartX + blockSize * scaleLength_bl, scaleStartY);
+		ctx.stroke(4);
+		
+		var text_y = scaleStartY + cTextOffset - 2;
+		drawMultilineCenteredText(scaleStartX, text_y, '0');
+		drawMultilineCenteredText(scaleStartX + blockSize * scaleLength_bl, text_y, Math.round(blockDistance * scaleLength_bl).toString());
+
+		var textWidth_space = ctx.measureText(' ').width;
+		var textWidth_zero = ctx.measureText('0').width;
+		var textWidth_blockDist = ctx.measureText(blockDistance_str).width;
+		
+		if (((textWidth_blockDist + textWidth_zero) / 2 + textWidth_space) <= blockSize) {
+			// There's enough room to label a distance of 1 block
+			drawMultilineCenteredText(scaleStartX + blockSize, text_y, blockDistance_str);		
+		}
+	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
 	ctx.mozImageSmoothingEnabled = false;
@@ -673,19 +643,11 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 		0, 0,
 		canvas.width, canvas.height);
 		
-	var crosshairSize = 10;
-	var originX = translateCoord_x(0);
-	var originZ = translateCoord_z(0);
-		
-	ctx.moveTo(originX, originZ - crosshairSize);
-	ctx.lineTo(originX, originZ + crosshairSize);
-	ctx.stroke();
-	ctx.moveTo(originX - crosshairSize, originZ);
-	ctx.lineTo(originX + crosshairSize, originZ);
-	ctx.stroke();
-
 	ctx.font = "10px Arial";
 
+	if (config.ShowOrigin) drawOrigin();
+	if (config.ShowScale)  drawScale();
+	
 	var renderLayer;
 	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
 	
@@ -697,14 +659,18 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	}
 }
 
-function createMapImageInDiv(divElementName, aWidth, aHeight, config, locations, iconsOnly) {
+// zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
+// out map, 1 is the first level of zooming in, etc.
+function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations) {
 
 	var canvas = document.createElement('canvas');
 	canvas.width = aWidth;
 	canvas.height = aHeight;
+
+	var iconsOnly = config.LabelsLevel > zoomLevelNumber;
 	
 	drawMapDetails(canvas, config, locations, iconsOnly);	
-	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, locations);
+	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations);
 	
 	var newImage = document.createElement('img');
 	newImage.src = canvas.toDataURL("image/png");
@@ -713,22 +679,14 @@ function createMapImageInDiv(divElementName, aWidth, aHeight, config, locations,
 }
 
 // returns the name of the map
- function CreateAreaMapInDiv(divElementName, aWidth, aHeight, locations){
+ function CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations){
 
 	var result = divElementName + '-areamap';
 
 	var mapSize = aWidth > aHeight ? aWidth : aHeight;
-	var halfMapSize = mapSize / 2;
-
-	function translateCoord_x(coord)
-	{
-		return ((coord - gXOffset) * halfMapSize / cMapRange) + halfMapSize;
-	}
-
-	function translateCoord_z(coord)
-	{
-		return ((coord - gZOffset) * halfMapSize / cMapRange) + halfMapSize;
-	}
+	
+	var translateCoord_x = config.GetXTranslationFunction(mapSize);
+	var translateCoord_z = config.GetZTranslationFunction(mapSize);
 	
 	var newmap = document.createElement('map')
 	newmap.name = result;
@@ -758,6 +716,9 @@ function createMapImageInDiv(divElementName, aWidth, aHeight, config, locations,
 // Assumes tiles are square, arranged beside each other in the tileImage left to right in two 
 // rows (top row icons, bottom row masks) and should be drawn centered.
 // This means user can change size of icons just by changing the images the tiles are in.
+//
+// tilesImage: an img element
+// drawMask: if True, the icon mask will be drawn (i.e. the bottom row)
 function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
 
 	var width = tilesImage.height / 2;
