@@ -8,7 +8,7 @@ var gCustomIconsLoaded = false;
 
 
 // ---------------------------------------------
-// Javascript helper functions for type checking
+// Javascript helper functions for type checking.
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
@@ -22,6 +22,22 @@ function isFunction(item) {
 }
 // ---------------------------------------------
 
+
+function stringToBool(value){
+	switch(value.trim().toLowerCase()){
+		case "true": 
+		case "yes": 
+		case "1": 
+			return true;
+		case "false": 
+		case "no": 
+		case "0": 
+		case null: 
+			return false;
+		default: 
+			return Boolean(string);
+	}
+}
 
 // Code snippet (from http://james.padolsey.com/javascript/parsing-urls-with-the-dom/)
 // 
@@ -188,12 +204,10 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 			this.CustomIconsUri = unquoteString(value);
 		}
 		if (key == 'showorigin' && isString(value)) {
-			if (value.toLowerCase() == 'false') this.ShowOrigin = false;
-			if (value.toLowerCase() == 'true')  this.ShowOrigin = true;
+			this.ShowOrigin = stringToBool(value);
 		}
 		if (key == 'showscale' && isString(value)) {
-			if (value.toLowerCase() == 'false') this.ShowScale = false;
-			if (value.toLowerCase() == 'true')  this.ShowScale = true;
+			this.ShowScale = stringToBool(value);
 		}
 	}
 }
@@ -478,12 +492,10 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		if ('hidescale' in locationInfo.params)  result.ShowScale  = false;
 		// or showoroigin and showscale could be specified explicitly
 		if ('showorigin' in locationInfo.params && isString(locationInfo.params.showorigin)) {
-			if (locationInfo.params.showorigin.toLowerCase() == 'false') result.ShowOrigin = false;
-			if (locationInfo.params.showorigin.toLowerCase() == 'true')  result.ShowOrigin = true;
+			result.ShowOrigin = stringToBool(locationInfo.params.showorigin);
 		}
 		if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
-			if (locationInfo.params.showscale.toLowerCase() == 'false') result.ShowScale = false;
-			if (locationInfo.params.showscale.toLowerCase() == 'true')  result.ShowScale = true;
+			result.ShowScale = stringToBool(locationInfo.params.showscale);
 		}
 
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
