@@ -72,17 +72,20 @@ function parseURL(url) {
 
 
 var LocationType = {
-  Village:         {iconIndex: 0, name: "Village",        href: "http://minecraft.gamepedia.com/Village"}, 
-  DesertVillage:   {iconIndex: 1, name: "Desert village", href: "http://minecraft.gamepedia.com/Village"}, 
-  JungleTemple:    {iconIndex: 2, name: "Jungle temple",  href: "http://minecraft.gamepedia.com/Jungle_temple"},
-  DesertTemple:    {iconIndex: 3, name: "Desert temple",  href: "http://minecraft.gamepedia.com/Desert_temple"},
-  WitchHut:        {iconIndex: 4, name: "Witch's hut",    href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
-  NetherPortal:    {iconIndex: 5, name: "Portal",         href: "http://minecraft.gamepedia.com/Nether_Portal"},
+  Village:         {iconIndex: 0, name: "Village",         href: "http://minecraft.gamepedia.com/Village"}, 
+  DesertVillage:   {iconIndex: 1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village"}, 
+  WitchHut:        {iconIndex: 3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
+  JungleTemple:    {iconIndex: 4, name: "Jungle temple",   href: "http://minecraft.gamepedia.com/Jungle_temple"},
+  DesertTemple:    {iconIndex: 5, name: "Desert temple",   href: "http://minecraft.gamepedia.com/Desert_temple"},
+  NetherFortress:  {iconIndex: 6, name: "Nether Fortress", href: "http://minecraft.gamepedia.com/Nether_Fortress"},
+  NetherPortal:    {iconIndex: 7, name: "Portal",          href: "http://minecraft.gamepedia.com/Nether_Portal"},
   
-  Forest:          {iconIndex: 6, name: "Forest",         href: "http://minecraft.gamepedia.com/Biome#Forest"},
+  Forest:          {iconIndex: 19, name: "Forest",          href: "http://minecraft.gamepedia.com/Biome#Forest"},
   
-  Spawn:           {iconIndex: 7, name: "Spawn", href: ""},
-  PlayerStructure: {iconIndex: 8, name: "",      href: ""},  
+  Spawn:           {iconIndex: 25, name: "Spawn", href: ""},
+  PlayerStructure: {iconIndex: 8,  name: "",      href: ""},  
+  PlayerCastle:    {iconIndex: 9,  name: "",      href: ""},  
+  PlayerHouse:     {iconIndex: 10, name: "",      href: ""},  
   Label:           {iconIndex: -1, name: "",      href: ""}  
 };
 
@@ -593,13 +596,14 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	}
 	
 	function drawOrigin() {
-		var crosshairSize = 10;
-		var originX = translateCoord_x(0);
-		var originZ = translateCoord_z(0);
+		var crosshairSize = 8;
+		var originX = Math.round(translateCoord_x(0));
+		var originZ = Math.round(translateCoord_z(0));
 			
+		ctx.lineWidth = 2;
+		ctx.strokeStyle="#6e5830";
 		ctx.moveTo(originX, originZ - crosshairSize);
 		ctx.lineTo(originX, originZ + crosshairSize);
-		ctx.stroke();
 		ctx.moveTo(originX - crosshairSize, originZ);
 		ctx.lineTo(originX + crosshairSize, originZ);
 		ctx.stroke();
@@ -610,26 +614,27 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 		var blockDistance = (config.MapRange * 2) / pixelsInBackground;
 		var blockDistance_str = Math.round(blockDistance).toString();
 		var blockSize = canvas.width / pixelsInBackground;
-		var scaleLength_bl = 4;
-		var scaleStartX = 6 * blockSize;
-		var scaleStartY = ($('#map-background').height() - 7) * blockSize;
+		var scaleLength_bl = 5; // with cMapRangeDefault of 6400 and a map-background resolution of 64, 5 blocks is a nice visual size and also gives a nice round 1km 
+		var scaleStartX = Math.round(6 * blockSize);
+		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
+		var notchHeight = Math.round(blockSize * 0.4);
 
+		ctx.lineWidth = 2;
+		ctx.strokeStyle="#6e5830";
 		ctx.moveTo(scaleStartX, scaleStartY);
-		ctx.lineTo(scaleStartX + blockSize * scaleLength_bl, scaleStartY);
-		ctx.stroke(4);
-		
-		var text_y = scaleStartY + cTextOffset - 2;
-		drawMultilineCenteredText(scaleStartX, text_y, '0');
-		drawMultilineCenteredText(scaleStartX + blockSize * scaleLength_bl, text_y, Math.round(blockDistance * scaleLength_bl).toString());
+		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
+		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY + notchHeight);
+		ctx.moveTo(scaleStartX, scaleStartY - notchHeight);
+		ctx.lineTo(scaleStartX, scaleStartY + notchHeight);
+		ctx.moveTo(scaleStartX + Math.round(blockSize), scaleStartY - notchHeight);
+		ctx.lineTo(scaleStartX + Math.round(blockSize), scaleStartY);
+		ctx.stroke();
 
-		var textWidth_space = ctx.measureText(' ').width;
-		var textWidth_zero = ctx.measureText('0').width;
-		var textWidth_blockDist = ctx.measureText(blockDistance_str).width;
-		
-		if (((textWidth_blockDist + textWidth_zero) / 2 + textWidth_space) <= blockSize) {
-			// There's enough room to label a distance of 1 block
-			drawMultilineCenteredText(scaleStartX + blockSize, text_y, blockDistance_str);		
-		}
+		var text_y1 = scaleStartY - notchHeight - 4;
+		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
+		drawMultilineCenteredText(scaleStartX + blockSize, text_y1, blockDistance_str);		
+		drawMultilineCenteredText(scaleStartX, text_y2, '0');
+		drawMultilineCenteredText(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
 	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)

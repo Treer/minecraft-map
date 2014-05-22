@@ -1,0 +1,42 @@
+type,             x,     z,    description,          owner,  href,                  iconIndex
+
+Village,          -4800, -4800, "0) Village"
+DesertVillage,    -4800, -4000, "1) Desert Village"
+Label,            -4800, -3200, "2) Skull and crossbones", "", "", 2
+WitchHut,         -4800, -2400, "3) WitchHut"
+JungleTemple,     -4800, -1600, "4) JungleTemple"
+DesertTemple,     -4800,  -800, "5) DesertTemple"
+NetherFortress,   -4800,     0, "6) NetherFortress"
+NetherPortal,     -4800,   800, "7) NetherPortal"
+
+PlayerStructure,  -2400, -4800, "8) PlayerStructure"                        
+PlayerCastle,     -2400, -4000, "9) PlayerCastle"
+PlayerHouse,      -2400, -3200, "10) PlayerHouse"
+PlayerStructure,  -2400, -2400, "11) Player structure (railway station)", "", "", 11
+PlayerStructure,  -2400, -1600, "12) Monument (Sarsen stones)", "", "", 12
+PlayerStructure,  -2400,  -800, "13) Monument (Obelisk)", "", "", 13
+PlayerStructure,  -2400,     0, "14) Monument (Maoi)", "", "", 14
+
+Forest,               0, -4800, "15) Forest 1 (Oak)", "", "", 15
+Forest,               0, -4000, "16) Forest 2 (Sapling)", "", "", 16
+Forest,               0, -3200, "17) Forest 3 (Pirate palms)", "", "", 17
+Forest,               0, -2400, "18) Forest 4 (dark)", "", "", 18
+Forest,               0, -1600, "19) Forest 5 (default)"            
+Label,                0,  -800, "\n20) Mountains 1", "", "", 20
+Label,                0,   800, "\n21) Mountains 2", "", "", 21
+Label,                0,  1600, "22) Cave", "", "", 22
+Label,                0,  2400, "23) Horse", "", "", 23
+Label,                0,  3200, "\n24) Dragon", "", "", 24
+
+Spawn,             2400, -4800, "25) Spawn"
+Label,             2400, -4000, "26) Marker 2", "", "", 26
+Label,             2400, -3200, "27) Marker 3", "", "", 27
+Label,             2400, -2400, "28) Marker 4", "", "", 28
+Label,             2400, -1600, "29) Marker 5 (origin)", "", "", 29
+
+Label,             4800, -4800, "30) Enchantment table", "", "", 30
+Label,             4800, -4000, "31) Chest", "", "", 31
+
+LabelsLevel = 0
+Title = "Legend"
+Blurb = "Shows all icons, with icon number."             
