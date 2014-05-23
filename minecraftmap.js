@@ -433,13 +433,18 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		
 	function getMapDataAndLocationsFromUrl(dataUrl, callback) {
 		if (isString(dataUrl)) {	
-			var dataTypeIsText = dataUrl.match(/\.txt$|\.csv$/); // Assume HTML unless the dataUrl ends in .txt or .csv
+			// Assume HTML unless the dataUrl ends in .txt or .csv (wikis etc often won't end in .html)
+			var testDataType = new RegExp("\.txt$|\.csv$", "i");
+			var dataTypeIsText = testDataType.test(dataUrl); 
 					
 			$.ajax({
 				 url: dataUrl,
 				 dataType: (dataTypeIsText ? 'text' : 'html'),
 				 success: function(data, textStatus, jqXHR) {
-					if (dataTypeIsText) {
+				 
+					var contenType = jqXHR.getResponseHeader("content-type") || "";
+					
+					if (contenType.indexOf("text") >= 0 || dataTypeIsText) {
 						parseTextLocations(data, callback);
 					} else {
 						parseHtmlLocations(data, callback);

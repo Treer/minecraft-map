@@ -2,8 +2,8 @@ type,             x,     z,    description,          owner,  href,              
 
 "Village",        -4800, -4800, "0) Village"
 DesertVillage,    -4800, -4000, "1) Desert Village"
-Label,            -4800, -3200, "2) Skull and crossbones", "", "", 2
-WitchHut,         -4800, -2400, "3) Witch Hut"
+Label,            -4800, -3200, "\n2) Skull\nand crossbones", "", "", 2
+WitchHut,         -4800, -2400, "3) WitchHut"
 JungleTemple,     -4800, -1600, "4) JungleTemple"
 DesertTemple,     -4800,  -800, "5) DesertTemple"
 NetherFortress,   -4800,     0, "6) NetherFortress"
@@ -12,7 +12,7 @@ NetherPortal,     -4800,   800, "7) NetherPortal"
 PlayerStructure,  -2400, -4800, "8) PlayerStructure"                        
 PlayerCastle,     -2400, -4000, "9) PlayerCastle"
 PlayerHouse,      -2400, -3200, "10) PlayerHouse"
-PlayerStructure,  -2400, -2400, "11) Player structure (railway station)", "", "", 11
+PlayerStructure,  -2400, -2400, "11) Railway structure", "", "", 11
 PlayerStructure,  -2400, -1600, "12) Monument (Sarsen stones)", "", "", 12
 PlayerStructure,  -2400,  -800, "13) Monument (Obelisk)", "", "", 13
 PlayerStructure,  -2400,     0, "14) Monument (Maoi)", "", "", 14
