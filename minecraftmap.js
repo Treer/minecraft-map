@@ -1,4 +1,4 @@
-var cMapRangeDefault = 6400; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 6400 gives map squares of a nice round scale of 200)
+var cMapRangeDefault = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius     = 12;   // How far from the center of the icon is clickable
 var cTextOffset      = 14;   // How far under the center of the icon should the text be drawn
 
@@ -515,6 +515,11 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
 			result.MapDataUri = decodeURIComponent(locationInfo.params.src);
+		}
+		// Some extra support for hosting via Google Drive, as google drive is a good way to map
+		// the map collaborative while avoiding cross-domain data headaches.
+		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {		
+			result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
 		}
 
 		return result;

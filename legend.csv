@@ -1,6 +1,6 @@
 type,             x,     z,    description,          owner,  href,                  iconIndex
 
-"Village",          -4800, -4800,"0) Village\n         Village"
+"Village",        -4800, -4800, "0) Village"
 DesertVillage,    -4800, -4000, "1) Desert Village"
 Label,            -4800, -3200, "2) Skull and crossbones", "", "", 2
 WitchHut,         -4800, -2400, "3) Witch Hut"
@@ -37,6 +37,8 @@ Label,             2400, -3200, "29) Marker 3", "", "", 29
 EnchantingRoom,    4800, -4800, "30) EnchantingRoom"
 Label,             4800, -4000, "31) Chest", "", "", 31
 
-LabelsLevel = 0
 Title = "Legend"
-Blurb = "Shows all icons, with icon number."             
+Blurb = "Shows all icons, with icon number."
+LabelsLevel = 0
+Range = 6400
+
