@@ -97,11 +97,16 @@ var LocationType = {
   NetherPortal:    {iconIndex: 7, name: "Portal",          href: "http://minecraft.gamepedia.com/Nether_Portal"},
   
   Forest:          {iconIndex: 19, name: "Forest",          href: "http://minecraft.gamepedia.com/Biome#Forest"},
+  MushroomIsland:  {iconIndex: 20, name: "Mushroom island", href: "http://minecraft.gamepedia.com/Mushroom_Island"},
+  Horse:           {iconIndex: 24, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
+  Wolf:            {iconIndex: 25, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
+  Dragon:          {iconIndex: 26, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
   
-  Spawn:           {iconIndex: 25, name: "Spawn", href: ""},
+  Spawn:           {iconIndex: 27, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex: 8,  name: "",      href: ""},  
   PlayerCastle:    {iconIndex: 9,  name: "",      href: ""},  
   PlayerHouse:     {iconIndex: 10, name: "",      href: ""},  
+  EnchantingRoom:  {iconIndex: 30, name: "",      href: "http://minecraft.gamepedia.com/Enchantment_Table"}, 
   Label:           {iconIndex: -1, name: "",      href: ""}  
 };
 
@@ -246,26 +251,32 @@ Location.prototype.getAlt = function() {
 
 // -----------------------------
  
-
+ 
+// entryNumber is given to the user if there is an error parsing the entry
+//
 // Format for commaSeperatedValues:
-//   type, x, z, "description", "owner", "href", iconIndex
+//   type, x, z, "description, etc.", "owner", "href", iconIndex
 //
 // The first 3 values are required, and determine whether a location
 // will be returned.
-function createLocationFromRow(commaSeperatedValues) {
+function createLocationFromRow(entryNumber, commaSeperatedValues) {
 	
 	var result = null;
 	
-	var values = commaSeperatedValues.split(',');
+	var values;
+	try {
+		CSV.DETECT_TYPES = false;
+		CSV.TRIM_UNQUOTED_VALUES = true;	
+		CSV.EXPAND_QUOTED_NEWLINES = true;
+		values = CSV.parse(commaSeperatedValues)[0];
+	} catch(err) {
+		alert('Could not parse comma seperated values for entry ' + entryNumber.toString() + ': ' + err.message);
+	}
 	
-	var i = 0;
-	for(i = 0; i < values.length; i++) {
-		values[i] = values[i].trim();
-	}		
+	var typeName = values[0];
+	
 	// Wikis can treat camelcase words like "PlayerStructure" as wikiwords and 
-	// put a questionmark after them so remove any trailing questionmark, and 
-	// also try unquoting it in case the wikipage editors put some in.
-	var typeName = unquoteString(values[0]);
+	// put a questionmark after them so remove any trailing questionmark.
 	if (typeName[typeName.length - 1] == '?') typeName = typeName.substring(0, typeName.length - 1);
 			
 	if (typeName in LocationType) {
@@ -306,7 +317,7 @@ function parseTextLocations(data, callback) {
 	lines = data.split('\n');
 	var i = 0;
 	for(i = 0; i < lines.length; i++) {
-		var newLocation = createLocationFromRow(lines[i]);	
+		var newLocation = createLocationFromRow(i + 1, lines[i]);	
 		if (newLocation instanceof Location) {
 			locationList.push(newLocation);		
 		} else {
@@ -322,12 +333,14 @@ function parseHtmlLocations(data, callback) {
 	var locationList = [];
 	
 	var htmlDom = jQuery.parseHTML( data );
+	var entryNumber = 0;
 	
 	// scrape any locations contained in tables
 	$(htmlDom).find('tr').each(
 		function() {
 	
 			var rowString = "";
+			entryNumber++;
 		
 			$(this).find('td').each(
 				function() {
@@ -335,7 +348,7 @@ function parseHtmlLocations(data, callback) {
 				}
 			);
 			
-			var newLocation = createLocationFromRow(rowString);	
+			var newLocation = createLocationFromRow(entryNumber, rowString);	
 			if (newLocation instanceof Location) {
 				locationList.push(newLocation);					
 			} else {
@@ -345,11 +358,13 @@ function parseHtmlLocations(data, callback) {
 	);
 
 	// scrape any locations contained in unordered lists and ordered lists
+	entryNumber = 0;
 	$(htmlDom).find('ul, ol').each(
 		function() {
 			$(this).find('li').each(
-				function() {			
-					var newLocation = createLocationFromRow(this.textContent);	
+				function() {
+					entryNumber++;
+					var newLocation = createLocationFromRow(entryNumber, this.textContent);	
 					if (newLocation instanceof Location) {
 						locationList.push(newLocation);
 					} else {

@@ -1,9 +1,9 @@
 type,             x,     z,    description,          owner,  href,                  iconIndex
 
-Village,          -4800, -4800, "0) Village"
+"Village",          -4800, -4800,"0) Village\n         Village"
 DesertVillage,    -4800, -4000, "1) Desert Village"
 Label,            -4800, -3200, "2) Skull and crossbones", "", "", 2
-WitchHut,         -4800, -2400, "3) WitchHut"
+WitchHut,         -4800, -2400, "3) Witch Hut"
 JungleTemple,     -4800, -1600, "4) JungleTemple"
 DesertTemple,     -4800,  -800, "5) DesertTemple"
 NetherFortress,   -4800,     0, "6) NetherFortress"
@@ -22,19 +22,19 @@ Forest,               0, -4000, "16) Forest 2 (Sapling)", "", "", 16
 Forest,               0, -3200, "17) Forest 3 (Pirate palms)", "", "", 17
 Forest,               0, -2400, "18) Forest 4 (dark)", "", "", 18
 Forest,               0, -1600, "19) Forest 5 (default)"            
-Label,                0,  -800, "\n20) Mountains 1", "", "", 20
-Label,                0,   800, "\n21) Mountains 2", "", "", 21
-Label,                0,  1600, "22) Cave", "", "", 22
-Label,                0,  2400, "23) Horse", "", "", 23
-Label,                0,  3200, "\n24) Dragon", "", "", 24
+MushroomIsland,       0,  -800, "20) MushroomIsland,\nor savanna/acacia Trees",
+Label,                0,   800, "\n21) Mountains 1", "", "", 21
+Label,                0,  1600, "\n22) Mountains 2", "", "", 22
+Label,                0,  2400, "23) Cave", "", "", 23
+Horse,                0,  3200, "24) Horse"
+Wolf,                 0,  4000, "25) Wolf"
+Dragon,               0,  4800, "\n26) Dragon"
 
-Spawn,             2400, -4800, "25) Spawn"
-Label,             2400, -4000, "26) Marker 2", "", "", 26
-Label,             2400, -3200, "27) Marker 3", "", "", 27
-Label,             2400, -2400, "28) Marker 4", "", "", 28
-Label,             2400, -1600, "29) Marker 5 (origin)", "", "", 29
+Spawn,             2400, -4800, "27) Spawn"
+Label,             2400, -4000, "28) Marker 2", "", "", 28
+Label,             2400, -3200, "29) Marker 3", "", "", 29
 
-Label,             4800, -4800, "30) Enchantment table", "", "", 30
+EnchantingRoom,    4800, -4800, "30) EnchantingRoom"
 Label,             4800, -4000, "31) Chest", "", "", 31
 
 LabelsLevel = 0
