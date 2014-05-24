@@ -29,8 +29,115 @@
       <div class="inner clearfix">
         <section id="main-content">
 
-        <h1>Headline 1</h1>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
+		<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0BxhE5JB9opBWM3U3YjNfN3FpUjQ">Example map</a>
+		
+		<p>The map lets any player show locations of interest without spoiling the element of exploration.</p>
+		
+		<p>(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration from the game, 
+		<a href="http://overviewer.org">Overviewer</a> is a nice online map system)</p>
+		
+        <h1>Creating your own</h1>
+		
+		<ol>
+		<li>Create a file in Google Drive and place all your <a href="#LocationListFormat">map locations</a> into it.</li>
+		<li>Set the file's visibility to "Public on the web" and add <a href="#GoogleDriveId">its id</a> to the end of this URL:<br/>
+			<pre>https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=</pre>
+		</li>
+		<li>You're done!</li>
+		</ol>
+		
+		<h2>In more detail...</h2>
+		<p>To create your own map you take the web-address of the map page and add your own settings to the end of the URL. One of 
+		the settings you add is the web-address of a page containing all the locations you want displayed on your map.</p>
+		
+		<p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good 
+		places to keep the list of locations - everyone can edit the list and the map page can read the locations directly from it. 
+		The locations list can be in either html format or txt format.</p>
+		
+        <p>If you want to host it yourself, then download the zip file on the right, otherwise just use the one already hosted on 
+		Google Drive. For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
+		the map page to access your locations list unless both their addresses share the same domain, so...</p> 
+		<p class="highlight">this means <span style="font-weight: bold;">if you don't want to host the map page yourself, and want to use the one already on Google Drive, 
+		then you must also create you locations list on Google Drive.</span></p>
+		
+		
+		
+		
+		<h1><a id="LocationListFormat"></a>Location list format</h1>
+		
+		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
+		
+		<p>If your location list file is a text file, then locations are specified in comma separated format, for example:</p>
+        <div class="highlight">
+		<pre>type,             x,     z,    description,                      owner,       href, icon-index
+
+DesertVillage,  245,   350, "Ghost town" 	
+WitchHut,     -4056, -2487,
+PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", "", 21</pre>
+        </div>		
+		
+		
+		<p>If the location list is an html file (for example a wiki page), then the locations can be specified either with 
+		unordered "bullet" lists, e.g:</p>
+		<ul>
+		<li>DesertVillage,  245,   350, "Ghost town"</li>
+		<li>WitchHut,     -2056, -2487</li>
+		<li>PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", "", 21</li>
+		</ul>
+		
+		<p>or by using a table:</p>
+
+		<p><TABLE BORDER='1'>
+		<TR><TD COLSPAN="1"><strong>Type</strong></TD><TD COLSPAN="1"> x    </TD><TD COLSPAN="1">  z    </TD><TD COLSPAN="1"><strong>Description</strong></TD><TD COLSPAN="1"><strong>Owner</strong></TD><TD COLSPAN="1"><strong>href</strong></TD><TD COLSPAN="1"><strong>IconIndex</strong> </TD></TR>
+		<TR><TD colspan='1'> DesertVillage        </TD><TD COLSPAN="1">1245 </TD><TD COLSPAN="1"> 350 </TD><TD COLSPAN="1">Ghost town</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> WitchHut        </TD><TD COLSPAN="1">-2056 </TD><TD COLSPAN="1"> -2487 </TD><TD COLSPAN="1"></TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> PlayerHouse        </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">RedstoneRising's mountain lair</TD><TD COLSPAN="1">RedstoneRising</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">21</TD></TR>
+		</TABLE></p>
+		
+		<p>Or with a combination of bullet lists and tables. Because of the examples above, even this page would work as a location list!</p>
+		
+		<p><a href="#Settings">Settings</a> for the map, such as scale can also be specified in the location list file.</p>
+		
+		<h2>Locations</h2>
+		
+		Each location may have up to 7 columns of information specified:
+			<blockquote>type, x, z, description, owner, href, icon-index</blockquote>
+			
+		but only the first 3 items are required (type, x, z).
+		
+		<h3>type</h3>
+		<p>The first column in the table specifies the type of location, and must be one of the following: </p>
+
+		<ul>
+		<li>Spawn</li>
+		<li>PlayerHouse</li>
+		<li>PlayerCastle</li>
+		<li>PlayerStructure</li>
+		<li>EnchantingRoom</li>
+		<li>Village</li>
+		<li>DesertVillage</li>
+		<li>JungleTemple</li>   
+		<li>DesertTemple</li> 
+		<li>WitchHut</li>
+		<li>NetherFortress</li>
+		<li>NetherPortal</li>
+		<li>Forest</li>
+		<li>MushroomIsland</li>
+		<li>Horse</li>
+		<li>Wolf</li>      
+		<li>Dragon</li>       
+		<li>Label</li>     
+		</ul>
+  
+		<p>The location-type determines the default icon to be drawn on the map at the location, and some location-types also provide an
+		href, (for example, Village locations will link to <a href="http://minecraft.gamepedia.com/Village">"http://minecraft.gamepedia.com/Village</a> by default). 
+		However both the icon and the href from the location can be overridden by putting your own values in the appropriate column.
+		</p>
+		
+		<p>The location-type also makes the list easier to read.</p>
+		
+		
+		<h2><a id="Settings"></a>Settings</h2>
 
         <div class="highlight">
         <pre><span class="nb">require</span> <span class="s1">'redcarpet'</span>
@@ -38,6 +145,8 @@
 <span class="nb">puts</span> <span class="n">markdown</span><span class="o">.</span><span class="n">to_html</span></pre>
         </div>
 
+		
+		<h1><a id="GoogleDriveId"></a>Getting the id of a file on Google Drive</h1>		
         <h2>Headline 2</h2>
         <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
         <h3>Headline 3</h3>
@@ -54,14 +163,8 @@
             <small>Download</small>
             .zip file
           </a>
-          <a href="https://github.com/jasonlong/architect-theme/archive/master.tar.gz" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
 
           <p class="repo-owner"><a href="https://github.com/jasonlong/architect-theme">architect-theme</a> is maintained by <a href="https://github.com/jasonlong">jasonlong</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
     </div>
