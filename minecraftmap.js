@@ -270,7 +270,7 @@ function createLocationFromRow(entryNumber, commaSeperatedValues) {
 		CSV.EXPAND_QUOTED_NEWLINES = true;
 		values = CSV.parse(commaSeperatedValues)[0];
 	} catch(err) {
-		alert('Could not parse comma seperated values for entry ' + entryNumber.toString() + ': ' + err.message);
+		alert('Could not parse comma seperated values for entry/line ' + entryNumber.toString() + ': ' + err);
 	}
 	
 	var typeName = values[0];
@@ -543,11 +543,11 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	var translateCoord_x = config.GetXTranslationFunction(mapSize);
 	var translateCoord_z = config.GetZTranslationFunction(mapSize);
 	
-	function drawMultilineCenteredText(x, y, text) {
+	function drawMultilineCenteredText(x, y, text, overrideIconsOnly) {
 
 		var textOffset = 0;
 		
-		if (!isEmpty(text) && !iconsOnly) {
+		if (!isEmpty(text) && (overrideIconsOnly || !iconsOnly)) {
 			var lines = text.split(/\r\n|\n|\r/);;
 			var lineNo;
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -669,9 +669,9 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 
 		var text_y1 = scaleStartY - notchHeight - 4;
 		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
-		drawMultilineCenteredText(scaleStartX + blockSize, text_y1, blockDistance_str);		
-		drawMultilineCenteredText(scaleStartX, text_y2, '0');
-		drawMultilineCenteredText(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
+		drawMultilineCenteredText(scaleStartX + blockSize, text_y1, blockDistance_str, true);		
+		drawMultilineCenteredText(scaleStartX, text_y2, '0', true);
+		drawMultilineCenteredText(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString(), true);
 	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
