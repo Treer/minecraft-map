@@ -29,18 +29,21 @@
       <div class="inner clearfix">
         <section id="main-content">
 
-		<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0BxhE5JB9opBWM3U3YjNfN3FpUjQ">Example map</a>
+		<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U"><img src="screenshot-small.png" align="right"/></a>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U">Example map</a></p>
 		
 		<p>The map lets any player show locations of interest without spoiling the element of exploration.</p>
 		
-		<p>(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration from the game, 
-		<a href="http://overviewer.org">Overviewer</a> is a nice online map system)</p>
+		<p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration from the game, 
+		<a href="http://overviewer.org">Overviewer</a> provides a very nice online map system)</p>
 		
+		<br clear="all"/>
         <h1>Creating your own</h1>
 		
 		<ol>
 		<li>Create a file in Google Drive and place all your <a href="#LocationListFormat">map locations</a> into it.</li>
-		<li>Set the file's visibility to "Public on the web" and add <a href="#GoogleDriveId">its id</a> to the end of this URL:<br/>
+		<li>Set the file's visibility to "<a href="#GoogleDriveVisibility">Public on the web</a>" then add <a href="#GoogleDriveId">its id</a> to the end of this URL:<br/>
 			<pre>https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=</pre>
 		</li>
 		<li>You're done!</li>
@@ -51,7 +54,7 @@
 		the settings you add is the web-address of a page containing all the locations you want displayed on your map.</p>
 		
 		<p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good 
-		places to keep the list of locations - everyone can edit the list and the map page can read the locations directly from it. 
+		places to keep the list of locations - that way everyone can edit the list and the map page can read the locations directly from it. 
 		The locations list can be in either html format or txt format.</p>
 		
         <p>If you want to host it yourself, then download the zip file on the right, otherwise just use the one already hosted on 
@@ -61,13 +64,19 @@
 		then you must also create you locations list on Google Drive.</span></p>
 		
 		
+		<h2><a id="GoogleDriveId"></a>Getting the id of a file on Google Drive</h2>		
+		Upload your file to Google Drive, then click on it and 
+		jhdjs
 		
 		
 		<h1><a id="LocationListFormat"></a>Location list format</h1>
 		
+		
+		<p style="color: red"><a href="">An example location-list file</a></p>
+		
 		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
 		
-		<p>If your location list file is a text file, then locations are specified in comma separated format, for example:</p>
+		<p>If your location list file is a text file, then the filename must end in either <code>.txt</code> or <code>.csv</code>, and locations are specified in comma separated format. For example the following is a csv locations list:</p>
         <div class="highlight">
 		<pre>type,             x,     z,    description,                      owner,       href, icon-index
 
@@ -96,67 +105,114 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		
 		<p>Or with a combination of bullet lists and tables. Because of the examples above, even this page would work as a location list!</p>
 		
-		<p><a href="#Settings">Settings</a> for the map, such as scale can also be specified in the location list file.</p>
+		<p><a href="#Settings">Settings</a> for the map, such as <span class="setting">range</span> can also be specified in your location list file.</p>
 		
 		<h2>Locations</h2>
 		
-		Each location may have up to 7 columns of information specified:
+		Each location may have up to 7 columns (or comma seperated values) of information specified:
 			<blockquote>type, x, z, description, owner, href, icon-index</blockquote>
 			
 		but only the first 3 items are required (type, x, z).
 		
 		<h3>type</h3>
-		<p>The first column in the table specifies the type of location, and must be one of the following: </p>
+		<p>The first column specifies the type of location, and must be one of the following: </p>
 
 		<ul>
-		<li>Spawn</li>
-		<li>PlayerHouse</li>
-		<li>PlayerCastle</li>
-		<li>PlayerStructure</li>
-		<li>EnchantingRoom</li>
-		<li>Village</li>
-		<li>DesertVillage</li>
-		<li>JungleTemple</li>   
-		<li>DesertTemple</li> 
-		<li>WitchHut</li>
-		<li>NetherFortress</li>
-		<li>NetherPortal</li>
-		<li>Forest</li>
-		<li>MushroomIsland</li>
-		<li>Horse</li>
-		<li>Wolf</li>      
-		<li>Dragon</li>       
-		<li>Label</li>     
+		<li><span class="locationtype">Spawn</span></li>
+		<li><span class="locationtype">PlayerHouse</span></li>
+		<li><span class="locationtype">PlayerCastle</span></li>
+		<li><span class="locationtype">PlayerStructure</span> - a generic catch-all block for things players have built that defy any more specific icons.</li>
+		<li><span class="locationtype">EnchantingRoom</span></li>
+		<li><span class="locationtype">Village</span></li>
+		<li><span class="locationtype">DesertVillage</span></li>
+		<li><span class="locationtype">JungleTemple</span></li>   
+		<li><span class="locationtype">DesertTemple</span></li> 
+		<li><span class="locationtype">WitchHut</span></li>
+		<li><span class="locationtype">NetherFortress</span></li>
+		<li><span class="locationtype">NetherPortal</span></li>
+		<li><span class="locationtype">Forest</span></li>
+		<li><span class="locationtype">MushroomIsland</span></li>
+		<li><span class="locationtype">Horse</span></li>
+		<li><span class="locationtype">Wolf</span></li>      
+		<li><span class="locationtype">Dragon</span> - a dragon. You can use it to indicate an End portal, the Ender Dragon, or just as "Here be dragons" filler decoration.</li>       
+		<li><span class="locationtype">Label</span> - a location-type that has no icon by default, you can use it to place plain text onto the map.</li>     
 		</ul>
   
-		<p>The location-type determines the default icon to be drawn on the map at the location, and some location-types also provide an
-		href, (for example, Village locations will link to <a href="http://minecraft.gamepedia.com/Village">"http://minecraft.gamepedia.com/Village</a> by default). 
-		However both the icon and the href from the location can be overridden by putting your own values in the appropriate column.
+		<p>The location-type determines the default icon to be drawn at the location, and some have a default
+		href (for example, <span class="locationtype">Village</span> icons link to <a href="http://minecraft.gamepedia.com/Village">http://minecraft.gamepedia.com/Village</a> by default). 
+		However both the icon and the href of a location-type can be overridden by placing your own values in the appropriate columns.
 		</p>
 		
-		<p>The location-type also makes the list easier to read.</p>
+		<p>Given that any location-type can be set to display any icon or href, their purpose is only to make the list easier to read, and to 
+		save having to repeatedly type out the details.</p>
 		
-		
-		<h2><a id="Settings"></a>Settings</h2>
+		<h3>x and z</h3>
 
-        <div class="highlight">
-        <pre><span class="nb">require</span> <span class="s1">'redcarpet'</span>
-<span class="n">markdown</span> <span class="o">=</span> <span class="no">Redcarpet</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">"Hello World!"</span><span class="p">)</span>
-<span class="nb">puts</span> <span class="n">markdown</span><span class="o">.</span><span class="n">to_html</span></pre>
-        </div>
-
+		<p>The x and z columns should contain the area's coordinates from Minecraft (press F3 in the game to see your coordinates).</p>
 		
-		<h1><a id="GoogleDriveId"></a>Getting the id of a file on Google Drive</h1>		
-        <h2>Headline 2</h2>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
-        <h3>Headline 3</h3>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
-        <h4>Headline 4</h4>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
-        <h5>Headline 5</h5>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>
-        <h6>Headline 6</h6>
-        <p>Lorem ipsizzle funky fresh i'm in the shizzle boom shackalack, consectetizzle adipiscing my shizz. Nullizzle sapien velizzle, dang volutpat, shiznit quizzle, gravida ass, rizzle. Pot get down get down tortor. Sed erizzle. Black go to hizzle dolizzle dapibizzle turpis fo shizzle my nizzle yo. Maurizzle pellentesque nibh et check it out. Bow wow wow check it out tortizzle. Pellentesque for sure rhoncizzle bow wow wow. In owned habitasse brizzle dictumst. Nizzle dapibizzle. Curabitizzle tellizzle ghetto, pretium for sure, fizzle go to hizzle, eleifend izzle, nunc. Dope suscipizzle. Integizzle boom shackalack velit ass purus.</p>        </section>
+		<h3>description and owner</h3>
+		
+		<p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:
+			<ul> 
+			<li>You can insert a \n in your text if you want to split the line.</li>
+			<li>You can add spaces to pad out the start or end of your label if you want to nudge its position slightly 
+			to avoid something else on the map nearby. <br/>
+			<span class="note">(Note that html collapses multiple spaces into one, so in a wiki you'd 
+			have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span></li>
+			</ul>
+		</p>
+		
+
+		<h3>icon-index</h3>
+		
+		<p>There are more icons available than can be specified with the location-type. The icon-index field lets you 
+		manually choose the icon to be displayed at the location. The stock icons and their icon-index can be viewed in this 
+		<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?src=legend.csv">Legend Map</a>. 
+		You can also <a href="#Settings_icons">add your own</a>.</p>
+
+		<p>You'll notice two styles of icons, some are in Minecraft style and others are in the hand-drawn fantasy map style, 
+		the idea was to give the impression of Minecraft structures on a fantasy map.</p>
+		
+		<br/>
+		
+		<h1><a id="Settings"></a>Settings</h1>
+		
+		<p>Map settings such as <span class="setting">range</span> can be specified either in the location-list file, or 
+		in the map URL. Settings in the URL will override settings in the location-list file, allowing the creation of different URLs
+		for different views of the same location list.</p>
+		
+		<p>Settings take the from of <code>key=value</code>. Settings must have one line each when in a location-list file, but
+		are all on the same line when specified in a URL - separated by "&amp;" symbols.</p>
+		
+		When string values are specified in a setting in a URL, you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
+		the URL remains valid.
+		
+		<p>The following settings are available:
+		
+		
+		
+		
+		</p>
+		
+		<h3><a id="Settings_icons"></a>icons</h3>
+
+		<p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list 
+		file, and use the <span class="setting">icons</span> setting to add them to the list of icons (their icon-indexes will begin at 32).</p>
+		
+		Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and it background). 
+		You specify the height of your icons via the height of the .png file, see the <code>iconguide.png</code> file.
+		
+		
+		
+		<h1>Philosophy</h1>
+		<p>Extra features can make the map easier, such displaying coordinate locations, and perhaps this will happen in a later version or fork. However
+		the original idea behind this map was to preserve Minecraft's world-exploration gameplay. It's intended to be like ye olde fantasy-genre map - having to work out where you are, what direction you face and what
+		direction to head, more of a guide really. Put on your adventurer's cap.</p>
+				
+		<p>It was made for our no-cheats/shortcuts survival server. <a href="http://overviewer.org">Overviewer</a> already caters nicely for the opposite philosophy.</p>
+		
+		
+		</section>
 
         <aside id="sidebar">
           <a href="https://github.com/jasonlong/architect-theme/archive/master.zip" class="button">
