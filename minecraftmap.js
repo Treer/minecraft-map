@@ -329,6 +329,23 @@ function parseTextLocations(data, callback) {
 
 function parseHtmlLocations(data, callback) {
 	
+	function encodeForCsv(value) {
+		// if value contains any quotemarks or commas and is not already quoted then 
+		// wrap it in quotes so it can safely be concatenated csv-style		
+		var result = value;
+		
+		var trimValue = value.trim();
+		var isQuoted = trimValue.length >= 2 && trimValue[0] == '"' && trimValue[trimValue.length - 1] == '"';
+		
+		if (!isQuoted) {
+			if (trimValue.indexOf(',') >= 0 || trimValue.indexOf('"') >= 0) {
+				// This string needs to be quoted
+				result = '"' + trimValue.replace(/"/g,'""') + '"';
+			}		
+		}	
+		return result;
+	}	
+	
 	var config = new MapConfiguration();
 	var locationList = [];
 	
@@ -344,7 +361,7 @@ function parseHtmlLocations(data, callback) {
 		
 			$(this).find('td').each(
 				function() {
-					rowString += this.textContent + ',';
+					rowString += encodeForCsv(this.textContent) + ',';
 				}
 			);
 			
@@ -378,6 +395,8 @@ function parseHtmlLocations(data, callback) {
 	callback(config, locationList);
 }
  
+ 
+
 // callback will be given two arguments - a dictionary of settings and an array of Location instances
 function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
@@ -490,11 +509,6 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			result.Blurb = decodeURIComponent(locationInfo.params.blurb);
 		}	
 		
-		// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
-		if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
-			result.CustomIconsUri = locationInfo.params.icons;
-		}
-
 		// if "x" is specified on the URL then change the center of the map
 		if ('x' in locationInfo.params) {
 			var new_x = parseInt(locationInfo.params.x);
@@ -521,10 +535,19 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
 			result.MapDataUri = decodeURIComponent(locationInfo.params.src);
 		}
+		
+		// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
+		if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
+			result.CustomIconsUri = locationInfo.params.icons;
+		}
+		
 		// Some extra support for hosting via Google Drive, as google drive is a good way to map
 		// the map collaborative while avoiding cross-domain data headaches.
 		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {		
 			result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+		}
+		if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
+			result.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
 		}
 
 		return result;

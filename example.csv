@@ -21,12 +21,12 @@ labelslevel = 1
 // Format:
 // Type, x, z, Description, Owner, href, Icon-index
 
-Forest, -934, -4676, "Dark oak", LeadAssassin, http://img36.imageshack.us/img36/678/connorw.png
+Forest, -934, -4676, "Dark oak", LeadAssassin, http://img36.imageshack.us/img36/678/connorw.png, 18
 Forest, 1268, -2410, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
 Forest, 1107,  2048, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
 Forest, 2146,  4144, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
-Forest, -1700,  -700, "Dark oak", , , http://minecraft.gamepedia.com/Roofed_forest
-Forest,  1439,  3233, "Dark oak", , , http://minecraft.gamepedia.com/Roofed_forest
+Forest,-1700,  -700, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 18
+Forest, 1439,  3233, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 18
 MushroomIsland, 3560,  2460
 
 PlayerHouse, 1850, -1344, drakeM
@@ -54,7 +54,7 @@ DesertVillage  ,-3500, -850
 DesertVillage  ,-207 ,  881                                
 Village        ,-870 , -4489                               
 Village        , 1236,  353 , "Sysop's\nreanimated\nvillage"
-Village        , 245 ,  350 , "Ghost\nTown"                  
+Village        , 245 ,  350 , "\nGhost town"                  
 Village        ,-860 ,  4932, "Crevasse Village"             
 Village        ,-4383,  66  , "Tiny  Village"                
 DesertTemple   ,-4056, -2487                              

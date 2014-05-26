@@ -36,8 +36,8 @@
     CSV.DETECT_TYPES = true;
     CSV.IGNORE_QUOTE_WHITESPACE = true;
     CSV.DEBUG = false;
-	CSV.TRIM_UNQUOTED_VALUES = false;
-	CSV.EXPAND_QUOTED_NEWLINES = false;
+    CSV.TRIM_UNQUOTED_VALUES = false;
+    CSV.EXPAND_QUOTED_NEWLINES = false;
 
     CSV.ERROR_EOF = "UNEXPECTED_END_OF_FILE";
     CSV.ERROR_CHAR = "UNEXPECTED_CHARACTER";
@@ -119,8 +119,8 @@
             // pre-token: look for start of escape sequence
             if (CSV.state == PRE_TOKEN) {
 
-				CSV.wasEscaped = false;
-				
+                CSV.wasEscaped = false;
+                
                 if ( (c === SPACE || c === TAB) && CSV.next_nonspace() == QUOTE ){
                     if( CSV.RELAXED || CSV.IGNORE_QUOTE_WHITESPACE ) {
                         continue;
@@ -151,7 +151,7 @@
                     else {
                         CSV.debug("...escaped end", c);
                         CSV.escaped = false;
-						CSV.wasEscaped = true;
+                        CSV.wasEscaped = true;
                         CSV.state = POST_TOKEN;
                     }
                 }
@@ -258,14 +258,13 @@
     };
 
     CSV.token_end = function () {
-		if (CSV.wasEscaped) {
-			if (CSV.EXPAND_QUOTED_NEWLINES) {
-				var re = /\\n/g;
-				CSV.token = CSV.token.replace(re,'\n');
-			}
-		} else {
-			if (CSV.TRIM_UNQUOTED_VALUES) CSV.token = CSV.token.trim();
-		}
+        if (CSV.wasEscaped) {
+            if (CSV.EXPAND_QUOTED_NEWLINES) {
+                CSV.token = CSV.token.replace(/\\n/g,'\n');
+            }
+        } else {
+            if (CSV.TRIM_UNQUOTED_VALUES) CSV.token = CSV.token.trim();
+        }
         if( CSV.DETECT_TYPES ) {
             CSV.token = CSV.resolve_type(CSV.token);
         }
