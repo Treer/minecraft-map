@@ -503,8 +503,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		// if "title" is specified on the URL then relabel the page
 		if ('title' in locationInfo.params  && isString(locationInfo.params.title)) {
-			$("#mainTitle").text(decodeURIComponent(locationInfo.params.title));
-			result.Title = locationInfo.params.title;
+			result.Title = decodeURIComponent(locationInfo.params.title);
 		}	
 
 		// if "blurb" is specified on the URL then change the tag line
