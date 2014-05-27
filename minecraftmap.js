@@ -90,8 +90,9 @@ function parseURL(url) {
 
 
 var LocationType = {
-  Village:         {iconIndex: 0, name: "Village",         href: "http://minecraft.gamepedia.com/Village"}, 
-  DesertVillage:   {iconIndex: 1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village"}, 
+  Village:         {iconIndex: 0, name: "Village",         href: "http://minecraft.gamepedia.com/Village#Plains"}, 
+  DesertVillage:   {iconIndex: 1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Desert"}, 
+  SavannahVillage: {iconIndex: 0, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
   WitchHut:        {iconIndex: 3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
   JungleTemple:    {iconIndex: 4, name: "Jungle temple",   href: "http://minecraft.gamepedia.com/Jungle_temple"},
   DesertTemple:    {iconIndex: 5, name: "Desert temple",   href: "http://minecraft.gamepedia.com/Desert_temple"},
@@ -606,12 +607,14 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	// Adjust this to adjust which pass the different map parts are rendered in
 	var RenderLayer = {
 		Masks:            0,
-		Captions:         1,
-		UncaptionedIcons: 2,
-		CaptionedIcons:   3,
+		Origin:           1,    
+		Captions:         2,
+		UncaptionedIcons: 3,
+		CaptionedIcons:   4,
+		Scale:            5,
 		
 		First:            0,
-		Last:             3
+		Last:             5
 	}
 		
 	
@@ -711,18 +714,23 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 		canvas.width, canvas.height);
 		
 	ctx.font = "10px Arial";
-
-	if (config.ShowOrigin) drawOrigin();
-	if (config.ShowScale)  drawScale();
 	
 	var renderLayer;
 	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
 	
-		var index;
-		for (index = 0; index < locations.length; ++index) {
+		if (renderLayer == RenderLayer.Origin) {
+			if (config.ShowOrigin) drawOrigin();
+			
+		} else if (renderLayer == RenderLayer.Scale) {
+			if (config.ShowScale)  drawScale();
+			
+		} else {	
+			var index;
+			for (index = 0; index < locations.length; ++index) {
 
-			drawLocation(locations[index], renderLayer);
-		}	
+				drawLocation(locations[index], renderLayer);
+			}	
+		}
 	}
 }
 

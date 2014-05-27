@@ -51,7 +51,8 @@ PlayerCastle   , 1391,  900 , "Burning ruins"
 DesertVillage  , 2244, -1271                               
 DesertVillage  , 797 ,  153                                
 DesertVillage  ,-3500, -850                                
-DesertVillage  ,-207 ,  881                                
+DesertVillage  ,-207 ,  881          
+Village        ,-3360,  4321                      
 Village        ,-870 , -4489                               
 Village        , 1236,  353 , "Sysop's\nreanimated\nvillage"
 Village        , 245 ,  350 , "\nGhost town"                  
