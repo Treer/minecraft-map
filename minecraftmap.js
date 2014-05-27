@@ -1,3 +1,5 @@
+// v1.4
+
 var cMapRangeDefault = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius     = 12;   // How far from the center of the icon is clickable
 var cTextOffset      = 14;   // How far under the center of the icon should the text be drawn
@@ -463,7 +465,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 				 
 					var contenType = jqXHR.getResponseHeader("content-type") || "";
 					
-					if (contenType.indexOf("text") >= 0 || dataTypeIsText) {
+					if (contenType.indexOf("text/plain") >= 0 || contenType.indexOf("text/csv") >= 0 || dataTypeIsText) {
 						parseTextLocations(data, callback);
 					} else {
 						parseHtmlLocations(data, callback);
