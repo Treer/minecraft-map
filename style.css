@@ -12,3 +12,22 @@ img{ border:0; }
 .block{ float:center; margin-right:2%; margin-top:10px; }
 .sunsign { position:absolute; }
 .hidden-sunsign { visibility: hidden; } 
+.hidden-hoverFrame { visibility: hidden; } 
+
+/* h1 { font-family: 'Press Start 2P', sans-serif; } */
+.locationHoverPlacename { font-family: 'Merienda', sans-serif; font-weight: bold; color: #5e4820; }
+.locationHoverOwner { font-family: 'Calligraffitti', sans-serif; font-weight: bold; color: #550000 }
+
+#locationDesc {
+  width: 250px;
+  padding: 4px 0px 6px 0px;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 22px 25px 22px 20px;
+
+  border-image-width: 22 25 22 20;
+  border-image:        url("img/scrollborder.png") 22 25 22 20 fill stretch;  
+  -moz-border-image:   url("img/scrollborder.png") 22 25 22 20 fill stretch; /* Old firefox */
+  -webkit-border-image:url("img/scrollborder.png") 22 25 22 20 fill stretch; /* Safari */
+  -o-border-image:     url("img/scrollborder.png") 22 25 22 20 fill stretch; /* Opera */
+}

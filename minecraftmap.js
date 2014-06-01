@@ -1,10 +1,18 @@
-// v1.4
+// v1.5
+//
+// Copyright 2014 Glenn Fisher
+//
+// While in development, I'm making this file GPL v3 licence until I 
+// get time to sort out licensing properly. Note that other files in 
+// this project have their own licence.
+//
+// (bitcoin 1BcjNaumW41vZSJUkeSw2GVFcB6DFsuCB1)
 
 var cMapRangeDefault = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius     = 12;   // How far from the center of the icon is clickable
 var cTextOffset      = 14;   // How far under the center of the icon should the text be drawn
 
-var cCustomIconIndexStart = 32; // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cCustomIconIndexStart = 64; // IconIndexes with this value or higher should be loaded from gCustomIcons
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 
@@ -17,6 +25,10 @@ function isEmpty(str) {
 
 function isString(str) {
 	return (typeof str == 'string' || str instanceof String);
+}
+
+function isNotEmptyString(str) {
+	return (typeof str == 'string' || str instanceof String) && str.length > 0;
 }
 
 function isFunction(item) {
@@ -90,25 +102,30 @@ function parseURL(url) {
 
 
 var LocationType = {
-  Village:         {iconIndex: 0, name: "Village",         href: "http://minecraft.gamepedia.com/Village#Plains"}, 
-  DesertVillage:   {iconIndex: 1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Desert"}, 
-  SavannahVillage: {iconIndex: 0, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
-  WitchHut:        {iconIndex: 3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
-  JungleTemple:    {iconIndex: 4, name: "Jungle temple",   href: "http://minecraft.gamepedia.com/Jungle_temple"},
-  DesertTemple:    {iconIndex: 5, name: "Desert temple",   href: "http://minecraft.gamepedia.com/Desert_temple"},
-  NetherFortress:  {iconIndex: 6, name: "Nether Fortress", href: "http://minecraft.gamepedia.com/Nether_Fortress"},
-  NetherPortal:    {iconIndex: 7, name: "Portal",          href: "http://minecraft.gamepedia.com/Nether_Portal"},
+  Village:         {iconIndex:  0, name: "Village",         href: "http://minecraft.gamepedia.com/Village#Plains"}, 
+  DesertVillage:   {iconIndex:  1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Desert"}, 
+  SavannahVillage: {iconIndex:  0, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
+  WitchHut:        {iconIndex:  3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
+  JungleTemple:    {iconIndex:  4, name: "Jungle temple",   href: "http://minecraft.gamepedia.com/Jungle_temple"},
+  DesertTemple:    {iconIndex:  5, name: "Desert temple",   href: "http://minecraft.gamepedia.com/Desert_temple"},
+  NetherFortress:  {iconIndex:  6, name: "Nether Fortress", href: "http://minecraft.gamepedia.com/Nether_Fortress"},
+  NetherPortal:    {iconIndex:  7, name: "Portal",          href: "http://minecraft.gamepedia.com/Nether_Portal"},
   
   Forest:          {iconIndex: 19, name: "Forest",          href: "http://minecraft.gamepedia.com/Biome#Forest"},
+  FlowerForest:    {iconIndex: 19, name: "Flower forest",   href: "http://minecraft.gamepedia.com/Flower_forest"},
   MushroomIsland:  {iconIndex: 20, name: "Mushroom island", href: "http://minecraft.gamepedia.com/Mushroom_Island"},
   Horse:           {iconIndex: 24, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
   Wolf:            {iconIndex: 25, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
   Dragon:          {iconIndex: 26, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
+  Ship:            {iconIndex: 32, name: "",                href: ""}, // No default href as ship is probably used for map decoration
+	// island
   
   Spawn:           {iconIndex: 27, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex: 8,  name: "",      href: ""},  
   PlayerCastle:    {iconIndex: 9,  name: "",      href: ""},  
   PlayerHouse:     {iconIndex: 10, name: "",      href: ""},  
+  PlayerFarm:      {iconIndex:  8, name: "Farm",  href: ""},  
+  PlayerMachine:   {iconIndex:  8, name: "",      href: ""},  
   EnchantingRoom:  {iconIndex: 30, name: "",      href: "http://minecraft.gamepedia.com/Enchantment_Table"}, 
   Label:           {iconIndex: -1, name: "",      href: ""}  
 };
@@ -117,6 +134,7 @@ var LocationType = {
 // Object constructor functions
 // ----------------------------
 
+// Constructor
 function MapConfiguration() {
 	// Leave fields undefined unless specifically set (or call SetDefaults())
 }
@@ -146,7 +164,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
-
+	
 	if ('MapDataUri'     in sourceConfig) this.MapDataUri     = sourceConfig.MapDataUri;
 	if ('LabelsLevel'    in sourceConfig) this.LabelsLevel    = sourceConfig.LabelsLevel;
 	if ('MapRange'       in sourceConfig) this.MapRange       = sourceConfig.MapRange;
@@ -157,26 +175,6 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('Z'              in sourceConfig) this.Z              = sourceConfig.Z;
 	if ('ShowOrigin'     in sourceConfig) this.ShowOrigin     = sourceConfig.ShowOrigin;
 	if ('ShowScale'      in sourceConfig) this.ShowScale      = sourceConfig.ShowScale;
-}
-
-MapConfiguration.prototype.GetXTranslationFunction = function(mapSize) {
-	var halfMapSize = mapSize / 2;
-	var mapX = this.X;
-	var mapRange = this.MapRange;
-	
-	return function(coord) {
-		return ((coord - mapX) * halfMapSize / mapRange) + halfMapSize;
-	}
-}
-
-MapConfiguration.prototype.GetZTranslationFunction = function(mapSize) {
-	var halfMapSize = mapSize / 2;
-	var mapZ = this.Z;
-	var mapRange = this.MapRange;
-
-	return function(coord) {
-		return ((coord - mapZ) * halfMapSize / mapRange) + halfMapSize;
-	}
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -220,6 +218,33 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 	}
 }
 
+// Returns a function that converts Minecraft coordinates into canvas coordinates
+MapConfiguration.prototype.GetXTranslationFunction = function(mapSize) {
+
+	var halfMapSize = mapSize / 2;
+	// the closure won't automatically keep a reference to 'this' so take a copy.
+	var mapX = this.X;
+	var mapRange = this.MapRange;
+	
+	return function(coord) {
+		return ((coord - mapX) * halfMapSize / mapRange) + halfMapSize;
+	}
+}
+
+// Returns a function that converts Minecraft coordinates into canvas coordinates
+MapConfiguration.prototype.GetZTranslationFunction = function(mapSize) {
+
+	var halfMapSize = mapSize / 2;
+	// the closure won't automatically keep a reference to 'this' so take a copy.
+	var mapZ = this.Z;
+	var mapRange = this.MapRange;
+
+	return function(coord) {
+		return ((coord - mapZ) * halfMapSize / mapRange) + halfMapSize;
+	}
+}
+
+// Constructor
 // x, z: coords in Minecraft.
 // Type: should be an element of LocationType
 function Location (x, z, type, description, owner, href, iconIndex) {
@@ -543,7 +568,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			result.CustomIconsUri = locationInfo.params.icons;
 		}
 		
-		// Some extra support for hosting via Google Drive, as google drive is a good way to map
+		// Some extra support for hosting via Google Drive, as google drive is a good way to make
 		// the map collaborative while avoiding cross-domain data headaches.
 		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {		
 			result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
@@ -702,17 +727,15 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 	}
 
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.webkitImageSmoothingEnabled = false;
-	ctx.msImageSmoothingEnabled = false;
-	ctx.imageSmoothingEnabled = false;
+	setCanvasScalingToPixelated(ctx);
 	
 	ctx.drawImage(
 		document.getElementById('map-background'),
 		0, 0,
 		canvas.width, canvas.height);
 		
-	ctx.font = "10px Arial";
+	ctx.font = "10px Arial";	
+	ctx.font = "10px 'Merienda', Arial, sans-serif";	
 	
 	var renderLayer;
 	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
@@ -731,6 +754,14 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 			}	
 		}
 	}
+}
+
+function setCanvasScalingToPixelated(ctx) {
+	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
+	ctx.msImageSmoothingEnabled = false;
+	ctx.imageSmoothingEnabled = false;
 }
 
 // zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
@@ -771,20 +802,79 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 		var location = locations[index];
 		var href = location.getHref();
 
-		if (!isEmpty(href)) {
+		var newArea = document.createElement('area');
+		newArea.shape = 'circle';
+		newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
+		if (!isEmpty(href)) newArea.href = href;
+		newArea.alt = location.getAlt();
 		
-			var newArea = document.createElement('area');
-			newArea.shape = 'circle';
-			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
-			newArea.href = href;
-			newArea.alt = location.getAlt();
-			
-			$(newArea).appendTo(newmap);
+		var htmlString = generateHtmlLabel(location);
+		if (htmlString.length > 0) {
+			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
+			$(newArea).mouseout(Handle_mouseout);
 		}
+		
+		$(newArea).appendTo(newmap);
 	}
 	$(newmap).appendTo(document.getElementById(divElementName));
 	
 	return result;
+}
+
+
+function CreateHandler_mouseover(htmlLabel) {
+	// Creates a closure so the event handler keeps a reference to the label
+	return function(eventObject) { 
+		$("#locationDesc").empty();
+		$("#locationDesc").append(htmlLabel);
+		$("#hoverFrame").removeClass('hidden-hoverFrame');
+	}
+}
+
+function Handle_mouseout(eventObject) {
+	$("#hoverFrame").addClass('hidden-hoverFrame');
+	$("#locationDesc").empty();
+}
+
+function generateHtmlLabel(location)
+{
+	var result = "";
+
+	var label = location.getLabel();
+	if (isNotEmptyString(label)) label = strToHtml(label.trim());
+
+	var owner = location.owner;
+	if (isNotEmptyString(owner)) owner = strToHtml(owner.trim());
+
+	var ownerPos = isNotEmptyString(owner) ? label.indexOf(owner) : -1;	
+	var htmlOwner = '<span class="locationHoverOwner">' + owner + '</span>';
+	var showOwner = true;
+	
+	if (isNotEmptyString(label) && label != owner) {
+	
+		var htmlLabel = label;
+		if (ownerPos >= 0) {
+			// The location label contains the owner, mark-up the owner name portion of the label
+			htmlLabel = 
+				label.substring(0, ownerPos) + 
+				htmlOwner +
+				label.substring(ownerPos + owner.length);	
+			showOwner = false; // Owner is already shown
+		}
+		htmlLabel = '<span class="locationHoverPlacename">' + htmlLabel + '</span>';
+	
+		result = htmlLabel;
+		if (isNotEmptyString(owner) && ownerPos == -1) {
+			result += '<br/>';		
+		}
+	}
+	if (isNotEmptyString(owner) && showOwner) result += htmlOwner;		
+
+	return result;
+}
+
+function strToHtml(str) {
+	return str.replace("\n", " ").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 }
 
 // Assumes tiles are square, arranged beside each other in the tileImage left to right in two 
