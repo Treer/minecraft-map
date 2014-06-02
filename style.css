@@ -17,6 +17,7 @@ img{ border:0; }
 /* h1 { font-family: 'Press Start 2P', sans-serif; } */
 .locationHoverPlacename { font-family: 'Merienda', sans-serif; font-weight: bold; color: #5e4820; }
 .locationHoverOwner { font-family: 'Calligraffitti', sans-serif; font-weight: bold; color: #550000 }
+.locationHoverCoordinates { font-family: 'Merienda', sans-serif; font-size: 70%; color: #5e4820; }
 
 #locationDesc {
   width: 250px;

@@ -153,29 +153,31 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	}
 
 	// MapDataUri has no default - it MUST be set from the "src" param on the URL.
-	if (!('LabelsLevel'    in this)) this.LabelsLevel = labelsLevelDefault;
-	if (!('MapRange'       in this)) this.MapRange = cMapRangeDefault;
-	if (!('Title'          in this)) this.Title = 'Map of the Overworld';
-	if (!('Blurb'          in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
-	if (!('CustomIconsUri' in this)) this.CustomIconsUri = '';
-	if (!('X'              in this)) this.X = 0;
-	if (!('Z'              in this)) this.Z = 0;
-	if (!('ShowOrigin'     in this)) this.ShowOrigin = true;
-	if (!('ShowScale'      in this)) this.ShowScale = true;
+	if (!('LabelsLevel'     in this)) this.LabelsLevel = labelsLevelDefault;
+	if (!('MapRange'        in this)) this.MapRange = cMapRangeDefault;
+	if (!('Title'           in this)) this.Title = 'Map of the Overworld';
+	if (!('Blurb'           in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
+	if (!('CustomIconsUri'  in this)) this.CustomIconsUri = '';
+	if (!('X'               in this)) this.X = 0;
+	if (!('Z'               in this)) this.Z = 0;
+	if (!('ShowOrigin'      in this)) this.ShowOrigin = true;
+	if (!('ShowScale'       in this)) this.ShowScale = true;
+	if (!('ShowCoordinates' in this)) this.ShowCoordinates = false;
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	
-	if ('MapDataUri'     in sourceConfig) this.MapDataUri     = sourceConfig.MapDataUri;
-	if ('LabelsLevel'    in sourceConfig) this.LabelsLevel    = sourceConfig.LabelsLevel;
-	if ('MapRange'       in sourceConfig) this.MapRange       = sourceConfig.MapRange;
-	if ('Title'          in sourceConfig) this.Title          = sourceConfig.Title;
-	if ('Blurb'          in sourceConfig) this.Blurb          = sourceConfig.Blurb;
-	if ('CustomIconsUri' in sourceConfig) this.CustomIconsUri = sourceConfig.CustomIconsUri;
-	if ('X'              in sourceConfig) this.X              = sourceConfig.X;
-	if ('Z'              in sourceConfig) this.Z              = sourceConfig.Z;
-	if ('ShowOrigin'     in sourceConfig) this.ShowOrigin     = sourceConfig.ShowOrigin;
-	if ('ShowScale'      in sourceConfig) this.ShowScale      = sourceConfig.ShowScale;
+	if ('MapDataUri'      in sourceConfig) this.MapDataUri      = sourceConfig.MapDataUri;
+	if ('LabelsLevel'     in sourceConfig) this.LabelsLevel     = sourceConfig.LabelsLevel;
+	if ('MapRange'        in sourceConfig) this.MapRange        = sourceConfig.MapRange;
+	if ('Title'           in sourceConfig) this.Title           = sourceConfig.Title;
+	if ('Blurb'           in sourceConfig) this.Blurb           = sourceConfig.Blurb;
+	if ('CustomIconsUri'  in sourceConfig) this.CustomIconsUri  = sourceConfig.CustomIconsUri;
+	if ('X'               in sourceConfig) this.X               = sourceConfig.X;
+	if ('Z'               in sourceConfig) this.Z               = sourceConfig.Z;
+	if ('ShowOrigin'      in sourceConfig) this.ShowOrigin      = sourceConfig.ShowOrigin;
+	if ('ShowScale'       in sourceConfig) this.ShowScale       = sourceConfig.ShowScale;
+	if ('ShowCoordinates' in sourceConfig) this.ShowCoordinates = sourceConfig.ShowCoordinates;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -216,6 +218,9 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'showscale' && isString(value)) {
 			this.ShowScale = stringToBool(value);
 		}
+		if (key == 'notchgavesteveacompassnotagps' && isString(value)) {
+			this.ShowCoordinates = !stringToBool(value);
+		}		
 	}
 }
 
@@ -593,6 +598,9 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
 			result.ShowScale = stringToBool(locationInfo.params.showscale);
 		}
+		if ('notchgavesteveacompassnotagps' in locationInfo.params && isString(locationInfo.params.notchgavesteveacompassnotagps)) {
+			result.ShowCoordinates = !stringToBool(locationInfo.params.notchgavesteveacompassnotagps);
+		}
 
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
 			result.MapDataUri = decodeURIComponent(locationInfo.params.src);
@@ -843,7 +851,7 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 		if (!isEmpty(href)) newArea.href = href;
 		newArea.alt = location.getAlt();
 		
-		var htmlString = generateHtmlLabel(location);
+		var htmlString = generateHtmlLabel(location, config.ShowCoordinates);
 		if (htmlString.length > 0) {
 			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
 			$(newArea).mouseout(Handle_mouseout);
@@ -871,7 +879,7 @@ function Handle_mouseout(eventObject) {
 	$("#locationDesc").empty();
 }
 
-function generateHtmlLabel(location)
+function generateHtmlLabel(location, includeCoordinates)
 {
 	var result = "";
 
@@ -905,6 +913,10 @@ function generateHtmlLabel(location)
 	}
 	if (isNotEmptyString(owner) && showOwner) result += htmlOwner;		
 
+	if (isNotEmptyString(result) && includeCoordinates) {
+		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
+	}
+	
 	return result;
 }
 
