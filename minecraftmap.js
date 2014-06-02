@@ -8,9 +8,10 @@
 //
 // (bitcoin 1BcjNaumW41vZSJUkeSw2GVFcB6DFsuCB1)
 
-var cMapRangeDefault = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
-var cClickRadius     = 12;   // How far from the center of the icon is clickable
-var cTextOffset      = 14;   // How far under the center of the icon should the text be drawn
+var cMapRangeDefault    = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+var cClickRadius        = 12;   // How far from the center of the icon is clickable
+var cTextOffset         = 14;   // How far under the center of the icon should the text be drawn
+var cSuppressLabelsChar = '~'; // The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
 
 var cCustomIconIndexStart = 64; // IconIndexes with this value or higher should be loaded from gCustomIcons
 var gCustomIcons = new Image();
@@ -244,6 +245,40 @@ MapConfiguration.prototype.GetZTranslationFunction = function(mapSize) {
 	}
 }
 
+// -----------------------------
+
+// Constructor
+// text: the text of the label. 
+// suppress: a boolean indicating whether the text should be suppressed from the 
+//           map rendering (only shown on hover etc.)
+function SuppressableLabel(text, suppress) {
+	this.text = text;
+	this.suppress = suppress;
+}
+
+SuppressableLabel.prototype.toString = function() {
+	return this.text;
+}
+
+// Parses "suppression-marked-up" text and returns a SuppressableLabel.
+// If 'markedupLabel' is surrounded by cSuppressLabelsChars (~), then
+// they are removed and suppress is set to true.
+SuppressableLabel.parse = function(markedupLabel) {
+
+	var result = new SuppressableLabel(markedupLabel, false);
+
+	if (isString(markedupLabel)) {
+		var trimLabelStr = markedupLabel.trim();
+		if (trimLabelStr.length >= 2 && trimLabelStr[0] == cSuppressLabelsChar && trimLabelStr[trimLabelStr.length - 1] == cSuppressLabelsChar) {		
+			result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), true);
+		}
+	}	
+	return result;
+}
+
+// -----------------------------
+
+
 // Constructor
 // x, z: coords in Minecraft.
 // Type: should be an element of LocationType
@@ -251,10 +286,10 @@ function Location (x, z, type, description, owner, href, iconIndex) {
     this.x = x;
     this.z = z;
 	this.type = type;
-	this.labelOverride = description;
+	this.labelOverride = SuppressableLabel.parse(description);
 	this.hrefOverride = href;
 	this.iconIndexOverride = iconIndex;
-	this.owner = owner;
+	this.owner = SuppressableLabel.parse(owner);	
 }
 
 Location.prototype.getHref = function() {
@@ -262,7 +297,7 @@ Location.prototype.getHref = function() {
 };
 
 Location.prototype.getLabel = function() {
-    return isEmpty(this.labelOverride) ? this.type.name : this.labelOverride;
+    return isEmpty(this.labelOverride.text) ? this.type.name : this.labelOverride.text;
 };
 
 Location.prototype.getIconIndex = function() {
@@ -272,7 +307,7 @@ Location.prototype.getIconIndex = function() {
 Location.prototype.getAlt = function() {
 
     var result = this.getLabel();	
-	if (isEmpty(result) && !isEmpty(this.owner)) result = this.owner;
+	if (isEmpty(result) && !isEmpty(this.owner.text)) result = this.owner.text;
 
     return result;
 };
@@ -648,15 +683,15 @@ function drawMapDetails(canvas, config, locations, iconsOnly)
 		var text = "";
 
 		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
-		if (isEmpty(locationInstance.labelOverride)) {
-			if (!isEmpty(locationInstance.owner)) text += locationInstance.owner;
+		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
+			if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
 		} else {
-			text += locationInstance.labelOverride;
+			text += locationInstance.labelOverride.text;
 		}
 		
-		if (!isEmpty(locationInstance.owner) && text.indexOf(locationInstance.owner) == -1) {
+		if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
 			// The owner was specified, and is not named in the description, add in brackets at the bottom
-			text += '\n(' + locationInstance.owner + ')';
+			text += '\n(' + locationInstance.owner.text + ')';
 		}
 
 		if (!isEmpty(text) && renderLayer == RenderLayer.Captions) {
@@ -843,7 +878,7 @@ function generateHtmlLabel(location)
 	var label = location.getLabel();
 	if (isNotEmptyString(label)) label = strToHtml(label.trim());
 
-	var owner = location.owner;
+	var owner = location.owner.text;
 	if (isNotEmptyString(owner)) owner = strToHtml(owner.trim());
 
 	var ownerPos = isNotEmptyString(owner) ? label.indexOf(owner) : -1;	

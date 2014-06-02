@@ -8,10 +8,10 @@
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Calligraffitti">
-<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Merienda">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Calligraffitti">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merienda">
 <!--<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Press Start 2P">-->
+<link rel="stylesheet" type="text/css" href="style.css">
 
 <script src="js/head.min.js"></script>
 <script type="text/javascript">
@@ -51,7 +51,12 @@ head.js(
 </div>
 <div style="position: absolute; left: 50%;">
 	<div id="hoverFrame" class="hidden-hoverFrame" style="position:relative; top: -20px; left: -50%; text-align: center; z-index: 30;">
-		<div id="locationDesc"></div>
+		<div id="locationDesc">
+			<!-- Take advantage of this hidden frame to include the fonts in the document 
+			     so that $(document).ready() isn't triggered before they are loaded.
+				 The contents of locationDesc will get cleared anyway. -->
+			<span class="font-family: 'Merienda';">M</span><span class="font-family: 'Calligraffitti';">ap</span>
+		</div>
 	</div>
 </div>
 
