@@ -133,10 +133,25 @@ var LocationType = {
 
 
 var LabellingStyle = {
-  none:  0, // draw no labels (labelslevel >= zoom level)
-  smart: 1, // draw only the labels that have room, in order of importance (labelslevel < zoom level <= alllabelslevel)
-  all:   2  // draw all labels (zoom level > alllabelslevel)
+  none:  0, // draw no labels (i.e. when zoomlevel < hidelabelsabove. Note that a level of 0 is 'higher' than a level of 1)
+  smart: 1, // draw only the labels that have room, in order of importance (showlabelsbelow >= zoom level < hidelabelsabove. Note that a level of 0 is 'higher' than a level of 1)
+  all:   2  // draw all labels (zoom level > showlabelsbelow. Note that a level of 0 is 'higher' than a level of 1)
 }
+
+// This array allows hints to be given about how labels should avoid the stock icons
+var IconBoundsInformation = {
+	 0: {width: 14, height: 15, yOffset:  0}, // village plain
+	 1: {width: 14, height: 15, yOffset:  0}, // village desert
+	 2: {width: 16, height: 21, yOffset:  2}, // skull
+	 3: {width: 14, height: 21, yOffset: -3}, // witch
+	 5: {width: 10, height: 17, yOffset:  0}, // desert temple
+	 6: {width: 10, height: 14, yOffset: -2}, // Nether fortress
+	 7: {width: 10, height: 13, yOffset: -1}, // Portal
+	 8: {width: 10, height: 10, yOffset:  0}, // PlayerStructure
+	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
+	10: {width: 12, height: 11, yOffset: -1}, // PlayerHouse
+}
+
 
 // Object constructor functions
 // ----------------------------
@@ -148,19 +163,20 @@ function MapConfiguration() {
 
 
 // screenWidth and screenHeight are optional parameters - provide them if you have them
-// and they will be used to pick a sensible default for LabelsLevel.
+// and they will be used to pick a sensible default for HideLabelsAbove.
 MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 
-	var labelsLevelDefault = 0;
+	var hideLabelsAbove_Default = 0;
+	/* commented out because I think smart-labels will work well at any screen size
 	if (screenWidth > 0 || screenHeight > 0) {
-		// small or tiny viewports will have labelslevel set to 1 instead of 0, as
+		// small or tiny viewports will have hidelabelsabove set to 1 instead of 0, as
 		// they don't have room for captions at the most zoomed out level.
-		labelsLevelDefault = (head.screen.height < 800 || head.screen.height < 800) ? 1 : 0;
-	}
+		hideLabelsAbove_Default = (head.screen.height < 800 || head.screen.height < 800) ? 1 : 0;		
+	} */
 
 	// MapDataUri has no default - it MUST be set from the "src" param on the URL.
-	if (!('LabelsLevel'     in this)) this.LabelsLevel = labelsLevelDefault;
-	if (!('AllLabelsLevel'  in this)) this.AllLabelsLevel = 3; // The levels in between LabelsLevel & AllLabelsLevel will use smartlabels
+	if (!('HideLabelsAbove' in this)) this.HideLabelsAbove = hideLabelsAbove_Default;
+	if (!('ShowLabelsBelow' in this)) this.ShowLabelsBelow = 2; // 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
 	if (!('MapRange'        in this)) this.MapRange = cMapRangeDefault;
 	if (!('Title'           in this)) this.Title = 'Map of the Overworld';
 	if (!('Blurb'           in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
@@ -175,8 +191,8 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	
 	if ('MapDataUri'      in sourceConfig) this.MapDataUri      = sourceConfig.MapDataUri;
-	if ('LabelsLevel'     in sourceConfig) this.LabelsLevel     = sourceConfig.LabelsLevel;
-	if ('AllLabelsLevel'  in sourceConfig) this.AllLabelsLevel  = sourceConfig.AllLabelsLevel;
+	if ('HideLabelsAbove' in sourceConfig) this.HideLabelsAbove = sourceConfig.HideLabelsAbove;
+	if ('ShowLabelsBelow' in sourceConfig) this.ShowLabelsBelow = sourceConfig.ShowLabelsBelow;
 	if ('MapRange'        in sourceConfig) this.MapRange        = sourceConfig.MapRange;
 	if ('Title'           in sourceConfig) this.Title           = sourceConfig.Title;
 	if ('Blurb'           in sourceConfig) this.Blurb           = sourceConfig.Blurb;
@@ -203,9 +219,9 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 			var new_x = parseInt(value);
 			if (!isNaN(new_x)) this.X = new_x;
 		}
-		if (key == 'labelslevel') {
-			var new_LabelsLevel = parseInt(value);
-			if (!isNaN(new_LabelsLevel)) this.LabelsLevel = new_LabelsLevel;
+		if (key == 'hidelabelsabove') {
+			var new_HideLabelsAbove = parseInt(value);
+			if (!isNaN(new_HideLabelsAbove)) this.HideLabelsAbove = new_HideLabelsAbove;
 		}
 		if (key == 'range') {
 			var new_MapRange = parseInt(value);
@@ -616,11 +632,11 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		var locationInfo = parseURL(location);
 		
-		// if "labelslevel" is specified on the URL, then only display labels when
-		// the map is zoomed in more levels than the value of labelslevel.
+		// if "hidelabelsabove" is specified on the URL, then only display labels when
+		// the map is zoomed in more levels than the value of hidelabelsabove.
 		// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
-		if ('labelslevel' in locationInfo.params) {
-			result.LabelsLevel = locationInfo.params.labelslevel;
+		if ('hidelabelsabove' in locationInfo.params) {
+			result.HideLabelsAbove = locationInfo.params.hidelabelsabove;
 		}	
 
 		// Set any constants specified by the URL (instead of using the default value)
@@ -690,6 +706,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 function drawMapDetails(canvas, config, locations, labellingStyle)
 {
 	var cTextLineHeight = 10;
+	var cShowBoundingBoxes = false; // This is for debug only
 
 	var ctx = canvas.getContext("2d");
 	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -706,8 +723,8 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		return text.split(/\r\n|\n|\r/);
 	}
 	
-	// Returns an array of bounding boxes for the label and icon of a location
-	function location_bounds(locationInstance, finalizedCaption) {
+	// Returns an array of bounding boxes for the multiline-centered label of a location
+	function locationLabel_bounds(locationInstance, finalizedCaption, pixelOffsetFromLocation_y) {
 	
 		var boundsAtOrigin;
 		if ('BoundsAtOrigin' in locationInstance) {
@@ -716,11 +733,8 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			// It hasn't been calculated yet, so do that now.
 			// We cache it from a position 0, 0 because the actual translation will
 			// change depending on the zoom level.
-			// I'm caching it because I assume that measuring text width is slow - could be wrong, need to test.
-			boundsAtOrigin = multilineCenteredText_bounds(0, cTextOffset, finalizedCaption, 1);
-			//boundsAtOrigin = boundsAtOrigin.concat(
-			//	icon_bounds(locationInstance.getIconIndex(), 0, 0, 0)
-			//);		
+			// (I'm caching it because I assume that determining graphical text width is slow - could be wrong, need to test)
+			boundsAtOrigin = multilineCenteredText_bounds(0, pixelOffsetFromLocation_y, finalizedCaption, 1);
 			locationInstance.BoundsAtOrigin = boundsAtOrigin; // cache it
 		}
 		
@@ -735,10 +749,10 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 	
 	// returns an array of bounding Rectangle instances that enclose the text which
 	// would be rendered by multilineCenteredText_draw()
-	function multilineCenteredText_bounds(x, y, text, margin) {
+	function multilineCenteredText_bounds(x, y, text, padding) {
 	
 		var result = [];
-		if (!(margin < 0) && !(margin > 0)) margin = 0;
+		if (!(padding < 0) && !(padding > 0)) padding = 0;
 
 		if (!isEmpty(text)) {
 			
@@ -748,14 +762,18 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
 			
 				var lineWidth = ctx.measureText(lines[lineNo]).width;
+				var leftTrim_lineWidth = ctx.measureText(lines[lineNo].trimLeft()).width;
+				var rightTrim_lineWidth = ctx.measureText(lines[lineNo].trimRight()).width;
+				var leftMargin = lineWidth - leftTrim_lineWidth;
+				var rightMargin = lineWidth - rightTrim_lineWidth;
 				var bound_x = x - (lineWidth - 1) / 2;
 				var bound_y = y + textOffset;
 				
 				result[lineNo] = new Rectangle(
-					bound_x - margin,
-					bound_y - cTextLineHeight - margin,
-					bound_x + (lineWidth - 1) + margin,
-					bound_y + margin
+					bound_x + leftMargin - padding,
+					bound_y - cTextLineHeight - padding,
+					bound_x + (lineWidth - 1) - rightMargin + padding,
+					bound_y + padding
 				);
 				textOffset += cTextLineHeight;
 			}
@@ -783,19 +801,29 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		}
 	}
 
+	// Returns an array of Rectangle, which will be empty if the
+	// index indicates no icon.
 	function icon_bounds(index, x, z, margin) {
 		// most icons fit in 20x20
 		// todo: hardcode any exceptions
-		var translated_x = translateCoord_x(x);
-		var translated_z = translateCoord_z(z);
-		
-		
 		var result = [];
 		
 		if (isNaN(index) || index < 0) {
 			// no icon
 		} else {
-			result[0] = new Rectangle(translated_x - 10, translated_z - 11, translated_x + 10, translated_z + 9);
+			var iconBoundsHint = IconBoundsInformation[index];
+			if (iconBoundsHint === undefined) {
+				// The icon is not specified in IconBoundsInformation array, use default values
+				iconBoundsHint = {width: 20, height: 20, yOffset:  0};			
+			}
+			var topLeft_x = x - iconBoundsHint.width / 2;
+			var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
+			result[0] = new Rectangle(
+				topLeft_x, 
+				topLeft_z, 
+				topLeft_x + iconBoundsHint.width - 1,
+				topLeft_z + iconBoundsHint.height - 1
+			);
 		}
 		
 		return result;
@@ -809,10 +837,10 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			if (index >= cCustomIconIndexStart) {
 				// it's a custom icon				
 				if (gCustomIconsLoaded) {
-					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, translateCoord_x(x), translateCoord_z(z));			
+					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, x, z);			
 				}				
 			} else {			
-				drawGlyph(ctx, tilesImage, index, drawMask, translateCoord_x(x), translateCoord_z(z));			
+				drawGlyph(ctx, tilesImage, index, drawMask, x, z);			
 			}
 		}
 	}
@@ -833,6 +861,8 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 	function drawLocation(locationInstance, renderLayer) {
 			
 		var text = "";
+		var location_x = translateCoord_x(locationInstance.x);
+		var location_z = translateCoord_z(locationInstance.z);
 
 		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
 		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
@@ -850,14 +880,16 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		
 			var iconIndex = locationInstance.getIconIndex();
 			
-			// TODO! put this edgecase into the bounding boxes
 			var textOffset = cTextOffset;
-			if (isNaN(iconIndex) || iconIndex < 0) textOffset = 3; // Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+			if (isNaN(iconIndex) || iconIndex < 0) {
+				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+				textOffset = 3; 
+			}
 		
 			var drawLabel = true;
 			if (labellingStyle == LabellingStyle.smart) {			
 				// check the space needed by the label isn't already occupied
-				var boundingboxes = location_bounds(locationInstance, text);
+				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
 
 				var boxIndex
 				for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
@@ -869,7 +901,7 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 							// a label or icon already occupies this space
 							
 							// make sure it's not the bounding box of our own icon that we collided with
-							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), locationInstance.x, locationInstance.z, 0);
+							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
 							if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
 								drawLabel = false;
 								break;
@@ -885,30 +917,32 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			}
 				
 			if (drawLabel) { 
-				multilineCenteredText_draw(translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z) + textOffset, text);
+				multilineCenteredText_draw(location_x, location_z + textOffset, text);
 			}
 			
-			/* debug code for showing bounding boxes
-			ctx.lineWidth = 1;
-			var boxes = location_bounds(locationInstance, text);
-			var i;
-			for(i = 0; i < boxes.length; i++) {
-				boxes[i].stroke(ctx);
+			if (cShowBoundingBoxes) {
+				// debug code for showing bounding boxes
+				ctx.lineWidth = 1;
+				ctx.strokeStyle="#0000FF";
+				var boxes = locationLabel_bounds(locationInstance, text);
+				var i;
+				for(i = 0; i < boxes.length; i++) {
+					boxes[i].stroke(ctx);
+				}
 			}
-			//*/			
 		}
 		
 		if (renderLayer == RenderLayer.Masks) {		
-			icon_draw(locationInstance.getIconIndex(), true, locationInstance.x, locationInstance.z);
+			icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
 		}
 
 		if (isEmpty(text)) {
 			if (renderLayer == RenderLayer.UncaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, locationInstance.x, locationInstance.z);
+				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
 			}
 		} else {
 			if (renderLayer == RenderLayer.CaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, locationInstance.x, locationInstance.z);
+				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
 			}		
 		}
 		
@@ -965,11 +999,16 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		canvas.width, canvas.height);
 
 	// prefil the occupiedSpace array with boxes indicating where graphics are.
+	ctx.lineWidth = 1;
+	ctx.strokeStyle="#FF00FF";
 	var i;
 	for (i = 0; i < locations.length; i++) {
 		var locationInstance = locations[i];
-		var bounds = icon_bounds(locationInstance.getIconIndex(), locationInstance.x, locationInstance.z, 0);
-		if (bounds.length > 0) occupiedSpace[occupiedSpace.length] = bounds[0];
+		var bounds = icon_bounds(locationInstance.getIconIndex(), translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z), 0);
+		if (bounds.length > 0) {
+			occupiedSpace[occupiedSpace.length] = bounds[0];
+			if (cShowBoundingBoxes) bounds[0].stroke(ctx); // debug code for showing bounding boxes			
+		}
 	}	
 
 		
@@ -1021,12 +1060,12 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 
 	var labellingStyle;
 
-	if (config.LabelsLevel > zoomLevelNumber) {
+	if (zoomLevelNumber < config.HideLabelsAbove) {
 		labellingStyle = LabellingStyle.none;
-	} else if (config.AllLabelsLevel > zoomLevelNumber) {
-		labellingStyle = LabellingStyle.smart;
-	} else {
+	} else if (zoomLevelNumber > config.ShowLabelsBelow) {
 		labellingStyle = LabellingStyle.all;	
+	} else {
+		labellingStyle = LabellingStyle.smart;
 	}
 	
 	drawMapDetails(canvas, config, locations, labellingStyle);	
@@ -1051,25 +1090,38 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	var newmap = document.createElement('map')
 	newmap.name = result;
 
+	// Start at the top of the list (index = 0), as the first area
+	// elements we add appear to occlude later areas we add - in 
+	// Firefox at least. And we want higher locations in the list to 
+	// have higher priority.	
 	var index;
 	for (index = 0; index < locations.length; ++index) {
 	
 		var location = locations[index];
 		var href = location.getHref();
+		var includeArea = false;
 
 		var newArea = document.createElement('area');
-		newArea.shape = 'circle';
-		newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
-		if (!isEmpty(href)) newArea.href = href;
-		newArea.alt = location.getAlt();
+
+		if (!isEmpty(href)) {
+			newArea.href = href;
+			includeArea = true;
+		}
 		
 		var htmlString = generateHtmlLabel(location, config.ShowCoordinates);
 		if (htmlString.length > 0) {
 			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
 			$(newArea).mouseout(Handle_mouseout);
+			includeArea = true;
 		}
 		
-		$(newArea).appendTo(newmap);
+		if (includeArea) {		
+			newArea.shape = 'circle';
+			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
+			newArea.alt = location.getAlt();
+		
+			$(newArea).appendTo(newmap);
+		}
 	}
 	$(newmap).appendTo(document.getElementById(divElementName));
 	
