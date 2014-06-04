@@ -8,10 +8,11 @@
 //
 // (bitcoin 1BcjNaumW41vZSJUkeSw2GVFcB6DFsuCB1)
 
-var cMapRangeDefault    = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
-var cClickRadius        = 12;   // How far from the center of the icon is clickable
-var cTextOffset         = 14;   // How far under the center of the icon should the text be drawn
-var cSuppressLabelsChar = '~'; // The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+var cClickRadius          = 12;   // How far from the center of the icon is clickable
+var cTextOffset           = 14;   // How far under the center of the icon should the text be drawn
+var cLabel_DontDrawChar   = '~';  // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cLabel_AlwaysDrawChar = '!';  // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
 
 var cCustomIconIndexStart = 64; // IconIndexes with this value or higher should be loaded from gCustomIcons
 var gCustomIcons = new Image();
@@ -138,7 +139,16 @@ var LabellingStyle = {
   all:   2  // draw all labels (zoom level > showlabelsbelow. Note that a level of 0 is 'higher' than a level of 1)
 }
 
-// This array allows hints to be given about how labels should avoid the stock icons
+var LabellingStyleOverride = {
+  normal:   0, // don't override - i.e. draw the label if the LabellingStyle of the zoomlevel says to.
+  suppress: 1, // suppress the label from the map rendering (only shown on hover etc.)
+  always:   2  // always draw the label regardless of whether there is room for it, and regardless of whether LabellingStyle is none
+}
+
+// This array allows hints to be given about how labels should avoid the stock icons.
+// The earth won't end if this data is a little wrong, and working it out from the icon
+// images would waste a lot of time.
+// (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
 	 0: {width: 14, height: 15, yOffset:  0}, // village plain
 	 1: {width: 14, height: 15, yOffset:  0}, // village desert
@@ -150,6 +160,27 @@ var IconBoundsInformation = {
 	 8: {width: 10, height: 10, yOffset:  0}, // PlayerStructure
 	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
 	10: {width: 12, height: 11, yOffset: -1}, // PlayerHouse
+	11: {width: 15, height:  8, yOffset:  0}, // Rail
+	12: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
+	13: {width:  4, height: 18, yOffset:  0}, // Obelisk
+	14: {width: 14, height: 24, yOffset: -4}, // Maoi
+	15: {width: 15, height: 16, yOffset: -1}, // tree
+	16: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
+	17: {width: 15, height: 16, yOffset: -1}, // tree (palms)
+	18: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
+	19: {width: 24, height: 22, yOffset: -4}, // Forest 
+	20: {width: 17, height: 16, yOffset: -2}, // Mushroom
+	21: {width: 30, height: 18, yOffset:  0}, // Mountains
+	22: {width: 30, height: 20, yOffset: -1}, // Mountain
+	23: {width: 18, height: 16, yOffset: -1}, // Cave	
+	24: {width: 18, height: 17, yOffset:  0}, // Horse
+	25: {width: 17, height: 13, yOffset:  0}, // Wolf
+	26: {width: 30, height: 28, yOffset:  1}, // Dragon
+	27: {width: 14, height: 12, yOffset:  0}, // Spawn
+	28: {width: 18, height: 16, yOffset:  0}, // Marker
+	29: {width: 14, height: 22, yOffset: -4}, // Marker2
+	30: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
+	31: {width: 14, height: 16, yOffset: -1}  // Chest
 }
 
 
@@ -278,11 +309,19 @@ MapConfiguration.prototype.GetZTranslationFunction = function(mapSize) {
 
 // Constructor
 // text: the text of the label. 
-// suppress: a boolean indicating whether the text should be suppressed from the 
-//           map rendering (only shown on hover etc.)
-function SuppressableLabel(text, suppress) {
+// labellingStyleOverride: an enumeration of type LabellingStyleOverride indicating whether the text should 
+// be suppressed from the map rendering (only shown on hover etc.), always drawn regardless of the labellingStyle
+// of the zoom level, or drawn when suitable (default)
+function SuppressableLabel(text, labellingStyleOverride) {
 	this.text = text;
-	this.suppress = suppress;
+	
+	if (labellingStyleOverride === undefined) {
+		this.displayOverride = LabellingStyleOverride.normal;
+	} else {
+		this.displayOverride = labellingStyleOverride
+	}	
+	this.suppress = this.displayOverride == LabellingStyleOverride.suppress;	
+	this.always   = this.displayOverride == LabellingStyleOverride.always;	
 }
 
 SuppressableLabel.prototype.toString = function() {
@@ -290,16 +329,22 @@ SuppressableLabel.prototype.toString = function() {
 }
 
 // Parses "suppression-marked-up" text and returns a SuppressableLabel.
-// If 'markedupLabel' is surrounded by cSuppressLabelsChars (~), then
-// they are removed and suppress is set to true.
+//  * If 'markedupLabel' is surrounded by cLabel_DontDrawChar (~), then
+//    they are removed and .suppress is set to true.
+//  * If 'markedupLabel' is surrounded by cLabel_AlwaysDrawChar (!), then
+//    they are removed and .always is set to true.
 SuppressableLabel.parse = function(markedupLabel) {
 
-	var result = new SuppressableLabel(markedupLabel, false);
+	var result = new SuppressableLabel(markedupLabel);
 
 	if (isString(markedupLabel)) {
 		var trimLabelStr = markedupLabel.trim();
-		if (trimLabelStr.length >= 2 && trimLabelStr[0] == cSuppressLabelsChar && trimLabelStr[trimLabelStr.length - 1] == cSuppressLabelsChar) {		
-			result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), true);
+		if (trimLabelStr.length >= 2) {
+			if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {		
+				result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
+			} else if (trimLabelStr[0] == cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_AlwaysDrawChar) {		
+				result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
+			}
 		}
 	}	
 	return result;
@@ -887,6 +932,8 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			}
 		
 			var drawLabel = true;
+			var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
+			
 			if (labellingStyle == LabellingStyle.smart) {			
 				// check the space needed by the label isn't already occupied
 				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
@@ -910,13 +957,13 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 					}
 					if (!drawLabel) break;
 				}
-				if (drawLabel) {
+				if (drawLabel || drawLabelRegardless) {
 					// Add the space taken by this label to occupiedSpace
 					occupiedSpace = occupiedSpace.concat(boundingboxes);
 				}				
 			}
 				
-			if (drawLabel) { 
+			if (drawLabel || drawLabelRegardless) { 
 				multilineCenteredText_draw(location_x, location_z + textOffset, text);
 			}
 			
