@@ -19,6 +19,19 @@ img{ border:0; }
 .locationHoverOwner { font-family: 'Calligraffitti', sans-serif; font-weight: bold; color: #550000 }
 .locationHoverCoordinates { font-family: 'Merienda', sans-serif; font-size: 70%; color: #5e4820; }
 
+.credittext { 
+	font-family: 'Merienda', sans-serif; 
+	font-size: 11px;
+	color: #BBBBBB;
+	z-index: -10;
+}
+.credittext a {
+  text-decoration: none;
+  color: #BBBBBB;
+}
+.credittext a:hover, .credittext a:focus {text-decoration: underline; color: white;}
+
+
 #locationDesc {
   width: 250px;
   padding: 4px 0px 6px 0px;

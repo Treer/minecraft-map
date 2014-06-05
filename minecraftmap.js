@@ -2,7 +2,7 @@
 //
 // Copyright 2014 Glenn Fisher
 //
-// While in development, I'm making this file GPL v3 licence until I 
+// While in development, I'm making this file GPL v3 (or later) licence until I 
 // get time to sort out licensing properly. Note that other files in 
 // this project have their own licence.
 //
@@ -273,7 +273,7 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'showscale' && isString(value)) {
 			this.ShowScale = stringToBool(value);
 		}
-		if (key == 'notchgavesteveacompassnotagps' && isString(value)) {
+		if (key == 'showcoordinates' && isString(value)) {
 			this.ShowCoordinates = !stringToBool(value);
 		}		
 	}
@@ -721,8 +721,8 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
 			result.ShowScale = stringToBool(locationInfo.params.showscale);
 		}
-		if ('notchgavesteveacompassnotagps' in locationInfo.params && isString(locationInfo.params.notchgavesteveacompassnotagps)) {
-			result.ShowCoordinates = !stringToBool(locationInfo.params.notchgavesteveacompassnotagps);
+		if ('showcoordinates' in locationInfo.params && isString(locationInfo.params.showcoordinates)) {
+			result.ShowCoordinates = !stringToBool(locationInfo.params.showcoordinates);
 		}
 
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
