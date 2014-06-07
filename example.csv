@@ -12,7 +12,7 @@ z = -1090
 range = 6400
 
 // Hide all labels when fully zoomed out
-labelslevel = 1
+labelslevel = 0
 
 
 // Map locations:
@@ -21,31 +21,33 @@ labelslevel = 1
 // Format:
 // Type, x, z, Description, Owner, href, Icon-index
 
-Forest, -934, -4676, "Dark oak", LeadAssassin, http://img36.imageshack.us/img36/678/connorw.png, 18
+Forest, -934, -4676, "Dark oak", LeadAssassin, http://img36.imageshack.us/img36/678/connorw.png, 27
 Forest, 1268, -2410, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
 Forest, 1107,  2048, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
-Forest, 2146,  4144, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
-Forest,-1700,  -700, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 18
-Forest, 1439,  3233, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 18
+FlowerForest, 2146,  4144, "fairy forest",, http://minecraft.gamepedia.com/Flower_forest
+Forest,-1700,  -700, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 27
+Forest, 1439,  3233, "Dark oak", , http://minecraft.gamepedia.com/Roofed_forest, 27
 MushroomIsland, 3560,  2460
+IslandOverlay,  3560,  2460
+Ship,           4000,  1660
 
-PlayerHouse, 1850, -1344,                           , drakeM
-PlayerHouse, 1495, -1825, "Sir Colling of Woodaswel", "Sir Colling of Woodaswel"         ,https://i.imgur.com/5y8QLAv.png, 23
-PlayerHouse, 1112, -2887, "Horfett Manor"           , "Sysop"                            , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Horfett_Manor"
-PlayerHouse, 1445, -1324, "Temple of Tempest"       , webprophet                         , https://i.imgur.com/svt52CT.jpg, 12
-PlayerHouse, 84  , -903 , "Small Lighthouse"        , Lex                                , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Small_Light_House"
-PlayerCastle, 86  ,  610, "Outpost Exile"           , SoulessExile                       , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Outpost_Xisle"
-PlayerHouse, 1017,  324 , "~Redstone-\nRising's  \nhovel~" ,                               , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon"
-PlayerHouse,-800 , -1800, "RedstoneRising's\nmountain lair", "RedstoneRising"            , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon", 21
+PlayerHouse,     1850, -1344,                           , drakeM
+PlayerHouse,     1495, -1825, "Sir Colling of Woodaswel", "Sir Colling of Woodaswel"         ,https://i.imgur.com/5y8QLAv.png, 33
+PlayerHouse,     1112, -2887, "Horfett Manor"           , "Sysop"                            , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Horfett_Manor"
+PlayerHouse,     1445, -1324, "Temple of Tempest"       , webprophet                         , https://i.imgur.com/svt52CT.jpg, 20
+PlayerHouse,     84  , -903 , "Small Lighthouse"        , Lex                                , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Small_Light_House"
+PlayerCastle,    86  ,  610, "Outpost Exile"           , SoulessExile                       , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Outpost_Xisle"
+PlayerHouse,     1017,  324 , "Redstone-\nRising's  \nhovel" ,                               , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon"
+PlayerHouse,    -800 , -1800, "RedstoneRising's\nmountain lair", "RedstoneRising"            , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon", 31
 PlayerHouse    ,-1048,  687 , Crow11                , Crow11                             , http://www.arsimagica.net/~eccles/geekery/minecraft/crovexiusgarden02.jpg
 PlayerStructure, 1480, -1186, "Seaspray City"       , webprophet
-PlayerStructure,-1667,  781 , ~Ender Cathedral~
+PlayerStructure,-1667,  781 , Ender Cathedral
 PlayerStructure, 3529,  4706, "Portower"            , "Sysop"
 PlayerHouse    , 1200, -4400, "Ogdenville"          , "Sysop"                        , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Ogdenville"
 PlayerHouse    , 7500, -6200,                       , ElectricMason
 PlayerStructure, 1148, -72  , "Map\nroom"     
 PlayerHouse    , 846 ,  86  ,                 
-PlayerCastle   , 151 ,  278 , "Obsidian    \nTower    "
+PlayerCastle   , 151 ,  278 , "~Obsidian    \nTower    ~"
 PlayerHouse    , 2038, -1442,                       , "Fluoxetine"
 PlayerCastle   , 1391,  900 , "Burning ruins"
 DesertVillage  , 2244, -1271                               
@@ -64,11 +66,11 @@ DesertTemple   , 4410,  2872
 WitchHut       ,-3391,  1552                              
 WitchHut       ,-3903, -4393                              
 WitchHut       , 1555,  3813                              
-PlayerHouse    , 949 ,  45  ,                     , "      SoundLight", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?GCPSoundLight"
+PlayerHouse    , 949 ,  45  ,                     , "!      SoundLight!", "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?GCPSoundLight"
 Village        , 2589, -2980, "World's smallest village"
-Spawn          , 966 , -1090, "\nSpawn", , , 28
+Spawn          , 966 , -1090, "\nSpawn", , , 41
 
-PlayerHouse,  100, -4000, Big Bunny, drakeM, , 14
+PlayerHouse,  100, -4000, Big Bunny, drakeM, , 22
 PlayerHouse, 2300, -1900, Woodland Mansion, Tark, https://i.imgur.com/fggtD.jpg
 Label, 0, 0, "\nOrigin", "", http://i43.tinypic.com/2ch54zm.png
 Dragon, -761, 62, "", "", "", , (here be dragons, also math says there's also a stronghold around here somewhere)
