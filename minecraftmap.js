@@ -290,7 +290,7 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 			this.ShowScale = stringToBool(value);
 		}
 		if (key == 'showcoordinates' && isString(value)) {
-			this.ShowCoordinates = !stringToBool(value);
+			this.ShowCoordinates = stringToBool(value);
 		}		
 	}
 }
@@ -738,7 +738,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			result.ShowScale = stringToBool(locationInfo.params.showscale);
 		}
 		if ('showcoordinates' in locationInfo.params && isString(locationInfo.params.showcoordinates)) {
-			result.ShowCoordinates = !stringToBool(locationInfo.params.showcoordinates);
+			result.ShowCoordinates = stringToBool(locationInfo.params.showcoordinates);
 		}
 
 		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
