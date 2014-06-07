@@ -2,7 +2,7 @@ type,             x,     z,    description,          owner,  href,              
 
 "Village",        -4800, -4800, "0) Village"
 DesertVillage,    -4800, -4000, "1) Desert Village"
-Label,            -4800, -3200, "\n2) Skull\nand crossbones", "", "", 2
+Label,            -4800, -3200, "\n2) Skull", "", "", 2
 WitchHut,         -4800, -2400, "3) WitchHut"
 JungleTemple,     -4800, -1600, "4) JungleTemple"
 DesertTemple,     -4800,  -800, "5) DesertTemple"
@@ -13,29 +13,52 @@ PlayerStructure,  -2400, -4800, "8) PlayerStructure"
 PlayerCastle,     -2400, -4000, "9) PlayerCastle"
 PlayerHouse,      -2400, -3200, "10) PlayerHouse"
 PlayerStructure,  -2400, -2400, "11) Railway structure", "", "", 11
-PlayerStructure,  -2400, -1600, "12) Monument (Sarsen stones)", "", "", 12
-PlayerStructure,  -2400,  -800, "13) Monument (Obelisk)", "", "", 13
-PlayerStructure,  -2400,     0, "14) Monument (Maoi)", "", "", 14
+PlayerMachine,    -2400, -1600, "12) PlayerMachine"
+FenceOverlay,     -2400,  -800, "\n13) Fence overlay"
+PlayerFarm,       -2400,     0, "14) PlayerFarm (wheat)"
+PlayerFarm,       -2400,   800, "15) Chicken", , , 15
+PlayerFarm,       -2400,  1600, "16) Pig",,,16
+PlayerFarm,       -2400,  2400, "17) Cow",,,17
+PlayerFarm,       -2400,  3200, "18) Sheep",,,18
+Label,            -2400,  4000, "19) Pumpkin",,,19
 
-Forest,               0, -4800, "15) Forest 1 (Oak)", "", "", 15
-Forest,               0, -4000, "16) Forest 2 (Sapling)", "", "", 16
-Forest,               0, -3200, "17) Forest 3 (Pirate palms)", "", "", 17
-Forest,               0, -2400, "18) Forest 4 (dark)", "", "", 18
-Forest,               0, -1600, "19) Forest 5 (default)"            
-MushroomIsland,       0,  -800, "20) MushroomIsland,\nor savanna/acacia Trees",
-Label,                0,   800, "\n21) Mountains 1", "", "", 21
-Label,                0,  1600, "\n22) Mountains 2", "", "", 22
-Label,                0,  2400, "23) Cave", "", "", 23
-Horse,                0,  3200, "24) Horse"
-Wolf,                 0,  4000, "25) Wolf"
-Dragon,               0,  4800, "\n26) Dragon"
+PlayerStructure,      0, -4800, "20) Monument (Sarsen stones)", "", "", 20
+PlayerStructure,      0, -4000, "21) Monument (Obelisk)", "", "", 21
+PlayerStructure,      0, -3200, "22) Monument (Maoi)", "", "", 22
+Forest,               0, -2400, "23) Forest 1 (Oak)", "", "", 23
+Forest,               0, -1600, "24) Forest 2 (Sapling)", "", "", 24
+Forest,               0,  -800, "25) Forest 3 (Pirate palms)", "", "", 25
+FlowerForest,         0,   800, "26) Flower forest"
+Forest,               0,  1600, "27) Forest 4 (dark)", "", "", 27
+Forest,               0,  2400, "28) Forest 5 (default)"            
+MushroomIsland,       0,  3200, "29) MushroomIsland,\nor savanna/acacia Trees",
+IslandOverlay,        0,  4000, "\n30) Island overlay"
 
-Spawn,             2400, -4800, "27) Spawn"
-Label,             2400, -4000, "28) Marker 2", "", "", 28
-Label,             2400, -3200, "29) Marker 3", "", "", 29
+Label,             2400, -4800, "\n31) Mountains 1", "", "", 31
+Label,             2400, -4000, "\n32) Mountains 2", "", "", 32
+Label,             2400, -3200, "33) Cave", "", "", 33
+Horse,             2400, -2400, "34) Horse"
+Wolf,              2400, -1600, "35) Wolf"
+Dragon,            2400,  -800, "\n36) Dragon"
+Label,             2400,     0, "\n37) Ship 1", "", "", 37
+Label,             2400,   800, "\n38) Ship 2", "", "", 38
+Label,             2400,  1600, "\n39) Compass points", "", "", 39
+Spawn,             2400,  2400, "40) Spawn"
+Label,             2400,  3200, "41) Marker 2", "", "", 41
+Label,             2400,  4000, "42) Marker 3", "", "", 42
 
-EnchantingRoom,    4800, -4800, "30) EnchantingRoom"
-Label,             4800, -4000, "31) Chest", "", "", 31
+Label,             4800, -4800, "43) Chest", "", "", 43
+EnchantingRoom,    4800, -4000, "44) EnchantingRoom"
+
+MushroomIsland,    4800,  4000, "\nExample overlay"
+IslandOverlay,     4800,  4000
+
+// If draw order matters for your overlay (e.g. pig needs to be behind fence), then list the 
+// intended top-most icon first, and include a caption for both, e.g:
+FenceOverlay,      4800,  4800, "\nExample overlay"
+PlayerFarm,        4800,  4800, "\nExample overlay",,, 16
+
+
 
 Title = "Legend"
 Blurb = "Shows all icons, with icon number."

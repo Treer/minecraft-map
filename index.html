@@ -73,7 +73,7 @@ head.js(
 <div class="credittext" style="position:absolute; bottom: 5px; right: 5px;">
 	<!-- Take advantage of this tiny text to include the fonts in the document 
 		 so that $(document).ready() isn't triggered before they are loaded. -->
-	create your own at <a href="http://buildingwithblocks.info">BuildingWithBlocks.info</a><span class="font-family: 'Calligraffitti';">.</span>
+	create your own at <a href="http://buildingwithblocks.info">buildingWithBlocks.info</a></span>
 </div>
 <div class="resources">
 	<img id="map-background" src="img/map64.png"/>
@@ -106,40 +106,65 @@ head.ready(
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapImageInDiv(0, "zoomlevel1",  390,  390, config, locations);
-							createMapImageInDiv(1, "zoomlevel2",  708,  708, config, locations);
-							createMapImageInDiv(2, "zoomlevel3", 1253, 1253, config, locations);
-							createMapImageInDiv(3, "zoomlevel4", 2236, 2236, config, locations); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapsInDivs_Async(
+								 config, 
+								 locations,
+								 [
+									{divName: "zoomlevel1", width:  390, height:  390},
+									{divName: "zoomlevel2", width:  708, height:  708},
+									{divName: "zoomlevel3", width: 1253, height: 1253},
+									{divName: "zoomlevel4", width: 2236, height: 2236}   // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+								],
+								finishedRendering
+							);
 					
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapImageInDiv(0, "zoomlevel1",  630,  630, config, locations);
-							createMapImageInDiv(1, "zoomlevel2",  960,  960, config, locations);
-							createMapImageInDiv(2, "zoomlevel3", 1440, 1440, config, locations);
-							createMapImageInDiv(3, "zoomlevel4", 2236, 2236, config, locations); // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+							createMapsInDivs_Async(
+								 config, 
+								 locations,
+								 [
+									{divName: "zoomlevel1", width:  630, height:  630},
+									{divName: "zoomlevel2", width:  960, height:  960},
+									{divName: "zoomlevel3", width: 1440, height: 1440},
+									{divName: "zoomlevel4", width: 2236, height: 2236}   // 2236 x 2236 is the largest img ipad hardware can handle (5 megapixels)
+								],
+								finishedRendering
+							);
+							
 						} else {
-							createMapImageInDiv(0, "zoomlevel1",  800,  800, config, locations);
-							createMapImageInDiv(1, "zoomlevel2", 1200, 1200, config, locations);
-							createMapImageInDiv(2, "zoomlevel3", 1800, 1800, config, locations);
-							createMapImageInDiv(3, "zoomlevel4", 2700, 2700, config, locations);
+							createMapsInDivs_Async(
+								 config, 
+								 locations,
+								 [
+									{divName: "zoomlevel1", width:  800, height:  800},
+									{divName: "zoomlevel2", width: 1200, height: 1200},
+									{divName: "zoomlevel3", width: 1800, height: 1800},
+									{divName: "zoomlevel4", width: 2700, height: 2700}
+								],
+								finishedRendering
+							);
 						}
-								
-						$("#map-1").mapz({
-							zoom       : true,
-							mousewheel : true,
-							pinchzoom  : true,
-							createmaps : false
-						});
-								
-						// hide the loading screen
-						$('#loading').hide();
-						if (head.screen.width >= 1000) {
-							// we only show the sunrise/sunset signs if they can fit on the screen.
-							$('.sunsign').removeClass('hidden-sunsign');
-						} else {
-							// show the signs underneath the map instead
-							$('#signsunderneith').removeClass('hidden-sunsign');
+
+						function finishedRendering() {
+						
+							$("#map-1").mapz({
+								zoom       : true,
+								mousewheel : true,
+								pinchzoom  : true,
+								createmaps : false
+							});
+									
+							// hide the loading screen
+							$('#loading').hide();
+							if (head.screen.width >= 1000) {
+								// we only show the sunrise/sunset signs if they can fit on the screen.
+								$('.sunsign').removeClass('hidden-sunsign');
+							} else {
+								// show the signs underneath the map instead
+								$('#signsunderneith').removeClass('hidden-sunsign');
+							}
 						}
 					}
 				);

@@ -106,30 +106,32 @@ function parseURL(url) {
 var LocationType = {
   Village:         {iconIndex:  0, name: "Village",         href: "http://minecraft.gamepedia.com/Village#Plains"}, 
   DesertVillage:   {iconIndex:  1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Desert"}, 
-  SavannahVillage: {iconIndex:  0, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
+  SavannahVillage: {iconIndex:  0, name: "Savannah village",href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
   WitchHut:        {iconIndex:  3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
   JungleTemple:    {iconIndex:  4, name: "Jungle temple",   href: "http://minecraft.gamepedia.com/Jungle_temple"},
   DesertTemple:    {iconIndex:  5, name: "Desert temple",   href: "http://minecraft.gamepedia.com/Desert_temple"},
   NetherFortress:  {iconIndex:  6, name: "Nether Fortress", href: "http://minecraft.gamepedia.com/Nether_Fortress"},
   NetherPortal:    {iconIndex:  7, name: "Portal",          href: "http://minecraft.gamepedia.com/Nether_Portal"},
   
-  Forest:          {iconIndex: 19, name: "Forest",          href: "http://minecraft.gamepedia.com/Biome#Forest"},
-  FlowerForest:    {iconIndex: 19, name: "Flower forest",   href: "http://minecraft.gamepedia.com/Flower_forest"},
-  MushroomIsland:  {iconIndex: 20, name: "Mushroom island", href: "http://minecraft.gamepedia.com/Mushroom_Island"},
-  Horse:           {iconIndex: 24, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
-  Wolf:            {iconIndex: 25, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
-  Dragon:          {iconIndex: 26, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
-  Ship:            {iconIndex: 32, name: "",                href: ""}, // No default href as ship is probably used for map decoration
-	// island
+  Forest:          {iconIndex: 28, name: "Forest",          href: "http://minecraft.gamepedia.com/Biome#Forest"},
+  FlowerForest:    {iconIndex: 26, name: "Flower forest",   href: "http://minecraft.gamepedia.com/Flower_forest"},
+  MushroomIsland:  {iconIndex: 29, name: "Mushroom island", href: "http://minecraft.gamepedia.com/Mushroom_Island"},
+  Horse:           {iconIndex: 34, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
+  Wolf:            {iconIndex: 35, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
+  Dragon:          {iconIndex: 36, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
+  Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
   
-  Spawn:           {iconIndex: 27, name: "Spawn", href: ""},
-  PlayerStructure: {iconIndex: 8,  name: "",      href: ""},  
-  PlayerCastle:    {iconIndex: 9,  name: "",      href: ""},  
+  Spawn:           {iconIndex: 40, name: "Spawn", href: ""},
+  PlayerStructure: {iconIndex:  8, name: "",      href: ""},  
+  PlayerCastle:    {iconIndex:  9, name: "",      href: ""},  
   PlayerHouse:     {iconIndex: 10, name: "",      href: ""},  
-  PlayerFarm:      {iconIndex:  8, name: "Farm",  href: ""},  
-  PlayerMachine:   {iconIndex:  8, name: "",      href: ""},  
-  EnchantingRoom:  {iconIndex: 30, name: "",      href: "http://minecraft.gamepedia.com/Enchantment_Table"}, 
-  Label:           {iconIndex: -1, name: "",      href: ""}  
+  PlayerFarm:      {iconIndex: 14, name: "Farm",  href: ""},  
+  PlayerMachine:   {iconIndex: 12, name: "",      href: ""},  
+  EnchantingRoom:  {iconIndex: 44, name: "",      href: "http://minecraft.gamepedia.com/Enchantment_Table"}, 
+  Label:           {iconIndex: -1, name: "",      href: ""},  
+  
+  FenceOverlay:    {iconIndex: 13, name: "",      href: ""},  
+  IslandOverlay:   {iconIndex: 30, name: "",      href: ""}    
 };
 
 
@@ -150,10 +152,11 @@ var LabellingStyleOverride = {
 // images would waste a lot of time.
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
-	 0: {width: 14, height: 15, yOffset:  0}, // village plain
-	 1: {width: 14, height: 15, yOffset:  0}, // village desert
-	 2: {width: 16, height: 21, yOffset:  2}, // skull
-	 3: {width: 14, height: 21, yOffset: -3}, // witch
+	 0: {width: 14, height: 16, yOffset: -1}, // village plain
+	 1: {width: 14, height: 16, yOffset: -1}, // village desert
+	 2: {width: 12, height: 20, yOffset:  0}, // skull
+	 3: {width: 14, height: 20, yOffset: -5}, // witch
+	 4: {width: 16, height: 17, yOffset: -2}, // jungle temple
 	 5: {width: 10, height: 17, yOffset:  0}, // desert temple
 	 6: {width: 10, height: 14, yOffset: -2}, // Nether fortress
 	 7: {width: 10, height: 13, yOffset: -1}, // Portal
@@ -161,26 +164,39 @@ var IconBoundsInformation = {
 	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
 	10: {width: 12, height: 11, yOffset: -1}, // PlayerHouse
 	11: {width: 15, height:  8, yOffset:  0}, // Rail
-	12: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
-	13: {width:  4, height: 18, yOffset:  0}, // Obelisk
-	14: {width: 14, height: 24, yOffset: -4}, // Maoi
-	15: {width: 15, height: 16, yOffset: -1}, // tree
-	16: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
-	17: {width: 15, height: 16, yOffset: -1}, // tree (palms)
-	18: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
-	19: {width: 24, height: 22, yOffset: -4}, // Forest 
-	20: {width: 17, height: 16, yOffset: -2}, // Mushroom
-	21: {width: 30, height: 18, yOffset:  0}, // Mountains
-	22: {width: 30, height: 20, yOffset: -1}, // Mountain
-	23: {width: 18, height: 16, yOffset: -1}, // Cave	
-	24: {width: 18, height: 17, yOffset:  0}, // Horse
-	25: {width: 17, height: 13, yOffset:  0}, // Wolf
-	26: {width: 30, height: 28, yOffset:  1}, // Dragon
-	27: {width: 14, height: 12, yOffset:  0}, // Spawn
-	28: {width: 18, height: 16, yOffset:  0}, // Marker
-	29: {width: 14, height: 22, yOffset: -4}, // Marker2
-	30: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
-	31: {width: 14, height: 16, yOffset: -1}  // Chest
+	12: {width: 10, height: 16, yOffset: -4}, // PlayerMachine
+	13: {width:  0, height:  0, yOffset: -8}, // fence overlay
+	14: {width: 16, height: 16, yOffset: -1}, // wheat
+	15: {width: 12, height: 13, yOffset:  0}, // chicken
+	16: {width: 10, height: 10, yOffset:  0}, // pig
+	17: {width: 10, height: 10, yOffset:  0}, // cow
+	18: {width: 10, height: 10, yOffset:  0}, // sheep
+	19: {width: 16, height: 16, yOffset: -3}, // Pumpkin
+	20: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
+	21: {width:  4, height: 18, yOffset:  0}, // Obelisk
+	22: {width: 14, height: 24, yOffset: -4}, // Maoi
+	23: {width: 15, height: 16, yOffset: -1}, // tree
+	24: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
+	25: {width: 15, height: 16, yOffset: -1}, // tree (palms)	
+	26: {width: 14, height: 14, yOffset: -1}, // flower forest
+	27: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
+	28: {width: 24, height: 22, yOffset: -4}, // Forest 
+	29: {width: 17, height: 16, yOffset: -2}, // Mushroom
+	30: {width:  0, height:  0, yOffset: -8}, // island overlay
+	31: {width: 30, height: 18, yOffset:  0}, // Mountains
+	32: {width: 30, height: 20, yOffset: -1}, // Mountain
+	33: {width: 18, height: 16, yOffset: -1}, // Cave	
+	34: {width: 18, height: 17, yOffset:  0}, // Horse
+	35: {width: 17, height: 13, yOffset:  0}, // Wolf
+	36: {width: 30, height: 28, yOffset:  1}, // Dragon
+	37: {width: 27, height: 27, yOffset:  1}, // Ship 1
+	38: {width: 29, height: 30, yOffset:  0}, // Ship 2
+	39: {width: 20, height: 27, yOffset: -2}, // Compass points	
+	40: {width: 14, height: 12, yOffset:  0}, // Spawn
+	41: {width: 18, height: 16, yOffset:  0}, // Marker
+	42: {width: 14, height: 22, yOffset: -4}, // Marker2
+	43: {width: 14, height: 16, yOffset: -1}, // Chest
+	44: {width: 14, height: 16, yOffset: -1}  // EnchantingRoom
 }
 
 
@@ -1097,6 +1113,48 @@ function setCanvasScalingToPixelated(ctx) {
 	ctx.imageSmoothingEnabled = false;
 }
 
+// config is a MapConfiguration object
+// locations is an array of Location objects
+// divElementsAndSize is an array of { divName: ..., width: ..., height: ... }, one for each level of zoom
+function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedCallback) {
+	// The purpose of createMapsInDivs_Async() was to relinquish CPU - give time back to the 
+	// browser by breaking up the rendering of each zoom level into a separate function invoked 
+	// using setTimeout() so the browser can execute them whenever it gets around to it.
+	// 
+	// This does not appear to have reduced the the browser-lockup observed when the maps are being
+	// rendered, so I'm not going to bother breaking up the rendering up any further.
+	// If this function causes any problems, it can be replaced by a simple loop that sequentially
+	// calls createMapImageInDiv().
+	
+	function CreateDeferredRenderFunction(zoomLevel, deferredObj) {
+	
+		return function() {
+			createMapImageInDiv(
+				zoomLevel, 
+				divElementsAndSize[zoomLevel].divName, 
+				divElementsAndSize[zoomLevel].width, 
+				divElementsAndSize[zoomLevel].height, 
+				config, 
+				locations
+			);
+			deferredObj.resolve();
+		}		
+	}
+	
+	
+	var functionPromises = [];
+
+	var i;
+	for(i = 0; i < divElementsAndSize.length; i++) {
+						
+		var newDeferred = $.Deferred();		
+		
+		setTimeout( CreateDeferredRenderFunction(i, newDeferred), 1);		
+		functionPromises[i] = newDeferred;		
+	}
+	$.when.apply($, functionPromises).done(finishedCallback);
+}
+
 // zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
 // out map, 1 is the first level of zooming in, etc.
 function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations) {
@@ -1218,7 +1276,7 @@ function generateHtmlLabel(location, includeCoordinates)
 		htmlLabel = '<span class="locationHoverPlacename">' + htmlLabel + '</span>';
 	
 		result = htmlLabel;
-		if (isNotEmptyString(owner) && ownerPos == -1) {
+		if (isNotEmptyString(owner) && showOwner) {
 			result += '<br/>';		
 		}
 	}
@@ -1227,6 +1285,10 @@ function generateHtmlLabel(location, includeCoordinates)
 	if (isNotEmptyString(result) && includeCoordinates) {
 		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
 	}
+	if (isNotEmptyString(result) && isNotEmptyString(location.getHref())) {
+		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
+	}
+	
 	
 	return result;
 }
