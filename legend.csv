@@ -1,6 +1,6 @@
 type,             x,     z,    description,          owner,  href,                  iconIndex
 
-"Village",        -4800, -4800, "0) Village"
+"Village",        -4800, -4800, "0) Plains/savannah Village"
 DesertVillage,    -4800, -4000, "1) Desert Village"
 Label,            -4800, -3200, "\n2) Skull", "", "", 2
 WitchHut,         -4800, -2400, "3) WitchHut"
@@ -31,7 +31,7 @@ Forest,               0,  -800, "25) Forest 3 (Pirate palms)", "", "", 25
 FlowerForest,         0,   800, "26) Flower forest"
 Forest,               0,  1600, "27) Forest 4 (dark)", "", "", 27
 Forest,               0,  2400, "28) Forest 5 (default)"            
-MushroomIsland,       0,  3200, "29) MushroomIsland,\nor savanna/acacia Trees",
+MushroomIsland,       0,  3200, "29) MushroomIsland,\nor savannah/acacia Trees",
 IslandOverlay,        0,  4000, "\n30) Island overlay"
 
 Label,             2400, -4800, "\n31) Mountains 1", "", "", 31
@@ -49,6 +49,7 @@ Label,             2400,  4000, "42) Marker 3", "", "", 42
 
 Label,             4800, -4800, "43) Chest", "", "", 43
 EnchantingRoom,    4800, -4000, "44) EnchantingRoom"
+
 
 MushroomIsland,    4800,  4000, "\nExample overlay"
 IslandOverlay,     4800,  4000
