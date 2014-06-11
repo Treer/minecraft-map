@@ -128,6 +128,16 @@ aside#sidebar p.repo-owner a {
   margin-bottom: 40px;
 }
 
+.footer {
+  float: none;
+  width: 100% ! important;
+  background-image: none;
+  margin-top: 20px;
+  border-top: solid 1px #ddd;
+  padding: 20px 0;
+  min-height: 0;
+}
+
 a.button {
   width: 134px;
   height: 58px;
@@ -155,6 +165,18 @@ aside a.button {
   background: transparent url(../images/download-button.png) 0 0 no-repeat;
   margin-bottom: 20px;
   font-size: 21px;
+}
+a.downloadbutton {
+  width: 138px;
+  padding-left: 64px;
+  display: block;
+  background: transparent url(../images/download-button.png) 0 0 no-repeat;
+  margin-bottom: 20px;
+  font-size: 21px;
+}
+
+.monospace {
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
 code, pre {

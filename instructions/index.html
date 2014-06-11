@@ -20,8 +20,8 @@
     <header>
       <div class="inner">
         <h1>Make a Minecraft map</h1>
-        <h2>Collaboratively create maps of the server you play on without without needing admin or hosting</h2>
-        <a href="https://github.com/jasonlong/architect-theme" class="button"><small>View project on</small>GitHub</a>
+        <h2>Collaboratively create maps of the server you play on without needing admin or hosting</h2>
+        <!--<a href="https://github.com/Treer/minecraft-map" class="button"><small>View project on</small>GitHub</a>-->
       </div>
     </header>
 
@@ -29,34 +29,46 @@
       <div class="inner clearfix">
         <section id="main-content">
 
-		<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U"><img src="images/screenshot-small.png" align="right"/></a>
+		<div style="float:right;">
+			<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U">		
+				<img src="images/screenshot-small.jpg" width="400" height="275"/>
+				<br/>
+				<p style="text-align:center;">Example map, using real (SMP) locations</p>		
+			</a>
+		</div>
 		
-		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U">Example map</a></p>
+		<p>The map lets any player show locations of interest in the world without spoiling the element of exploration.</p>
 		
-		<p>The map lets any player show locations of interest without spoiling the element of exploration.</p>
+		<p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration, 
+		<a href="http://overviewer.org">Overviewer</a> provides a nice full online map system)</p>
 		
-		<p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration from the game, 
-		<a href="http://overviewer.org">Overviewer</a> provides a very nice online map system)</p>
-		
-		<br clear="all"/>
-        <h1>Creating your own</h1>
+        <h1 style="clear:both;">Creating your own</h1>
 		
 		<ol>
-		<li>Create a file in Google Drive and place all your <a href="#LocationListFormat">map locations</a> into it.</li>
-		<li>Set the file's visibility to "<a href="#GoogleDriveVisibility">Public on the web</a>" then add <a href="#GoogleDriveId">its id</a> to the end of this URL:<br/>
+		<li>Create a .txt file containing all your <a href="#LocationListFormat">map locations</a>, and upload it to Google Drive.</li>
+		<li>Set the file's visibility to "<a href="googledrive.html#Visibility">Public on the web</a>" then add <a href="googledrive.html#GoogleId">its unique code</a> to the end of this URL:<br/>
 			<pre>https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=</pre>
 		</li>
 		<li>You're done!</li>
 		</ol>
 		
+		
 		<h2>In more detail...</h2>
-		<p>To create your own map you take the web-address of the map page and add your own settings to the end of the URL. One of 
-		the settings you add is the web-address of a page containing all the locations you want displayed on your map.</p>
+		<p>It also <a href="dropbox.html">works from your Dropbox</a>, or a wiki page.</p>
+		
+		<p>To create your own map you take the URL of the map page and add your own settings to the end of it. One of 
+		the settings you add is the URL of a page containing all the locations you want displayed on your map (or a Google Drive ID).</p>
 		
 		<p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good 
 		places to keep the list of locations - that way everyone can edit the list and the map page can read the locations directly from it. 
-		The locations list can be in either html format or txt format.</p>
+		The locations list can be in either html format or txt format. By default, Google Drive will view but not edit .txt files, you can 
+		change this by adding a notepad app - go to Options &rarr; Manage apps.</p>
 		
+		
+		<a href="https://github.com/Treer/minecraft-map/archive/v1.4.zip" class="downloadbutton">
+            <small>Download</small>
+            .zip file
+          </a>
         <p>If you want to host it yourself, then download the zip file on the right, otherwise just use the one already hosted on 
 		Google Drive. For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
 		the map page to access your locations list unless both their addresses share the same domain, so...</p> 
@@ -126,12 +138,14 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<li><span class="locationtype">EnchantingRoom</span></li>
 		<li><span class="locationtype">Village</span></li>
 		<li><span class="locationtype">DesertVillage</span></li>
+		<li><span class="locationtype">SavannahVillage</span></li>
 		<li><span class="locationtype">JungleTemple</span></li>   
 		<li><span class="locationtype">DesertTemple</span></li> 
 		<li><span class="locationtype">WitchHut</span></li>
 		<li><span class="locationtype">NetherFortress</span></li>
 		<li><span class="locationtype">NetherPortal</span></li>
 		<li><span class="locationtype">Forest</span></li>
+		<li><span class="locationtype">FlowerForest</span></li>
 		<li><span class="locationtype">MushroomIsland</span></li>
 		<li><span class="locationtype">Horse</span></li>
 		<li><span class="locationtype">Wolf</span></li>      
@@ -160,8 +174,16 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 			to avoid something else on the map nearby. <br/>
 			<span class="note">(Note that html collapses multiple spaces into one, so in a wiki you'd 
 			have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span></li>
-			</ul>
+			<li>You can use quotation marks inside a label when it's surrounded by quotation marks. Do this by placing two in a row, for 
+			example <code>"My ""Scare quotes"""</code> will be drawn as <code>My "Scare quotes"</code>.<br/>
+			<span class="note">(Note that quotation marks cannot be used in a label unless it's surrounded with quotation 
+			marks)</span></li>
+			<li>You can also use commas inside a label when it's surrounded by quotation marks.</li>
+			</ul>					
 		</p>
+		
+		<p>If a value for owner is provided, and it doesn't already occur within the description, then the owner's name will be
+		placed in parenthesis underneath the label.</p>
 		
 
 		<h3>icon-index</h3>
@@ -203,26 +225,42 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and it background). 
 		You specify the height of your icons via the height of the .png file, see the <code>iconguide.png</code> file.
 		
+		<h1>Tips</h1>
+		you can use the paper texture to estimate distance, as the distance scale is aligned with it.
 		
+		make range divisible by 32 for round numbers on the scale		
+		
+		Controlling captions
+		  - add newlines to caption large images
+		  - supressed captions
+		  - aligning captions with linebreaks and spaces
+		  - labellevels and smartlabels.
+		  
+		Use a text editor
 		
 		<h1>Philosophy</h1>
-		<p>Extra features can make the map easier, such displaying coordinate locations, and perhaps this will happen in a later version or fork. However
+		<p>Extra features can make the map easier, such displaying coordinates, and perhaps this will happen in a later version or fork. However
 		the original idea behind this map was to preserve Minecraft's world-exploration gameplay. It's intended to be like ye olde fantasy-genre map - having to work out where you are, what direction you face and what
 		direction to head, more of a guide really. Put on your adventurer's cap.</p>
 				
 		<p>It was made for our no-cheats/shortcuts survival server. <a href="http://overviewer.org">Overviewer</a> already caters nicely for the opposite philosophy.</p>
 		
+		What it really needs is a nice web-UI for people to enter their locations in with.
 		
+		
+		<div class="footer">
+          <p class="repo-owner"><a href="https://github.com/jasonlong/architect-theme">architect-theme</a> is maintained by <a href="https://github.com/jasonlong">jasonlong</a>.</p>
+        </div>
 		</section>
 
+		<!--
         <aside id="sidebar">
-          <a href="https://github.com/jasonlong/architect-theme/archive/master.zip" class="button">
+          <a href="https://github.com/Treer/minecraft-map/archive/v1.4.zip" class="button">
             <small>Download</small>
             .zip file
           </a>
+        </aside>-->
 
-          <p class="repo-owner"><a href="https://github.com/jasonlong/architect-theme">architect-theme</a> is maintained by <a href="https://github.com/jasonlong">jasonlong</a>.</p>
-        </aside>
       </div>
     </div>
 
