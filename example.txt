@@ -1,0 +1,105 @@
+// This example map is taken from a real server with names and image-links changed to hide the innocent.
+//
+// Real data helps show how messy a map gets, and why zoom is needed.
+
+
+// Map settings:
+// =============
+range = 6400
+
+
+// Map locations:
+// ==============
+//
+// Format:
+// Type        , x    ,  z    , Description     , Owner     , href                                                                       , IconIndex
+
+Forest         ,-934  , -4676 ,                   , LeeDassin             , http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?LeeDassin , 27                             
+Forest         ,-1700 , -700  , "Dark oak forest" ,                       , http://minecraft.gamepedia.com/Roofed_forest , 27 
+Forest         , 1439 ,  3233 , "Dark oak forest" ,                       , http://minecraft.gamepedia.com/Roofed_forest , 27 
+Forest         , 1268 , -2410 , "Fairy forest"    , "ecchymotic & aeduna"
+FlowerForest   , 2146 ,  4144
+FlowerForest   , 4800 ,	-1500
+FlowerForest   , 4343 , -2813
+MushroomIsland , 3560 ,  2460 ,                 , , , 
+IslandOverlay  , 3560 ,  2460 ,                 , , , 
+Horse          , 1153 ,  4739 , "~Black\nhorses~" , , , 
+Horse          ,-3468 , -4721 , "~White\nhorses~" , , , 
+Horse          , 3222 , -4904 , ~Donkeys~         , , http://minecraft.gamepedia.com/Donkey , 
+Horse          , 4250 , -2500 , "~Black horses, donkeys, and others~" 
+Wolf           , -863 , -2523 , ~Wolves~        , , , 
+PlayerStructure , 3120 , 240   , "Serenity City"                    ,                         
+PlayerHouse     , 1850 , -1344 , "Hamish"                    , "emdrake"                       
+PlayerHouse     , 1495 , -1825 , "Sir Colling of Woodaswel"  , "Sir Colling of Woodaswel"      , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Collingwoodaswel"  ,33
+PlayerHouse     , 1112 , -2887 , "Horfett Manor"             , "aeduna"                        , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Horfett_Manor"     ,  
+PlayerHouse     , 1445 , -1324 , "Temple of Tempest"         ,  "WebSeer"                      , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Temple_Of_Tempest" ,20
+PlayerHouse     , 84   , -903  , "Small    \nLighthouse    " , "lex86"                         , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Small_Light_House" ,  
+PlayerCastle    , 86   ,  610  , "Outpost Xisle"             , "SolusXisle"                    , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Outpost_Xisle"     ,  
+PlayerHouse     , 1017 ,  324  , "CookieMon's\nhovel"        , "CookieMon"                     , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon"         ,  
+PlayerHouse     ,-800  , -1800 , "CookieMon's mountain lair" , "CookieMon"                     , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?CookieMon"         ,31
+PlayerHouse     ,-1048 ,  687  , "Crovexius"                 , "Crovexius"                     , http://www.arsimagica.net/~eccles/geekery/minecraft/crovexiusgarden02.jpg,  
+PlayerStructure , 1480 , -1186 , "Seaspray City"             ,  "WebSeer"     ,                                                                                      ,  
+PlayerStructure ,-1667 ,  781  , "Ender Cathedral"           ,                                 ,                                                                               
+PlayerStructure , 3529 ,  4706 , "Portower"                  , "aeduna"                        ,                                                                               
+PlayerHouse     , 1200 , -4400 , "Ogdenville"                , "aeduna"                        , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Ogdenville" 
+PlayerStructure , 1148 , -72   , "Map\nroom"                 ,                                 ,                                                                               
+PlayerHouse     , 846  ,  86   ,                             ,                                 ,                                                                               
+PlayerCastle    , 151  ,  278  , "Obsidian   \nTower   "     ,                                 ,                                                                               
+PlayerHouse     , 2038 , -1442 ,                             , "pr0zak"                        ,                                                                               
+PlayerCastle    , 1391 ,   900 , "Burning\nruins"            ,                                 ,                                                                               
+DesertVillage   , 2244 , -1271 ,                                   
+DesertVillage   ,  797 ,   153 ,                                   
+DesertVillage   ,-3500 ,  -850 ,                                   
+DesertVillage   , -207 ,   881 ,                                   
+DesertVillage   ,-2900 ,  4410 ,                                   
+DesertVillage   , 4734 ,   805 ,                                   
+DesertVillage   , 4688 , -1516 ,                                   
+DesertVillage   , 1070 ,  -270 , "yabbyurple's\nadopted village"   
+Village         ,-3430 ,  4321 ,                                   
+Village         , 525  ,   537 ,                                   
+Village         ,-870  , -4489 ,                                   
+Village         , 1236 ,   353 , "aeduna's\nreanimated\nvillage"   
+Village         , 245  ,   350 , "\nGhost town"                    
+Village         ,-860  ,  4932 , "~Crevasse Village~"              
+Village         ,-4383 ,    66 , "Tiny  Village"                   
+Village         , 2589 , -2980 , "World's smallest village"        
+SavannahVillage , 3203 , -2023 ,                                   
+DesertTemple    ,-4056 , -2487 ,                                   
+DesertTemple    , 332  ,   186 ,                                   
+DesertTemple    , 4410 ,  2872 ,                                   
+DesertTemple    , 4680 ,  1281 , Buried temple 
+WitchHut        ,-3391 ,  1552 ,                                   
+WitchHut        ,-3903 , -4393 ,                                   
+WitchHut        , 1555 ,  3813 ,                                   
+PlayerHouse     , 949  ,    45 , "   Home of\n     GCPSoundLight" , "GCPSoundLight" , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?GCPSoundLight"    ,  
+Spawn    , 966  , -1090 , "Spawn"    ,           , "http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Spawn_Point"                 ,41
+//Spawn    , 1865 , -1172 , "Forest spawn"  ,           , "http://www.arsimagica.net/~eccles/geekery/minecraft/forest-desert-spawn.jpg" ,  
+//Spawn    , 1093 , -2079 , "Taiga spawn"   ,           ,  ,  
+//Spawn    , 984  , -48   , "Desert\nspawn" ,           , "http://www.arsimagica.net/~eccles/geekery/minecraft/desertspawn01.jpg"       ,  
+//Spawn    , 258  , -1163 , "Plains   \nspawn    "  ,           , "http://www.arsimagica.net/~eccles/geekery/minecraft/plains_spawn.jpg"        ,  
+PlayerHouse     ,-4000 , 2000  , "Orthanc"                     , "Malthraz"                ,                                     ,  
+PlayerStructure ,   -0 , 5000  , "Ozymandias"                  , "aeduna & ecchymotic"     ,                                     ,22
+PlayerHouse     , 1068 , -3290 , "Richard's Mountain Fortress" , "r1chardj0n3s"            ,                                     ,32
+PlayerCastle    , 1954 ,   860 , "Aaron's\nswamp tower"        , "WebSeer",                                     ,  
+PlayerHouse     , 3427 ,   562 , "Bag End"                     , "Malthraz"                ,                                     ,  
+PlayerHouse     , 3041 ,  1587 , "Villa"                       , "aeduna"                  ,                                     ,  
+PlayerStructure ,-3081 ,  339  , "Atlantis"                    ,  ,  ,  
+PlayerCastle    ,  170 ,  2631 , "Sneakthief's castle"         , "Sneakthief"              ,                                     ,  
+Village         ,-3281 , -1650 , "town of\nWhite Horse"      ,                           ,                                     ,  
+PlayerStructure ,  552 , -1053 , "Floating\nIsland"            , "Malthraz"                ,                                     ,  
+PlayerCastle    ,  339 , -1173 , "River castle"                , "Malthraz"                ,                                     ,  
+PlayerCastle    ,  176 , -960  , "    Fortified\n     village"           , "~Lex86~"                   ,                                     ,  
+PlayerStructure ,-2163 , -1537 , "Colliseum"                   , "Malthraz"                ,                                     ,  
+Village         ,-1952 , -1375 , "town of\nGodsneedle"
+Village         ,-2319 , -1787 , "town of\nRedHorse"   ,                           ,                                     ,  
+Dragon-commented-out          ,-1780 ,  -180 , "\nDragon Rampant"  ,             Crovexius              ,                                     ,  
+PlayerStructure         ,1901 , -208 , Ayutthaya  ,   aeduna                        ,   "http://www.arsimagica.net/~eccles/geekery/minecraft/desertspawn01.jpg"                                  ,  
+PlayerHouse         ,-2850 , -3700 ,  Tudor House ,   aeduna / ecchymotic                     ,                                     ,  
+PlayerStructure,  100, -4000, Big Bunny, emdrake, , 22
+PlayerHouse, 2300, -1900, Woodland Mansion, Tarq
+Label, 0, 0, "\nOrigin", "", http://www.arsimagica.net/cgi-bin/cgiwrap/eccles/arscuniculus.pl?Center_Of_Creation
+Dragon, -761, 62, "", "", "", , (here be dragons, also math says there's also a stronghold around here somewhere)
+Ship, 5500, 500
+PlayerHouse, 2073,-685, Muizarts, Muizarts
+Label, 1944, -1073, Lava Pool
+NetherPortal, 512, 1024, ~Portal to the Nether (Click to travel)~ ,,?src=example_nether.txt&x=64&z=128

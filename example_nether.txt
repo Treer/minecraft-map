@@ -1,0 +1,18 @@
+// Map settings:
+// =============
+// Divide the range from the example map by 8, because it's the Nether
+range = 800
+title = Map of the Nether
+
+
+// Map locations:
+// ==============
+//
+// Format:
+// Type        , x    ,  z    , Description     , Owner     , href                                                                       , IconIndex
+
+
+PlayerStructure, 20, 20, Railway switch, , , 11
+NetherFortress, -300, -200
+
+NetherPortal, 64, 128, ~Portal to the Overworld~ , , ?src=example.txt

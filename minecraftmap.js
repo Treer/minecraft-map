@@ -1,20 +1,24 @@
-// v1.5
+// v1.6
 //
 // Copyright 2014 Glenn Fisher
 //
-// While in development, I'm making this file GPL v3 (or later) licence until I 
-// get time to sort out licensing properly. Note that other files in 
-// this project have their own licence.
+// This is an unofficial mapping system for Minecraft. It is neither produced nor 
+// endorsed by Mojang.
 //
-// (bitcoin 1BcjNaumW41vZSJUkeSw2GVFcB6DFsuCB1)
+// Licenced under GPL licence, version 2 or later
+// https://www.gnu.org/copyleft/gpl.html
+//
+// Note that other files in this project have their own licence, see licence.md
+
 
 var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius          = 12;   // How far from the center of the icon is clickable
 var cTextOffset           = 14;   // How far under the center of the icon should the text be drawn
 var cLabel_DontDrawChar   = '~';  // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
 var cLabel_AlwaysDrawChar = '!';  // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
-
 var cCustomIconIndexStart = 64; // IconIndexes with this value or higher should be loaded from gCustomIcons
+
+
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 
@@ -104,7 +108,7 @@ function parseURL(url) {
 
 
 var LocationType = {
-  Village:         {iconIndex:  0, name: "Village",         href: "http://minecraft.gamepedia.com/Village#Plains"}, 
+  Village:         {iconIndex:  0, name: "Plains Village",  href: "http://minecraft.gamepedia.com/Village#Plains"}, 
   DesertVillage:   {iconIndex:  1, name: "Desert village",  href: "http://minecraft.gamepedia.com/Village#Desert"}, 
   SavannahVillage: {iconIndex:  0, name: "Savannah village",href: "http://minecraft.gamepedia.com/Village#Savannah"}, 
   WitchHut:        {iconIndex:  3, name: "Witch's hut",     href: "http://minecraft.gamepedia.com/Generated_structures#Witch_Huts"},
@@ -150,6 +154,7 @@ var LabellingStyleOverride = {
 // This array allows hints to be given about how labels should avoid the stock icons.
 // The earth won't end if this data is a little wrong, and working it out from the icon
 // images would waste a lot of time.
+// Icons not in this list are assumed to be 20x20.
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
 	 0: {width: 14, height: 16, yOffset: -1}, // village plain
@@ -171,7 +176,7 @@ var IconBoundsInformation = {
 	16: {width: 10, height: 10, yOffset:  0}, // pig
 	17: {width: 10, height: 10, yOffset:  0}, // cow
 	18: {width: 10, height: 10, yOffset:  0}, // sheep
-	19: {width: 16, height: 16, yOffset: -3}, // Pumpkin
+	19: {width: 12, height: 12, yOffset:  0}, // Pumpkin
 	20: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
 	21: {width:  4, height: 18, yOffset:  0}, // Obelisk
 	22: {width: 14, height: 24, yOffset: -4}, // Maoi
@@ -269,6 +274,10 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'hidelabelsabove') {
 			var new_HideLabelsAbove = parseInt(value);
 			if (!isNaN(new_HideLabelsAbove)) this.HideLabelsAbove = new_HideLabelsAbove;
+		}
+		if (key == 'showlabelsbelow') {
+			var new_ShowLabelsBelow = parseInt(value);
+			if (!isNaN(new_ShowLabelsBelow)) this.ShowLabelsBelow = new_ShowLabelsBelow;
 		}
 		if (key == 'range') {
 			var new_MapRange = parseInt(value);
@@ -695,11 +704,19 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		
 		// if "hidelabelsabove" is specified on the URL, then only display labels when
 		// the map is zoomed in more levels than the value of hidelabelsabove.
-		// i.e. 0 means always show labels, while 2 means don't show labels unless zoomed twice or more.
+		// i.e. 0 means always allow labels, while 2 means don't show labels unless zoomed twice or more.
 		if ('hidelabelsabove' in locationInfo.params) {
 			result.HideLabelsAbove = locationInfo.params.hidelabelsabove;
 		}	
 
+		// if "showlabelsbelow" is specified on the URL, then display all labels when
+		// the map is zoomed in more levels than the value of showlabelsbelow.
+		// 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
+		// i.e. 0 means always show *all* labels, while 2 means force all labels to be shown at level 3 (full zoom)
+		if ('showlabelsbelow' in locationInfo.params) {
+			result.ShowLabelsBelow = locationInfo.params.showlabelsbelow;
+		}			
+		
 		// Set any constants specified by the URL (instead of using the default value)
 		if ('range' in locationInfo.params) {	
 			result.MapRange = locationInfo.params.range;

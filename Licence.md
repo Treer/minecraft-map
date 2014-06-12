@@ -3,24 +3,24 @@
 This is an unofficial mapping system for Minecraft. It is neither produced nor 
 endorsed by Mojang.
 
-## Files in this directory:
+## Files in this directory (root):
 
 Copyright 2014.	
 
-This work by Glenn Fisher is licenced under GPL licence, version 2 or later
+These works by Glenn Fisher are made available under the GPL licence, version 3 or later.
 
 https://www.gnu.org/copyleft/gpl.html
 	
 ## Files in the js directory:
 
-Each have their own authors and licensing, which if not explicitly specified 
-in the file, can be located based on the file name.
+Each of these files have their own authors and licensing, which if not explicitly 
+specified in the file, can be located using file's name.
 	
 ## Files in the img directory:
 
 Copyright 2014.	
 
-These works by Glenn Fisher are licenced under a Creative Commons 
+These works by Glenn Fisher are made available under the Creative Commons 
 Attribution-NonCommercial-ShareAlike 4.0 International License.
 http://creativecommons.org/licenses/by-nc-sa/4.0/
 
