@@ -138,7 +138,7 @@ aside#sidebar p.repo-owner a {
   min-height: 0;
 }
 
-a.button {
+a.button, a.downloadbutton {
   width: 134px;
   height: 58px;
   line-height: 1.2;
@@ -148,25 +148,17 @@ a.button {
   padding-top: 22px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
 }
-a.button small {
+a.button small, a.downloadbutton small  {
   display: block;
   font-size: 11px;
 }
-header a.button {
+header a.button, header a.downloadbutton {
   position: absolute;
   right: 0;
   top: 0;
   background: transparent url(../images/github-button.png) 0 0 no-repeat;
 }
-aside a.button {
-  width: 138px;
-  padding-left: 64px;
-  display: block;
-  background: transparent url(../images/download-button.png) 0 0 no-repeat;
-  margin-bottom: 20px;
-  font-size: 21px;
-}
-a.downloadbutton {
+aside a.button, a.downloadbutton {
   width: 138px;
   padding-left: 64px;
   display: block;
@@ -177,6 +169,9 @@ a.downloadbutton {
 
 .monospace {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+}
+.menuoptions {
+	color: black;
 }
 
 code, pre {
