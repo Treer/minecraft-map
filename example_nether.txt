@@ -15,4 +15,5 @@ title = Map of the Nether
 PlayerStructure, 20, 20, Railway switch, , , 11
 NetherFortress, -300, -200
 
-NetherPortal, 64, 128, ~Portal to the Overworld~ , , ?src=example.txt
+NetherPortal,  64,  128, ~Portal to the Overworld~ , , ?src=example.txt
+NetherPortal,   0, -375, ~Portal to the Overworld~ , , ?src=example.txt

@@ -1,6 +1,5 @@
 // Map settings:
 // =============
-// Divide the range from the example map by 8, because it's the Nether
 title = My awesome map
 
 
