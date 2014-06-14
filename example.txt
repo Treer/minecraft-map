@@ -20,13 +20,18 @@ Forest         , 1439 ,  3233 , "Dark oak forest" ,                       , http
 Forest         , 1268 , -2410 , "Fairy forest"    , "ecchymotic & aeduna"
 FlowerForest   , 2146 ,  4144
 FlowerForest   , 4800 ,	-1500
+
+// Two flower forests and about 5 herds of horses on the same island
 FlowerForest   , 4343 , -2813
+FlowerForest   , 4228 , -2819
+Horse          , 4250 , -2500 , "\nEquine Island", "~Black horses, other horses, donkeys, and lots of flowers~" 
+IslandOverlay  , 4250 , -2500
+
 MushroomIsland , 3560 ,  2460 ,                 , , , 
 IslandOverlay  , 3560 ,  2460 ,                 , , , 
 Horse          , 1153 ,  4739 , "~Black\nhorses~" , , , 
 Horse          ,-3468 , -4721 , "~White\nhorses~" , , , 
 Horse          , 3222 , -4904 , ~Donkeys~         , , http://minecraft.gamepedia.com/Donkey , 
-Horse          , 4250 , -2500 , "~Black horses, donkeys, and others~" 
 Wolf           , -863 , -2523 , ~Wolves~        , , , 
 PlayerStructure , 3120 , 240   , "Serenity City"                    ,                         
 PlayerHouse     , 1850 , -1344 , "Hamish"                    , "emdrake"                       

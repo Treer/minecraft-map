@@ -142,7 +142,7 @@ var LocationType = {
 var LabellingStyle = {
   none:  0, // draw no labels (i.e. when zoomlevel < hidelabelsabove. Note that a level of 0 is 'higher' than a level of 1)
   smart: 1, // draw only the labels that have room, in order of importance (showlabelsbelow >= zoom level < hidelabelsabove. Note that a level of 0 is 'higher' than a level of 1)
-  all:   2  // draw all labels (zoom level > showlabelsbelow. Note that a level of 0 is 'higher' than a level of 1)
+  all:   2  // draw all labels (zoom level >= showlabelsbelow. Note that a level of 0 is 'higher' than a level of 1)
 }
 
 var LabellingStyleOverride = {
@@ -228,7 +228,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 
 	// MapDataUri has no default - it MUST be set from the "src" param on the URL.
 	if (!('HideLabelsAbove' in this)) this.HideLabelsAbove = hideLabelsAbove_Default;
-	if (!('ShowLabelsBelow' in this)) this.ShowLabelsBelow = 2; // 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
+	if (!('ShowLabelsBelow' in this)) this.ShowLabelsBelow = 3; // 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
 	if (!('MapRange'        in this)) this.MapRange = cMapRangeDefault;
 	if (!('Title'           in this)) this.Title = 'Map of the Overworld';
 	if (!('Blurb'           in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
@@ -1184,7 +1184,7 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 
 	if (zoomLevelNumber < config.HideLabelsAbove) {
 		labellingStyle = LabellingStyle.none;
-	} else if (zoomLevelNumber > config.ShowLabelsBelow) {
+	} else if (zoomLevelNumber >= config.ShowLabelsBelow) {
 		labellingStyle = LabellingStyle.all;	
 	} else {
 		labellingStyle = LabellingStyle.smart;
