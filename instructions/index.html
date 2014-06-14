@@ -30,7 +30,8 @@
         <section id="main-content">
 
 		<div style="float:right;">
-			<a href="https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=0B35KCzsTLKY1czVKc0xkRFZ4Y0U">		
+		
+			<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM">		
 				<img src="images/screenshot-small.jpg" width="400" height="275"/>
 				<br/>
 				<p style="text-align:center;">Example map, using real (SMP) locations</p>		
@@ -67,7 +68,7 @@
 		change this by adding a notepad app - in Google Drive go to <span class="menuoptions">Options &rarr; Manage apps</span>.</p>
 
 
-		<h2>What if this website disappears?</h2>
+		<h2>Can I trust this to not disappear after I've start using it?</h2>
 
 		<div style="float: right"> 
 		<a href="https://github.com/Treer/minecraft-map/archive/v1.6.zip" class="downloadbutton">
@@ -76,7 +77,7 @@
           </a>
 		</div>
 		
-		<p>You can download your own copy of the map generator an run it locally straight off your computer. Or host your own copy online.</p>
+		<p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive account.</p>
 
 		<p>If you want to maintain your locations list in a wiki-page then you may need to host the map generator yourself anyway - so that it's on the same domain as the wiki. 
 		For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
@@ -123,6 +124,8 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		
 		<p><a href="#Settings">Settings</a> for the map, such as <span class="setting">range</span> can also be specified in your location list file.</p>
 		
+		<p>Any line in the file that does not start with one of the <a href="#locationTypes">location-types</a> or a <a href="#SettingNames">setting-name</a> is ignored. So the line containing column headings is ignored, because "type" is not a location name nor the name of a setting.</p>
+		
 		<h2>Locations</h2>
 		
 		Each location may have up to 7 columns (or comma seperated values) of information:
@@ -130,7 +133,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 			
 		but only the first 3 items are required (type, x, z).
 		
-		<h3>type</h3>
+		<h3><a id="locationTypes"></a>type</h3>
 		<p>The first column specifies the type of location, and must be one of the following: </p>
 
 		<ul>
@@ -154,7 +157,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<li><span class="locationtype">MushroomIsland</span></li>
 		<li><span class="locationtype">Horse</span></li>
 		<li><span class="locationtype">Wolf</span></li>      
-		<li><span class="locationtype">Dragon</span> - a dragon. You can use it to indicate an End portal, the Ender Dragon, or just as "Here be dragons" filler decoration.</li>       
+		<li><span class="locationtype">Dragon</span> - a dragon. You can use it to indicate an End portal, the Ender Dragon, or just as "Here be dragons" map decoration.</li>       
 		<li><span class="locationtype">Ship</span> - a sailing ship. You can use it to decorate the map and indicate ocean.</li>       
 		<li><span class="locationtype">FenceOverlay</span></li>       
 		<li><span class="locationtype">IslandOverlay</span></li>       
@@ -162,20 +165,20 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		</ul>
   
 		<p>The location-type determines the default icon to be drawn at the location, and some have a default
-		href (for example, <span class="locationtype">Village</span> icons link to <a href="http://minecraft.gamepedia.com/Village">http://minecraft.gamepedia.com/Village</a> by default). 
+		href (for example, <span class="locationtype">Village</span> locations link to <a href="http://minecraft.gamepedia.com/Village">http://minecraft.gamepedia.com/Village</a> by default). 
 		However both the icon and the href of a location-type can be overridden by placing your own values in the appropriate columns.
 		</p>
 		
 		<p>Given that any location-type can be set to display any icon or href, their purpose is only to make the list easier to read, and to 
 		save having to repeatedly type out the details.</p>
 		
-		<h3>x and z</h3>
+		<h3><span class="columnname">x</span> and <span class="columnname">z</span></h3>
 
 		<p>The x and z columns should contain the area's coordinates from Minecraft (press F3 in the game to see your coordinates).</p>
 		
 		<p>Don't worry about decimal places, just round the coordinates to whole numbers.</p>
 		
-		<h3>description and owner</h3>
+		<h3><span class="columnname">description</span> and <span class="columnname">owner</span></h3>
 		
 		<p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:
 			<ul> 
@@ -191,15 +194,22 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 			<li>You can also use commas inside a label when it's surrounded by quotation marks.</li>
 			</ul>					
 		</p>
+
+		<p>Having full control of this markup is why I recommend editing the file with a text editor instead of a spreadsheet or office application.</p>
 		
 		<p>If you want to make a label invisible, you can surround it with tildes, e.g:
 		<pre>PlayerHouse, 100, 100, Mansion, ~owner~</pre></p>
 		
-		<p>If you want to force a label to always be shown, you can surround it with exclamation marks, e.g:
+		<p>If you want to force a label to always be shown - even when it will overlap another label or icon, you can surround it with exclamation marks, e.g:
 		<pre>PlayerHouse, 100, 100, !Mansion!, owner</pre></p>
 		
+		<p>When two labels overlap, locations that are higher in the list will have their label displayed in preference to the label of a 
+		location lower in the list. By default, all labels are shown in the most zoomed-in view.</p>
 
-		<h3>href</h3>
+		<p>The visibility of labels can also be controlled using the <a href="#Settings_labels"><span class="setting">hidelabelsabove</span> and 
+		<span class="setting">showlabelsbelow</span> settings</a>.</p>
+		
+		<h3><span class="columnname">href</span></h3>
 		By placing a URL in this column you can make the map location clickable. Some suggested uses:
 		<ul>
 		<li>A link to pictures of the location, or information.</li>
@@ -207,11 +217,11 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this.</li>
 		</ul>
 
-		<h3>icon-index</h3>
+		<h3><span class="columnname">icon-index</span></h3>
 		
 		<p>There are more icons available than can be specified with the location-type. The icon-index field lets you 
 		manually choose the icon to be displayed at the location. The stock icons and their icon-index can be viewed in this 
-		<a href="https://googledrive.com/host/0B35KCzsTLKY1bHJMakdRYUtKN2M/index.html?src=legend.txt">Legend Map</a>. 
+		<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">Legend Map</a>. 
 		You can also <a href="#Settings_icons">add your own</a>.</p>
 
 		<p>You'll notice two styles of icons, some are in Minecraft style and others are in the hand-drawn fantasy map style, 
@@ -221,18 +231,18 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		
 		<h1><a id="Settings"></a>Settings</h1>
 				
-		<p>Map settings such as <span class="setting">range</span> can be specified either in the location-list file, or 
-		in the map URL. Settings in the URL will override settings in the location-list file, allowing the creation of different URLs
+		<p>Map settings such as <span class="setting">range</span> can be specified either in your location-list file, or 
+		in the map's URL. Settings in the URL will override settings in the location-list file, allowing the creation of different URLs
 		for different views of the same location list. For example a portal might link to a the URL of a map for the Nether, but with 
-		coordinates specified so the Nether map will be centered on the portal that was clicked.</p>
+		<span class="setting">x</span> and <span class="setting">z</span> specified so the Nether map will be centered on the portal that was clicked.</p>
 		
-		<p>Rather than comma seperated values, the settings take the from of <code>key=value</code>. Settings must have one line each when in a location-list file, but
+		<p>Rather than comma seperated values, settings take the from of <code>key=value</code>. Settings must have one line each when in a location-list file, but
 		are all on the same line when specified in a URL - separated by "&amp;" symbols.</p>
 		
 		<p>When string values are specified in a setting in a URL, you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
 		the URL remains valid.</p>
 						
-		<p>The following settings are available:
+		<p><a id="SettingNames"></a>The following settings are available:
 		
 		<ul>
 		<li><span class="setting">range</span></li>
@@ -249,23 +259,89 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		</ul>
 		</p>
 		
+		<h3>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>	
 		
-		<p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, but no other settings are required.
-		Neither <span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
+		<p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither 
+		<span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
 		
+		<p>There are no other required settings.</p>
 		
-		<h3><a id="Settings_icons"></a>icons</h3>
+		<p><span class="setting">src</span> tells the map generator where to get the location-list file, or webpage. It can be a relative or absolute URL, and you
+		should <a href="UrlEncoder.html">encode its value</a> to help keep the map URL nicely formatted.</p>
+		
+		<p><span class="setting">googlesrc</span> is a shorthand replacement for <span class="setting">src</span> to save you having to specify a full googledrive URL. 
+		If your locations file is on Google Drive then you can set <span class="setting">googlesrc</span> to the <a href="googledrive.html#GoogleId">file's unique code</a> 
+		instead of using <span class="setting">src</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
+		
+		<h3><span  class="setting">range</span></h3>		
+		
+		<p>This sets the radius the map will cover, it defaults to 3200 which makes the map 6400 Minecraft blocks wide and 6400 Minecraft blocks high by default.</p>
+
+		<p>Tip: Try to make the range a multiple of 32, as this results in the scale at the bottom-left of the map showing nice round numbers. (This is because there are 64 
+		blocks in the map background texture, and the scale is aligned to the texture to help make it easier to estimate distances)</p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&range=1600">Example - map with range set to 1600</a></p>
+		
+		<h3><span  class="setting">title</span></h3>	
+		
+		<p>This defaults to "Map of the Overworld", but you probably want to give your map its own name, or have a "Map of the Nether", this option lets you set the title of the map.</p>
+		
+		<p>You can put HTML in the value for this. If you are specifying the title in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+		if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+
+		<h3><span  class="setting">blurb</span></h3>	
+		
+		<p>This defaults to "Use up/down or mousewheel to zoom, drag to scroll", but you might have something more interesting to say, or something you want to link to.</p>
+
+		<p>You can put HTML in the value for this. If you are specifying the blurb in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+		if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+
+
+		<h3><span  class="setting">x</span> and <span  class="setting">z</span></h3>		
+		<p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&x=966&z=-1090">Example - map centered on the spawn point</a></p>
+
+		<h3><a id="Settings_icons"></a><span class="setting">icons</span></h3>
 
 		<p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list 
 		file, and use the <span class="setting">icons</span> setting to add them to the list of icons (their icon-indexes will begin at 64).</p>
 		
 		Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background). 
 		You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.
+
+		<h3><span  class="setting">showorigin</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
+
+		<h3><span  class="setting">showscale</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>		
+
+		<h3><span  class="setting">showcoordinates</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the 
+		mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS.</p>
+
+		<h3><a id="Settings_labels"></a><span class="setting">hidelabelsabove</span></h3>
+		
+		<p>This specifies the "zoom-level" that must be reached before labels are displayed. It defaults to 0, which means labels are always shown.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>		
+		
+		<h3><span class="setting">showlabelsbelow</span></h3>
+
+		<p>This specifies the "zoom-level" at which all labels will be displayed, even if they overlap other labels or icons (labels are normally only displayed when then don't 
+		overlap other items in the map). It defaults to 3, which means that at the last zoom-level (3), all labels are shown.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>		
 		
 		<h1>Tips</h1>
 		you can use the paper texture to estimate distance, as the distance scale is aligned with it.
 		
-		make range divisible by 32 for round numbers on the scale		
+		Overlays
 		
 		Controlling captions
 		  - add newlines to caption large images

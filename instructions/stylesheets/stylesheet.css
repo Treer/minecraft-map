@@ -339,6 +339,10 @@ b {
 	font-weight: bold
 }
 
+.columnname {
+	font-weight: bold;
+}
+
 .locationtype,  .setting {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   font-size: 90%;
