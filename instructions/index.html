@@ -59,16 +59,22 @@
 		<p>To create your own map you take the URL of the map generator and add your own settings to the end of it. One of 
 		the settings you will add is the URL of a file or page which contains all the locations you want displayed on your map, 
 		this file could be in your Dropbox, it could a wiki-page, a webpage, or a file on Google Drive.</p>
-		
-		<p>Example <a href="dropbox.html">using Dropbox</a>.</p>
 				
+				
+		<p>
+		<ul>
+		<li>Example <a href="dropbox.html">using Dropbox</a>.</li>
+		<li>More details of <a href="#Settings_src">how to specify the URL of the locations file</a></li>
+		</ul>
+		</p>
+
 		<p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good 
 		places to keep the list of locations - that way everyone can edit the list and the map generator can read the locations directly from it. 
 		The locations list can be in either html format or txt format. By default, Google Drive will view .txt files but not edit them, you can 
 		change this by adding a notepad app - in Google Drive go to <span class="menuoptions">Options &rarr; Manage apps</span>.</p>
 
 
-		<h2>Can I trust this to not disappear after I've start using it?</h2>
+		<h2>Can I trust this to not disappear after I've started using it?</h2>
 
 		<div style="float: right"> 
 		<a href="https://github.com/Treer/minecraft-map/archive/v1.6.zip" class="downloadbutton">
@@ -77,18 +83,22 @@
           </a>
 		</div>
 		
-		<p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive account.</p>
+		<p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive/Dropbox account.</p>
 
 		<p>If you want to maintain your locations list in a wiki-page then you may need to host the map generator yourself anyway - so that it's on the same domain as the wiki. 
 		For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
 		the map generator to access your locations list unless both their addresses share the same domain, so...</p> 
 		
 		<p class="highlight">that means <span style="font-weight: bold;">if you don't want to host the map generator yourself, and just want to use the one already on Google Drive, 
-		then you must also create you locations list on Google Drive itself, or on a site such as Dropbox</span> which allows cross-origin resource sharing</p>
+		then you must also create you locations list on Google Drive itself, or on a site such as Dropbox</span> which allows cross-origin resource sharing.</p>
+		
+		<p>I haven't mentioned other cloud file/hosting services as I've not tried them, they probably work fine though.</p>
 		
 		<h1><a id="LocationListFormat"></a>Making a location list file</h1>
 				
-		<p style="color: red"><a href="">An example location-list file</a></p>
+		<p><a href=https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">An example location-list file.</a></p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/template.txt">A template location-list file.</a></p>
 		
 		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
 		
@@ -259,7 +269,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		</ul>
 		</p>
 		
-		<h3>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>	
+		<h3><a id="Settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>	
 		
 		<p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither 
 		<span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
@@ -305,11 +315,17 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<h3><a id="Settings_icons"></a><span class="setting">icons</span></h3>
 
 		<p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list 
-		file, and use the <span class="setting">icons</span> setting to add them to the list of icons (their icon-indexes will begin at 64).</p>
+		file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
 		
-		Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background). 
-		You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.
+		<p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background). 
+		You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
 
+		<p>The <span class="setting">icons</span> setting can be a relative or absolute URL, and you should <a href="UrlEncoder.html">encode its value</a> 
+		to help keep the map URL nicely formatted. If your png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
+		and specify the file's unique code instead of the URL.</p>		
+		
+
+		
 		<h3><span  class="setting">showorigin</span></span></h3>	
 
 		<p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
