@@ -292,6 +292,9 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'icons' && isString(value)) {
 			this.CustomIconsUri = unquoteString(value);
 		}
+		if (key == 'googleicons' && isString(value)) {
+			this.CustomIconsUri = 'https://googledrive.com/host/' + unquoteString(value);
+		}
 		if (key == 'showorigin' && isString(value)) {
 			this.ShowOrigin = stringToBool(value);
 		}
@@ -769,8 +772,15 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		
 		// Some extra support for hosting via Google Drive, as google drive is a good way to make
 		// the map collaborative while avoiding cross-domain data headaches.
-		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {		
-			result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {
+
+			if (locationInfo.params.googlesrc.toLowerCase().indexOf('http') == 0) {
+				// User has used googlesrc when they should have used src. Rather than 
+				// explain the error just correct it.
+				result.MapDataUri = locationInfo.params.googlesrc;
+			} else {
+				result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+			}
 		}
 		if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
 			result.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;

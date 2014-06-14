@@ -1,0 +1,15 @@
+// Map settings:
+// =============
+// Divide the range from the example map by 8, because it's the Nether
+title = My awesome map
+
+
+// Map locations:
+// ==============
+//
+// Format:
+// Type, x, z, description, owner, href , iconIndex
+
+PlayerFarm,      100,  100, My awesome farm, my name here, , 16
+PlayerCastle,   -300, -200, My awesome castle, my name here
+Dragon,         -800,  800
