@@ -3,6 +3,7 @@
 // Divide the range from the example map by 8, because it's the Nether
 range = 800
 title = Map of the Nether
+showorigin = false
 
 
 // Map locations:
