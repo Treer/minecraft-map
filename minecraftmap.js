@@ -5,7 +5,7 @@
 // This is an unofficial mapping system for Minecraft. It is neither produced nor 
 // endorsed by Mojang.
 //
-// Licenced under GPL licence, version 2 or later
+// Licenced under GPL licence, version 3 or later
 // https://www.gnu.org/copyleft/gpl.html
 //
 // Note that other files in this project have their own licence, see licence.md
