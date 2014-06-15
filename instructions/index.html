@@ -31,7 +31,7 @@
 
 		<div style="float:right;">
 		
-			<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM">		
+			<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM">		
 				<img src="images/screenshot-small.jpg" width="400" height="275"/>
 				<br/>
 				<p style="text-align:center;">Example map, using real (SMP) locations</p>		
@@ -48,7 +48,7 @@
 		<ol>
 		<li>Create a .txt file containing all your <a href="#LocationListFormat">map locations</a>, and upload it to Google Drive.</li>
 		<li>Set the file's visibility to "<a href="googledrive.html#Visibility">Public on the web</a>" then add <a href="googledrive.html#GoogleId">its unique code</a> to the end of this URL:<br/>
-			<pre>https://googledrive.com/host/0B35KCzsTLKY1bXBnOGdSR0V0ZUU/index.html?googlesrc=</pre>
+			<pre>https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=</pre>
 		</li>
 		<li>You're done!</li>
 		</ol>
@@ -93,9 +93,10 @@
 		
 		<h1><a id="LocationListFormat"></a>Making a location list file</h1>
 				
-		<p><a href=https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">An example location-list file.</a></p>
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">An example location-list file.</a></p>
 		
 		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/template.txt">A template location-list file.</a></p>
+		
 		
 		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
 		
@@ -106,7 +107,7 @@
 
 DesertVillage,  245,   350, "Ghost town" 	
 WitchHut,     -4056, -2487,
-PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", "", 21</pre>
+PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone", "", 21</pre>
         </div>		
 		
 		
@@ -115,7 +116,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<ul>
 		<li>DesertVillage,  245,   350, "Ghost town"</li>
 		<li>WitchHut,     -2056, -2487</li>
-		<li>PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", "", 21</li>
+		<li>PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone", "", 21</li>
 		</ul>
 		
 		<p>or by using a table:</p>
@@ -124,7 +125,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		<TR><TD COLSPAN="1"><strong>Type</strong></TD><TD COLSPAN="1"> x    </TD><TD COLSPAN="1">  z    </TD><TD COLSPAN="1"><strong>Description</strong></TD><TD COLSPAN="1"><strong>Owner</strong></TD><TD COLSPAN="1"><strong>href</strong></TD><TD COLSPAN="1"><strong>IconIndex</strong> </TD></TR>
 		<TR><TD colspan='1'> DesertVillage        </TD><TD COLSPAN="1">1245 </TD><TD COLSPAN="1"> 350 </TD><TD COLSPAN="1">Ghost town</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
 		<TR><TD colspan='1'> WitchHut        </TD><TD COLSPAN="1">-2056 </TD><TD COLSPAN="1"> -2487 </TD><TD COLSPAN="1"></TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
-		<TR><TD colspan='1'> PlayerHouse        </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">RedstoneRising's mountain lair</TD><TD COLSPAN="1">RedstoneRising</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">21</TD></TR>
+		<TR><TD colspan='1'> PlayerHouse        </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">Dr.Frankenstone's mountain lair</TD><TD COLSPAN="1">Dr.Frankenstone</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">21</TD></TR>
 		</TABLE></p>
 		
 		<p>(Or with a combination of bullet lists and tables)</p>
@@ -364,7 +365,8 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 		
 		<p>Yet to come...</p>
 		
-		<p>Until I write this section, you can have a look in the legend.txt file - it implements overlays</p>
+		<p>Until I write this section, you can have a look near the bottom of the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/legend.txt">legend.txt</a> 
+		file - it <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">implements</a> overlays</p>
 		
 		<h2>Adjusting labels so they don't overlap</h2>
 
@@ -372,7 +374,7 @@ PlayerHouse,   -800, -1800, "RedstoneRising's mountain lair", "RedstoneRising", 
 
 		<p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things 
 		too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in 
-		the example.txt file - it uses all the tricks</p>
+		the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">example.txt</a> file - it uses all the tricks</p>
 		
 		<!--
 		Controlling captions
