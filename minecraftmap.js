@@ -658,7 +658,9 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			}
 		);
 	} else {
-		alert('no "src=" url was specified to scrape the location data from.');
+		if (configFromUrl.Abort != true) {
+			alert('no "src=" url was specified to scrape the location data from.');
+		}
 	}	
 	
 	function ApplyMapConfiguration(config) {
@@ -694,9 +696,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			});
 					
 		} else {
-			if (result.Abort != true) {
-				alert('Internal error: dataUrl not string');
-			}
+			alert('Internal error: dataUrl not string');
 		}	
 	}
 	
