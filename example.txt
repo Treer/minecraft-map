@@ -66,7 +66,7 @@ DesertVillage   , 1070 ,  -270 , "yurple's\nadopted village" , yurple
 Village         ,-3430 ,  4321 ,                                   
 Village         , 525  ,   537 ,                                   
 Village         ,-870  , -4489 ,                                   
-Village         , 1236 ,   353 , "aeduna's\nreanimated\nvillage"   
+Village         , 1236 ,   353 , "aeduna's\nreanimated\nvillage" , aeduna   
 Village         , 245  ,   350 , "\nGhost town"                    
 Village         ,-860  ,  4932 , "~Crevasse Village~" , , http://imgur.com/xO3W9jT       
 Village         ,-4383 ,    66 , "Tiny  Village"                   

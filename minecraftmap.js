@@ -1,4 +1,4 @@
-// v1.6
+// v1.61
 //
 // Copyright 2014 Glenn Fisher
 //
@@ -704,6 +704,18 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		var result = new MapConfiguration();
 
 		var locationInfo = parseURL(location);
+		
+		if (locationInfo.params.length == 0) {
+			// Check for the Google bug (where GoogleDrive intermittently performs a 301 redirect and 
+			// loses all of the URL paramters in the process)
+			if (location.host.indexOf("googledrive.com") > 20) {
+				// there are no URL parameters and the URL has been changed to something like
+				// https://85b5da109cbab0a781619b9c891f667f8ebe60b8.googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html
+				// (See http://stackoverflow.com/questions/24188499)
+			
+				alert('Google Drive appears to be on the fritz again.\n\nSee http://buildingwithblocks.info/googlebug for more details\n\nUntil they fix it, the map generator can still be run locally, or by hosting it elsewhere.');
+			}			
+		}
 		
 		// if "hidelabelsabove" is specified on the URL, then only display labels when
 		// the map is zoomed in more levels than the value of hidelabelsabove.
