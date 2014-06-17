@@ -705,7 +705,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		var locationInfo = parseURL(location);
 		
-		if (locationInfo.params.length == 0) {
+		if (Object.keys !== undefined && Object.keys(locationInfo.params).length == 0) {
 			// Check for the Google bug (where GoogleDrive intermittently performs a 301 redirect and 
 			// loses all of the URL paramters in the process)
 			if (location.host.indexOf("googledrive.com") > 20) {
