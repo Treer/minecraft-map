@@ -715,7 +715,11 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 				// https://85b5da109cbab0a781619b9c891f667f8ebe60b8.googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html
 				// (See http://stackoverflow.com/questions/24188499)
 			
-				alert('Google Drive appears to be on the fritz again.\n\nSee http://buildingwithblocks.info/googlebug for more details\n\nUntil they fix it, the map generator can still be run locally, or by hosting it elsewhere.');
+				alert(
+					'no "src=" url was specified to scrape the location data from.\n\n' + 
+					'(On the off-chance you did specify a src parameter and it\'s gone, then Google Drive could be experiencing problems again:\n' +
+					'See http://buildingwithblocks.info/googlebug for more details)'
+				);
 				result.Abort = true;
 			}			
 		}
