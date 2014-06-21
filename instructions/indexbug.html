@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Making your own Minecraft map</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Make a Minecraft map</h1>
+        <h2>Collaboratively create maps of the server you play on without needing admin or hosting</h2>
+        <!--<a href="https://github.com/Treer/minecraft-map" class="button"><small>View project on</small>GitHub</a>-->
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+		<a href="googlebug.html" style="color:red;">
+		<p>Google Drive is experiencing problems. Try anyway, but the map generator may fail, as it's hosted there.<br/>
+		(click here for more details)</p>		
+		</a>
+		
+		
+		<div style="float:right;">
+		
+			<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM">		
+				<img src="images/screenshot-small.png" width="400" height="288"/>
+				<br/>
+				<p style="text-align:center;">Example map, using real (SMP) locations</p>		
+			</a>
+		</div>
+		
+		<p>The map lets any player show locations of interest in the world without spoiling the element of exploration.</p>
+		
+		<p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration, 
+		<a href="http://overviewer.org">Overviewer</a> provides a nice full online map system)</p>
+		
+        <h1 style="clear:both;">Creating your own</h1>
+		
+		<ol>
+		<li>Create a .txt file containing all your <a href="#LocationListFormat">map locations</a>, and upload it to Google Drive.</li>
+		<li>Set the file's visibility to "<a href="googledrive.html#Visibility">Public on the web</a>" then add <a href="googledrive.html#GoogleId">its unique code</a> to the end of this URL:<br/>
+			<pre>https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=</pre>
+		</li>
+		<li>You're done!</li>
+		</ol>
+		
+
+		<h2>Or run it from your Dropbox, or a wiki page.</h2>
+		
+		<p>Example <a href="dropbox.html">using Dropbox</a>.</p>
+		
+		<p>To create your own map you take the URL of the map generator and add your own settings to the end of it. One of 
+		the settings you will add is the URL of a file or page which contains all the locations you want displayed on your map, 
+		this file could be in your Dropbox, it could a wiki-page, a webpage, or a file on Google Drive.</p>
+				
+				
+		<p>More details of <a href="#Settings_src">how to specify the URL of the locations file</a></p>
+
+		<p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good 
+		places to keep the list of locations - that way everyone can edit the list and the map generator can read the locations directly from it. 
+		The locations list can be in either html format or txt format. By default, Google Drive will view .txt files but not edit them, you can 
+		change this by adding a notepad app - in Google Drive go to <span class="menuoptions">Options &rarr; Manage apps</span>.</p>
+
+
+		<h2>Can I trust this to not disappear after I've started using it?</h2>
+
+		<div style="float: right"> 
+		<a href="https://github.com/Treer/minecraft-map/archive/v1.6.zip" class="downloadbutton">
+            <small>Download</small>
+            .zip file
+          </a>
+		</div>
+		
+		<p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive/Dropbox account.</p>
+
+		<p>If you want to maintain your locations list in a wiki-page then you may need to host the map generator yourself anyway - so that it's on the same domain as the wiki. 
+		For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
+		the map generator to access your locations list unless both their addresses share the same domain, so...</p> 
+		
+		<p class="highlight">that means <span style="font-weight: bold;">if you don't want to host the map generator yourself, and just want to use the one already on Google Drive, 
+		then you must also create you locations list on Google Drive itself, or on a site such as Dropbox</span> which allows cross-origin resource sharing.</p>
+		
+		<p>I haven't mentioned other cloud file/hosting services as I've not tried them, they probably work fine though.</p>
+		
+		<h1><a id="LocationListFormat"></a>Making a location list file</h1>
+				
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">An example location-list file.</a></p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/template.txt">A template location-list file.</a></p>
+		
+		
+		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
+		
+		<p>If your location list file is a text file, then the filename must end in either <code>.txt</code> or <code>.csv</code> (I recommend .txt because an office application
+		might open a .csv file and mess it up). Locations are specified in comma separated format. For example:</p>
+        <div class="highlight">
+		<pre style="font-size: 70%">type,             x,     z,    description,                      owner,       href, icon-index
+
+DesertVillage,  245,   350, "Ghost town" 	
+WitchHut,     -4056, -2487,
+PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone", "", 31</pre>
+        </div>		
+		
+		
+		<p>If the location list is an html file (for example a wiki page), then the locations can be specified either with 
+		unordered "bullet" lists in the same comma separated format, e.g:</p>
+		<ul>
+		<li>DesertVillage,  245,   350, "Ghost town"</li>
+		<li>WitchHut,     -2056, -2487</li>
+		<li>PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone", "", 31</li>
+		</ul>
+		
+		<p>or by using a table:</p>
+
+		<p><TABLE BORDER='1'>
+		<TR><TD COLSPAN="1"><strong>Type</strong></TD><TD COLSPAN="1"> x    </TD><TD COLSPAN="1">  z    </TD><TD COLSPAN="1"><strong>Description</strong></TD><TD COLSPAN="1"><strong>Owner</strong></TD><TD COLSPAN="1"><strong>href</strong></TD><TD COLSPAN="1"><strong>IconIndex</strong> </TD></TR>
+		<TR><TD colspan='1'> DesertVillage        </TD><TD COLSPAN="1">1245 </TD><TD COLSPAN="1"> 350 </TD><TD COLSPAN="1">Ghost town</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> WitchHut        </TD><TD COLSPAN="1">-2056 </TD><TD COLSPAN="1"> -2487 </TD><TD COLSPAN="1"></TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> PlayerHouse        </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">Dr.Frankenstone's mountain lair</TD><TD COLSPAN="1">Dr.Frankenstone</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">31</TD></TR>
+		</TABLE></p>
+		
+		<p>(Or with a combination of bullet lists and tables)</p>
+		
+		<p><a href="#Settings">Settings</a> for the map, such as <span class="setting">range</span> can also be specified in your location list file.</p>
+		
+		<p>Any line in the file that does not start with one of the <a href="#locationTypes">location-types</a> or a <a href="#SettingNames">setting-name</a> is ignored. So the line containing column headings is ignored, because "type" is not a location name nor the name of a setting.</p>
+		
+		<h2>Locations</h2>
+		
+		Each location may have up to 7 columns (or comma seperated values) of information:
+			<blockquote>type, x, z, description, owner, href, icon-index</blockquote>
+			
+		but only the first 3 items are required (type, x, z).
+		
+		<h3><a id="locationTypes"></a>type</h3>
+		<p>The first column specifies the type of location, and must be one of the following: </p>
+
+		<ul>
+		<li><span class="locationtype">Spawn</span></li>
+		<li><span class="locationtype">PlayerHouse</span></li>
+		<li><span class="locationtype">PlayerCastle</span></li>
+		<li><span class="locationtype">PlayerFarm</span></li>
+		<li><span class="locationtype">PlayerMachine</span></li>
+		<li><span class="locationtype">PlayerStructure</span> - a generic catch-all block for things players have built that defy any more specific icons.</li>
+		<li><span class="locationtype">EnchantingRoom</span></li>
+		<li><span class="locationtype">Village</span></li>
+		<li><span class="locationtype">DesertVillage</span></li>
+		<li><span class="locationtype">SavannahVillage</span></li>
+		<li><span class="locationtype">JungleTemple</span></li>   
+		<li><span class="locationtype">DesertTemple</span></li> 
+		<li><span class="locationtype">WitchHut</span></li>
+		<li><span class="locationtype">NetherFortress</span></li>
+		<li><span class="locationtype">NetherPortal</span></li>
+		<li><span class="locationtype">Forest</span></li>
+		<li><span class="locationtype">FlowerForest</span></li>
+		<li><span class="locationtype">MushroomIsland</span></li>
+		<li><span class="locationtype">Horse</span></li>
+		<li><span class="locationtype">Wolf</span></li>      
+		<li><span class="locationtype">Dragon</span> - a dragon. You can use it to indicate an End portal, the Ender Dragon, or just as "Here be dragons" map decoration.</li>       
+		<li><span class="locationtype">Ship</span> - a sailing ship. You can use it to decorate the map and indicate ocean.</li>       
+		<li><span class="locationtype">FenceOverlay</span></li>       
+		<li><span class="locationtype">IslandOverlay</span></li>       
+		<li><span class="locationtype">Label</span> - a location-type that has no icon by default, you can use it to place plain text onto the map.</li>     
+		</ul>
+  
+		<p>The location-type determines the default icon to be drawn at the location, and some have a default
+		href (for example, <span class="locationtype">Village</span> locations link to <a href="http://minecraft.gamepedia.com/Village">http://minecraft.gamepedia.com/Village</a> by default). 
+		However both the icon and the href of a location-type can be overridden by placing your own values in the appropriate columns.
+		</p>
+		
+		<p>Given that any location-type can be set to display any icon or href, their purpose is only to make the list easier to read, and to 
+		save having to repeatedly type out the details.</p>
+		
+		<h3><span class="columnname">x</span> and <span class="columnname">z</span></h3>
+
+		<p>The x and z columns should contain the area's coordinates from Minecraft (press F3 in the game to see your coordinates).</p>
+		
+		<p>Don't worry about decimal places, just round the coordinates to whole numbers.</p>
+		
+		<h3><span class="columnname">description</span> and <span class="columnname">owner</span></h3>
+		
+		<p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:
+			<ul> 
+			<li>You can insert a \n in your text if you want to split the line.</li>
+			<li>You can add spaces to pad out the start or end of your label if you want to nudge its position slightly 
+			to avoid something else on the map nearby. <br/>
+			<span class="note">(Note that html collapses multiple spaces into one, so in a wiki you'd 
+			have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span></li>
+			<li>You can use quotation marks inside a label when it's surrounded by quotation marks. Do this by placing two in a row, for 
+			example <code>"My ""Scare quotes"""</code> will be drawn as <code>My "Scare quotes"</code>.<br/>
+			<span class="note">(Note that quotation marks cannot be used in a label unless it's surrounded with quotation 
+			marks)</span></li>
+			<li>You can also use commas inside a label when it's surrounded by quotation marks.</li>
+			</ul>					
+		</p>
+
+		<p>Having full control of this markup is why I recommend editing the file with a text editor instead of a spreadsheet or office application.</p>
+		
+		<p>If you want to make a label invisible, you can surround it with tildes, e.g:
+		<pre>PlayerHouse, 100, 100, Mansion, ~owner~</pre></p>
+		
+		<p>If you want to force a label to always be shown - even when it will overlap another label or icon, you can surround it with exclamation marks, e.g:
+		<pre>PlayerHouse, 100, 100, !Mansion!, owner</pre></p>
+		
+		<p>When two labels overlap, locations that are higher in the list will have their label displayed in preference to the label of a 
+		location lower in the list. By default, all labels are shown in the most zoomed-in view.</p>
+
+		<p>The visibility of labels can also be controlled using the <a href="#Settings_labels"><span class="setting">hidelabelsabove</span> and 
+		<span class="setting">showlabelsbelow</span> settings</a>.</p>
+		
+		<h3><span class="columnname">href</span></h3>
+		By placing a URL in this column you can make the map location clickable. Some suggested uses:
+		<ul>
+		<li>A link to pictures of the location, or information.</li>
+		<li>A link to information about the player</li>
+		<li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this.</li>
+		</ul>
+
+		<h3><span class="columnname">icon-index</span></h3>
+		
+		<p>There are more icons available than can be specified with the location-type. The icon-index field lets you 
+		manually choose the icon to be displayed at the location. The stock icons and their icon-index can be viewed in this 
+		<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">Legend Map</a>. 
+		You can also <a href="#Settings_icons">add your own</a>.</p>
+
+		<p>You'll notice two styles of icons, some are in Minecraft style and others are in the hand-drawn fantasy map style, 
+		the idea was to give the impression of Minecraft structures on a fantasy map.</p>
+		
+		<br/>
+		
+		<h1><a id="Settings"></a>Settings</h1>
+				
+		<p>Map settings such as <span class="setting">range</span> can be specified either in your location-list file, or 
+		in the map's URL. Settings in the URL will override settings in the location-list file, allowing the creation of different URLs
+		for different views of the same location list. For example a portal might link to a the URL of a map for the Nether, but with 
+		<span class="setting">x</span> and <span class="setting">z</span> specified so the Nether map will be centered on the portal that was clicked.</p>
+		
+		<p>Rather than comma seperated values, settings take the from of <code>key=value</code>. Settings must have one line each when in a location-list file, but
+		are all on the same line when specified in a URL - separated by "&amp;" symbols.</p>
+		
+		<p>When string values are specified in a setting in a URL, you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
+		the URL remains valid.</p>
+						
+		<p><a id="SettingNames"></a>The following settings are available:
+		
+		<ul>
+		<li><span class="setting">range</span></li>
+		<li><span class="setting">title</span></li>
+		<li><span class="setting">blurb</span></li>
+		<li><span class="setting">x</span></li>
+		<li><span class="setting">z</span></li>
+		<li><span class="setting">icons</span></li>
+		<li><span class="setting">showorigin</span></li>
+		<li><span class="setting">showscale</span></li>
+		<li><span class="setting">showcoordinates</span></li>
+		<li><span class="setting">hidelabelsabove</span></li>
+		<li><span class="setting">showlabelsbelow</span></li>
+		</ul>
+		</p>
+		
+		<h3><a id="Settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>	
+		
+		<p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither 
+		<span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
+		
+		<p>There are no other required settings.</p>
+		
+		<p><span class="setting">src</span> tells the map generator where to get the location-list file, or webpage. It can be a relative or absolute URL, and you
+		should <a href="UrlEncoder.html">encode its value</a> to help keep the map URL nicely formatted.</p>
+		
+		<p><span class="setting">googlesrc</span> is a shorthand replacement for <span class="setting">src</span> to save you having to specify a full googledrive URL. 
+		If your locations file is on Google Drive then you can set <span class="setting">googlesrc</span> to the <a href="googledrive.html#GoogleId">file's unique code</a> 
+		instead of using <span class="setting">src</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
+		
+		<h3><span  class="setting">range</span></h3>		
+		
+		<p>This sets the radius the map will cover, it defaults to 3200 which makes the map 6400 Minecraft blocks wide and 6400 Minecraft blocks high by default.</p>
+
+		<p>Tip: Try to make the range a multiple of 32, as this results in the scale at the bottom-left of the map showing nice round numbers. (This is because there are 64 
+		blocks in the map background texture, and the scale is aligned to the texture to help make it easier to estimate distances)</p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&range=1600">Example - map with range set to 1600</a></p>
+		
+		<h3><span  class="setting">title</span></h3>	
+		
+		<p>This defaults to "Map of the Overworld", but you probably want to give your map its own name, or have a "Map of the Nether", this option lets you set the title of the map.</p>
+		
+		<p>You can put HTML in the value for this. If you are specifying the title in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+		if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+
+		<h3><span  class="setting">blurb</span></h3>	
+		
+		<p>This defaults to "Use up/down or mousewheel to zoom, drag to scroll", but you might have something more interesting to say, or something you want to link to.</p>
+
+		<p>You can put HTML in the value for this. If you are specifying the blurb in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+		if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+
+
+		<h3><span  class="setting">x</span> and <span  class="setting">z</span></h3>		
+		<p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&x=966&z=-1090">Example - map centered on the spawn point</a></p>
+
+		<h3><a id="Settings_icons"></a><span class="setting">icons</span></h3>
+
+		<p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list 
+		file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
+		
+		<p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background). 
+		You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
+
+		<p>The <span class="setting">icons</span> setting can be a relative or absolute URL, and you should <a href="UrlEncoder.html">encode its value</a> 
+		to help keep the map URL nicely formatted. If your png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
+		and specify the file's unique code instead of the URL.</p>		
+		
+
+		
+		<h3><span  class="setting">showorigin</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
+
+		<h3><span  class="setting">showscale</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
+		
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>		
+
+		<h3><span  class="setting">showcoordinates</span></span></h3>	
+
+		<p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the 
+		mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS.</p>
+
+		<h3><a id="Settings_labels"></a><span class="setting">hidelabelsabove</span></h3>
+		
+		<p>This specifies the "zoom-level" that must be reached before labels are displayed. It defaults to 0, which means labels are always shown.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>		
+		
+		<h3><span class="setting">showlabelsbelow</span></h3>
+
+		<p>This specifies the "zoom-level" at which all labels will be displayed, even if they overlap other labels or icons (labels are normally only displayed when then don't 
+		overlap other items in the map). It defaults to 3, which means that at the last zoom-level (3), all labels are shown.</p>
+
+		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>		
+		
+		<h1>Tips</h1>
+		
+		<h2>Estimating distance</h2>
+		
+		<div style="float:right;"><img src="images/maplines.gif" width="250" height="175"/></div>		
+		<p>You can use the paper texture to estimate distance, as the distance scale is aligned with it and tells you how far 1 block of the paper texture represents.</p>
+
+		<p>So those two villages are about 3 squares, or 600 meters (Minecraft blocks) apart.</p>
+		
+		<h2 style="clear:both;">Overlays</h2>
+		
+		<p>Yet to come...</p>
+		
+		<p>Until I write this section, you can have a look near the bottom of the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/legend.txt">legend.txt</a> 
+		file - it <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">implements</a> overlays</p>
+		
+		<h2>Adjusting labels so they don't overlap</h2>
+
+		<p>Yet to come...</p>
+
+		<p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things 
+		too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in 
+		the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">example.txt</a> file - it uses all the tricks</p>
+		
+		<!--
+		Controlling captions
+		  - add newlines to caption large images
+		  - supressed captions
+		  - aligning captions with linebreaks and spaces
+		  - labellevels and smartlabels.
+		  
+		 -->
+
+		<h2>Short URLs</h2>
+		
+		<p>You can use <a href="http://tinyurl.com">TinyUrl</a> or <a href="http://bit.ly">bit.ly</a> to hide the settings you include in the URL, and to 
+		make the URL shorter.</p>
+		
+		<h1>Philosophy</h1>
+		<p>Extra features can improve the map and perhaps will happen with time, however
+		the original idea behind this map was to preserve Minecraft's world-exploration gameplay. It's intended to be like ye olde fantasy-genre 
+		map - having to work out where you are, what direction you face and what direction to head, more of a guide really. Put on your adventurer's cap.</p>
+				
+		<p>It was made for our no-cheats/shortcuts survival server. <a href="http://overviewer.org">Overviewer</a> already caters nicely for the opposite philosophy.</p>
+		
+		What'd be nice is web-UI for people to enter their locations in with, but that would need a lot of hours (and it would mean everybody's maps 
+		depend on the server being maintained).		
+		
+		<div class="footer">
+			<div style="float: left"><a href="about.html">About</div>
+			<div style="float: right"><a href="https://github.com/jasonlong/architect-theme">architect-theme</a> is maintained by <a href="https://github.com/jasonlong">jasonlong</a>.</div>
+        </div>
+		</section>
+
+		<!--
+        <aside id="sidebar">
+          <a href="https://github.com/Treer/minecraft-map/archive/v1.4.zip" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+        </aside>-->
+
+      </div>
+    </div>
+
+  </body>
+</html>

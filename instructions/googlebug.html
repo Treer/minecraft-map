@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Google Drive 301 redirection bug</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Google Drive bug</h1>        
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+		<p>Note: This bug was supposedly fixed.</p>
+		
+		<p>This was an intermittent bug with Google Drive - if you waited a day it might go away again.</p>
+
+		<p>The only other way I know around this is to not use Google Drive - download the .zip and run the 
+		map generator locally from your hard drive instead, or run it from another service <a href="dropbox.html#Visibility">like dropbox</a>.</p>
+				
+		<h2>Advanced details</h2>
+		
+		<p>The initial GET request to Google Drive is met with a "301 Moved Permanently" redirect to a new URL, but the redirect
+		drops all the URL parameters from the request.</p>
+		
+		<p>There is some discussions of the problem here:</p>
+		<ul>
+		<li><a href="https://code.google.com/p/google-apps-script-issues/issues/detail?id=4084">https://code.google.com/p/google-apps-script-issues/issues/detail?id=4084</a></li>
+		<li><a href="http://stackoverflow.com/questions/24188499/google-drive-broken-links-for-ajax-for-chrome-and-safari">http://stackoverflow.com/questions/24188499/google-drive-broken-links-for-ajax-for-chrome-and-safari</a></li>
+		</ul>
+
+		<p class="monospace">:(</p>
+
+		<p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
+				
+		</section>
+
+      </div>
+    </div>
+
+  </body>
+</html>
