@@ -124,6 +124,7 @@ var LocationType = {
   Wolf:            {iconIndex: 35, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
   Dragon:          {iconIndex: 36, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
   Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
+  SeaMonster:      {iconIndex: 45, name: "",                href: ""}, 
   
   Spawn:           {iconIndex: 40, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex:  8, name: "",      href: ""},  
@@ -201,7 +202,8 @@ var IconBoundsInformation = {
 	41: {width: 18, height: 16, yOffset:  0}, // Marker
 	42: {width: 14, height: 22, yOffset: -4}, // Marker2
 	43: {width: 14, height: 16, yOffset: -1}, // Chest
-	44: {width: 14, height: 16, yOffset: -1}  // EnchantingRoom
+	44: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
+	45: {width: 28, height: 16, yOffset:  1}  // Sea monster
 }
 
 

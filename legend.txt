@@ -40,12 +40,13 @@ Label,             2400, -3200, "33) Cave", "", "", 33
 Horse,             2400, -2400, "34) Horse"
 Wolf,              2400, -1600, "35) Wolf"
 Dragon,            2400,  -800, "\n36) Dragon"
-Label,             2400,     0, "\n37) Ship 1", "", "", 37
-Label,             2400,   800, "\n38) Ship 2", "", "", 38
-Label,             2400,  1600, "\n39) Compass points", "", "", 39
-Spawn,             2400,  2400, "40) Spawn"
-Label,             2400,  3200, "41) Marker 2", "", "", 41
-Label,             2400,  4000, "42) Marker 3", "", "", 42
+SeaMonster,        2400,     0, "\n45) SeaMonster"
+Label,             2400,   800, "\n37) Ship 1", "", "", 37
+Label,             2400,  1600, "\n38) Ship 2", "", "", 38
+Label,             2400,  2400, "\n39) Compass points", "", "", 39
+Spawn,             2400,  3200, "40) Spawn"
+Label,             2400,  4000, "41) Marker 2", "", "", 41
+Label,             2400,  4800, "42) Marker 3", "", "", 42
 
 Label,             4800, -4800, "43) Chest", "", "", 43
 EnchantingRoom,    4800, -4000, "44) EnchantingRoom"
