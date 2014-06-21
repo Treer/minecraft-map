@@ -1,4 +1,4 @@
-// v1.61
+// v1.62
 //
 // Copyright 2014 Glenn Fisher
 //
@@ -123,8 +123,8 @@ var LocationType = {
   Horse:           {iconIndex: 34, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
   Wolf:            {iconIndex: 35, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
   Dragon:          {iconIndex: 36, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
-  Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
   SeaMonster:      {iconIndex: 45, name: "",                href: ""}, 
+  Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
   
   Spawn:           {iconIndex: 40, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex:  8, name: "",      href: ""},  
