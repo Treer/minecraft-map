@@ -4,6 +4,7 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="icon" type="image/png" href="images/favicon.png" />
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
@@ -82,6 +83,8 @@
 		
 		<p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive/Dropbox account.</p>
 
+		<p>Obviously though, I intend to keep it available from this website.</p>
+		
 		<p>If you want to maintain your locations list in a wiki-page then you may need to host the map generator yourself anyway - so that it's on the same domain as the wiki. 
 		For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow 
 		the map generator to access your locations list unless both their addresses share the same domain, so...</p> 
@@ -98,7 +101,7 @@
 		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/template.txt">A template location-list file.</a></p>
 		
 		
-		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates.</p>
+		<p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates (<a href="#rei">or from Rei's Minimap</a>).</p>
 		
 		<p>If your location list file is a text file, then the filename must end in either <code>.txt</code> or <code>.csv</code> (I recommend .txt because an office application
 		might open a .csv file and mess it up). Locations are specified in comma separated format. For example:</p>
@@ -244,11 +247,20 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		for different views of the same location list. For example a portal might link to a the URL of a map for the Nether, but with 
 		<span class="setting">x</span> and <span class="setting">z</span> specified so the Nether map will be centered on the portal that was clicked.</p>
 		
-		<p>Rather than comma seperated values, settings take the from of <code>key=value</code>. Settings must have one line each when in a location-list file, but
+		<p>Rather than comma separated values, settings take the from of <code>setting=value</code>. Settings must have one line each when in a location-list file, but
 		are all on the same line when specified in a URL - separated by "&amp;" symbols.</p>
 		
-		<p>When string values are specified in a setting in a URL, you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
+		<p>When text values are specified for a setting in a URL, then if they contain spaces or punctuation you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
 		the URL remains valid.</p>
+		
+		<p>Example of specifying settings in a location file:
+		<pre>
+title = Map of Treasure Island
+range = 6400</pre>
+		</p>
+		
+		<p>Example of specifying settings on the end of a URL:</p>
+		<pre style="font-size: 80%">https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM<span style="color:green;">&title=Map%20of%20Treasure%20Island&range=1600</span>	</pre>
 						
 		<p><a id="SettingNames"></a>The following settings are available:
 		
@@ -389,6 +401,21 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		
 		<p>You can use <a href="http://tinyurl.com">TinyUrl</a> or <a href="http://bit.ly">bit.ly</a> to hide the settings you include in the URL, and to 
 		make the URL shorter.</p>
+		
+		<h2><a id="rei"></a>Rei's Minimap</h2>
+		
+		<p>If you use Rei's Minimap and already have locations saved as waypoints, you can extract 
+		the location information from the <code>.point</code> files to add to your map. The <code>.point</code>
+		files can be found at:</p>
+		
+		<pre>%appdata%\.minecraft\mods\rei_minimap\</pre>
+		
+		<p>They can be opened with Notepad or a text editor, and each location is
+		stored as line of text in the following format:</p>
+				
+		<pre>name:x:y:z:visible:color</pre>
+		
+		
 		
 		<h1>Philosophy</h1>
 		<p>Extra features can improve the map and perhaps will happen with time, however
