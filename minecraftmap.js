@@ -395,7 +395,12 @@ function Location (x, z, type, description, owner, href, iconIndex) {
 }
 
 Location.prototype.getHref = function() {
-    return isEmpty(this.hrefOverride) ? this.type.href : this.hrefOverride;
+	if (this.hrefOverride == "-") {
+		// Don't defer to the default href
+		return "";
+	} else {
+		return isEmpty(this.hrefOverride) ? this.type.href : this.hrefOverride;
+	}
 };
 
 Location.prototype.getLabel = function() {
@@ -746,12 +751,16 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		// if "title" is specified on the URL then relabel the page
 		if ('title' in locationInfo.params  && isString(locationInfo.params.title)) {
-			result.Title = decodeURIComponent(locationInfo.params.title);
+			// Google drive has a bug in its redirect where %20 gets turned into + instead of being
+			// preserved, so replace any pluses in the string with spaces.
+			result.Title = decodeURIComponent(locationInfo.params.title).replace(/\+/g, " ");
 		}	
 
 		// if "blurb" is specified on the URL then change the tag line
 		if ('blurb' in locationInfo.params  && isString(locationInfo.params.blurb)) {
-			result.Blurb = decodeURIComponent(locationInfo.params.blurb);
+			// Google drive has a bug in its redirect where %20 gets turned into + instead of being
+			// preserved, so replace any pluses in the string with spaces.
+			result.Blurb = decodeURIComponent(locationInfo.params.blurb).replace(/\+/g, " ");
 		}	
 		
 		// if "x" is specified on the URL then change the center of the map
