@@ -1,4 +1,4 @@
-// v1.62
+// v1.63
 //
 // Copyright 2014 Glenn Fisher
 //
@@ -16,7 +16,7 @@ var cClickRadius          = 12;   // How far from the center of the icon is clic
 var cTextOffset           = 14;   // How far under the center of the icon should the text be drawn
 var cLabel_DontDrawChar   = '~';  // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
 var cLabel_AlwaysDrawChar = '!';  // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cCustomIconIndexStart = 64; // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cCustomIconIndexStart = 64;   // IconIndexes with this value or higher should be loaded from gCustomIcons
 
 
 var gCustomIcons = new Image();
@@ -46,10 +46,12 @@ function isFunction(item) {
 function stringToBool(value){
 	switch(value.trim().toLowerCase()){
 		case "true": 
+		case "on":
 		case "yes": 
 		case "1": 
 			return true;
 		case "false": 
+		case "off":
 		case "no": 
 		case "0": 
 		case null: 
@@ -753,16 +755,16 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 		// if "title" is specified on the URL then relabel the page
 		if ('title' in locationInfo.params  && isString(locationInfo.params.title)) {
-			// Google drive has a bug in its redirect where %20 gets turned into + instead of being
-			// preserved, so replace any pluses in the string with spaces.
-			result.Title = decodeURIComponent(locationInfo.params.title).replace(/\+/g, " ");
+			// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
+			// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
+			result.Title = decodeURIComponent(locationInfo.params.title.replace(/\+/g, " "));
 		}	
 
 		// if "blurb" is specified on the URL then change the tag line
 		if ('blurb' in locationInfo.params  && isString(locationInfo.params.blurb)) {
-			// Google drive has a bug in its redirect where %20 gets turned into + instead of being
-			// preserved, so replace any pluses in the string with spaces.
-			result.Blurb = decodeURIComponent(locationInfo.params.blurb).replace(/\+/g, " ");
+			// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
+			// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
+			result.Blurb = decodeURIComponent(locationInfo.params.blurb.replace(/\+/g, " "));
 		}	
 		
 		// if "x" is specified on the URL then change the center of the map
