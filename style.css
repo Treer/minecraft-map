@@ -10,7 +10,7 @@
 img{ border:0; }
 
 .block{ float:center; margin-right:2%; margin-top:10px; }
-.sunsign { position:absolute; }
+.sunsign { position:absolute; z-index: 5; }
 .hidden-sunsign { visibility: hidden; } 
 .hidden-hoverFrame { visibility: hidden; } 
 
@@ -23,7 +23,6 @@ img{ border:0; }
 	font-family: 'Merienda', sans-serif; 
 	font-size: 11px;
 	color: #BBBBBB;
-	z-index: -10;
 }
 .credittext a {
   text-decoration: none;
