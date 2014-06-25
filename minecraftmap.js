@@ -398,12 +398,14 @@ function Location (x, z, type, description, owner, href, iconIndex) {
 	this.owner = SuppressableLabel.parse(owner);	
 }
 
-Location.prototype.getHref = function() {
+// overrideOnly is an optional boolean, if true then only an hrefOverride value will
+// be returned, i.e. no default hrefs
+Location.prototype.getHref = function(overrideOnly) {
 	if (this.hrefOverride == "-") {
 		// Don't defer to the default href
 		return "";
 	} else {
-		return isEmpty(this.hrefOverride) ? this.type.href : this.hrefOverride;
+		return (isEmpty(this.hrefOverride) && overrideOnly != true) ? this.type.href : this.hrefOverride;
 	}
 };
 
@@ -1344,7 +1346,7 @@ function generateHtmlLabel(location, includeCoordinates)
 	if (isNotEmptyString(result) && includeCoordinates) {
 		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
 	}
-	if (isNotEmptyString(result) && isNotEmptyString(location.getHref())) {
+	if (isNotEmptyString(result) && isNotEmptyString(location.getHref(true))) {
 		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
 	}
 	
