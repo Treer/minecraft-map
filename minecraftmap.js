@@ -1,15 +1,16 @@
-// v1.63
-//
-// Copyright 2014 Glenn Fisher
-//
-// This is an unofficial mapping system for Minecraft. It is neither produced nor 
-// endorsed by Mojang.
-//
-// Licenced under GPL licence, version 3 or later
-// https://www.gnu.org/copyleft/gpl.html
-//
-// Note that other files in this project have their own licence, see licence.md
+/**** @Preserve
+ v1.63
 
+ Copyright 2014 Glenn Fisher
+
+ This is an unofficial mapping system for Minecraft. It is neither produced nor 
+ endorsed by Mojang.
+
+ Licenced under GPL licence, version 3 or later
+ https://www.gnu.org/copyleft/gpl.html
+
+ Note that other files in this project have their own licence, see licence.md
+*****/
 
 var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius          = 12;   // How far from the center of the icon is clickable
@@ -544,7 +545,7 @@ function parseTextLocations(data, callback) {
 	var config = new MapConfiguration();
 	var locationList = [];
 
-	lines = data.split('\n');
+	var lines = data.split('\n');
 	var i = 0;
 	for(i = 0; i < lines.length; i++) {
 		var newLocation = createLocationFromRow(i + 1, lines[i]);	

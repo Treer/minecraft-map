@@ -1,4 +1,4 @@
-/**
+/** @Preserve
 *	jQuery Mapz v1.0
 *
 *	by Danny van Kooten - http://dannyvankooten.com
@@ -115,7 +115,7 @@
 			var scale = 1;
 			var i = 0;
 			
-			// Loop trough zoom levels
+			// Loop through zoom levels
 			map.children('.level').each(function() {
 				i++;
 				
