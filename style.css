@@ -10,19 +10,15 @@
 img{ border:0; }
 
 .block{ float:center; margin-right:2%; margin-top:10px; }
-.sunsign { position:absolute; z-index: 5; }
+.sunsign { position:absolute; }
 .hidden-sunsign { visibility: hidden; } 
-.hidden-hoverFrame { visibility: hidden; } 
-
-/* h1 { font-family: 'Press Start 2P', sans-serif; } */
-.locationHoverPlacename { font-family: 'Merienda', sans-serif; font-weight: bold; color: #5e4820; }
-.locationHoverOwner { font-family: 'Calligraffitti', sans-serif; font-weight: bold; color: #550000 }
-.locationHoverCoordinates { font-family: 'Merienda', sans-serif; font-size: 70%; color: #5e4820; }
+#sunsetsign, #sunrisesign, #signsunderneith  { z-index: 5; }
 
 .credittext { 
 	font-family: 'Merienda', sans-serif; 
 	font-size: 11px;
 	color: #BBBBBB;
+	z-index: 1;
 }
 .credittext a {
   text-decoration: none;
@@ -30,6 +26,11 @@ img{ border:0; }
 }
 .credittext a:hover, .credittext a:focus {text-decoration: underline; color: white;}
 
+/* h1 { font-family: 'Press Start 2P', sans-serif; } */
+.hidden-hoverFrame { visibility: hidden; } 
+.locationHoverPlacename { font-family: 'Merienda', sans-serif; font-weight: bold; color: #5e4820; }
+.locationHoverOwner { font-family: 'Calligraffitti', sans-serif; font-weight: bold; color: #550000 }
+.locationHoverCoordinates { font-family: 'Merienda', sans-serif; font-size: 70%; color: #5e4820; }
 
 #locationDesc {
   width: 250px;
