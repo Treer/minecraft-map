@@ -13,11 +13,12 @@
 *****/
 
 var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
-var cClickRadius          = 12;   // How far from the center of the icon is clickable
-var cTextOffset           = 14;   // How far under the center of the icon should the text be drawn
-var cLabel_DontDrawChar   = '~';  // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cLabel_AlwaysDrawChar = '!';  // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cCustomIconIndexStart = 64;   // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cClickRadius          = 12;    // How far from the center of the icon is clickable
+var cTextOffset           = 14;    // How far under the center of the icon should the text be drawn
+var cLabel_DontDrawChar   = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cLabel_AlwaysDrawChar = '!';   // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cCustomIconIndexStart = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cShowBoundingBoxes    = false; // This is for debug only
 
 
 var gCustomIcons = new Image();
@@ -39,13 +40,37 @@ function isNotEmptyString(str) {
 }
 
 function isFunction(item) {
-	return is("Function", item);
+	return typeof item === 'function';
 }
-// ---------------------------------------------
 
+// ---------------------------------------------
+// Misc helper functions
+
+// Wow, Internet Explorer doesn't have trim functions.
+function trimRight(stringValue){
+	if (isFunction(stringValue.trimRight)) {
+		return stringValue.trimRight();
+	} else {
+		return stringValue.replace(/\s+$/, "");
+	}
+}
+function trimLeft(stringValue){
+	if (isFunction(stringValue.trimLeft)) {
+		return stringValue.trimLeft();
+	} else {
+		return stringValue.replace(/^\s+/, "");
+	}
+}
+function trim(stringValue){
+	if (isFunction(stringValue.trim)) {
+		return stringValue.trim();
+	} else {
+		return stringValue.replace(/^\s+|\s+$/g, ''); 
+	}
+}
 
 function stringToBool(value){
-	switch(value.trim().toLowerCase()){
+	switch(trim(value).toLowerCase()){
 		case "true": 
 		case "on":
 		case "yes": 
@@ -62,6 +87,7 @@ function stringToBool(value){
 	}
 }
 
+// ---------------------------------------------
 // Code snippet (from http://james.padolsey.com/javascript/parsing-urls-with-the-dom/)
 // 
 // This function creates a new anchor element and uses location
@@ -265,8 +291,8 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 
 	var posEquals = rowString.indexOf('=');
 	if (posEquals > 0) {
-		var key = rowString.substring(0, posEquals).trim().toLowerCase();
-		var value = rowString.slice(posEquals + 1).trim();
+		var key = trim(rowString.substring(0, posEquals)).toLowerCase();
+		var value = trim(rowString.slice(posEquals + 1));
 		
 		if (key == 'z') {
 			var new_z = parseInt(value);
@@ -371,7 +397,7 @@ SuppressableLabel.parse = function(markedupLabel) {
 	var result = new SuppressableLabel(markedupLabel);
 
 	if (isString(markedupLabel)) {
-		var trimLabelStr = markedupLabel.trim();
+		var trimLabelStr = trim(markedupLabel);
 		if (trimLabelStr.length >= 2) {
 			if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {		
 				result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
@@ -565,7 +591,7 @@ function parseHtmlLocations(data, callback) {
 		// wrap it in quotes so it can safely be concatenated csv-style		
 		var result = value;
 		
-		var trimValue = value.trim();
+		var trimValue = trim(value);
 		var isQuoted = trimValue.length >= 2 && trimValue[0] == '"' && trimValue[trimValue.length - 1] == '"';
 		
 		if (!isQuoted) {
@@ -829,7 +855,6 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 function drawMapDetails(canvas, config, locations, labellingStyle)
 {
 	var cTextLineHeight = 10;
-	var cShowBoundingBoxes = false; // This is for debug only
 
 	var ctx = canvas.getContext("2d");
 	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -885,8 +910,8 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
 			
 				var lineWidth = ctx.measureText(lines[lineNo]).width;
-				var leftTrim_lineWidth = ctx.measureText(lines[lineNo].trimLeft()).width;
-				var rightTrim_lineWidth = ctx.measureText(lines[lineNo].trimRight()).width;
+				var leftTrim_lineWidth = ctx.measureText(trimLeft(lines[lineNo])).width;
+				var rightTrim_lineWidth = ctx.measureText(trimRight(lines[lineNo])).width;
 				var leftMargin = lineWidth - leftTrim_lineWidth;
 				var rightMargin = lineWidth - rightTrim_lineWidth;
 				var bound_x = x - (lineWidth - 1) / 2;
@@ -1315,10 +1340,10 @@ function generateHtmlLabel(location, includeCoordinates)
 	var result = "";
 
 	var label = location.getLabel();
-	if (isNotEmptyString(label)) label = strToHtml(label.trim());
+	if (isNotEmptyString(label)) label = strToHtml(trim(label));
 
 	var owner = location.owner.text;
-	if (isNotEmptyString(owner)) owner = strToHtml(owner.trim());
+	if (isNotEmptyString(owner)) owner = strToHtml(trim(owner));
 
 	var ownerPos = isNotEmptyString(owner) ? label.indexOf(owner) : -1;	
 	var htmlOwner = '<span class="locationHoverOwner">' + owner + '</span>';
