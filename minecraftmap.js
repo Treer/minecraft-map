@@ -1263,9 +1263,11 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	drawMapDetails(canvas, config, locations, labellingStyle);	
 	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations);
 	
-	var newImage = document.createElement('img');
+	// Set the image's display style to block so that it doesn't default to vertically aligning
+	// to the font baseline and leaving 4 pixels of space underneath - that screws up the drag size calculation.
+	var newImage = $(document.createElement('img')).css('display', 'block')[0];	
 	newImage.src = canvas.toDataURL("image/png");
-	newImage.useMap = '#' + areaMapId;
+	newImage.useMap = '#' + areaMapId;	
 	$(newImage).appendTo(document.getElementById(divElementName));
 }
 
