@@ -164,6 +164,13 @@
 			// Check if map is currently out of bounds, revert to closest position if so
 			if(map.position().left < constraint.position().left) map.css('left',constraint.position().left);
 			if(map.position().top < constraint.position().top) map.css('top',constraint.position().top);
+
+			// Set the mouse cursor to cue whether scrolling is possible
+			if(constraint.width() <= map.width() && constraint.height() <= map.height()) {
+				map.css('cursor', 'default');
+			} else {
+				map.css('cursor', 'all-scroll');			
+			}			
 		}
 		
 		function zoom(direction) {

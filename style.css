@@ -6,7 +6,7 @@
 .current-level{ z-index:20; visibility: visible }
 .resources {visibility: hidden}
 
-#map-1{ position:absolute; left:0; top:0; cursor:move }
+#map-1{ position:absolute; left:0; top:0; }
 img{ border:0; }
 
 .block{ float:center; margin-right:2%; margin-top:10px; }
