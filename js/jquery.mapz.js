@@ -13,8 +13,7 @@
 */
 
 (function( $ ){
-
-  $.fn.mapz = function(options) {
+	$.fn.mapz = function(options) {
   
 		var settings = {
 			'zoom'       : false,
@@ -23,7 +22,7 @@
 			'pinchzoom'  : false
 		};
 		
-		 if ( options ) { 
+		if ( options ) { 
 			$.extend( settings, options );
 		}
   
@@ -34,8 +33,11 @@
 		// Add current-level class to first map level
 		map.children(".level:first").addClass('current-level');
 		
-		// Create constraint for current level.
-		createConstraint();
+		{
+			// Set map size to match current level, and create a constraint for current level.
+			var currentlvl = map.children(".current-level");
+			updateMapSizeAndConstraint(currentlvl, currentlvl);
+		}		
 		
 		// Is zooming enabled?
 		if(settings.zoom) {
@@ -187,6 +189,11 @@
 			targetlvl.addClass('current-level');
 			currentlvl.removeClass('current-level');
 			
+			updateMapSizeAndConstraint(targetlvl, currentlvl);
+		}
+		
+		function updateMapSizeAndConstraint(newLevel, oldLevel) {
+			
 			var pos = map.position();
 			
 			var halfViewWidth = viewport.width()  / 2;
@@ -194,8 +201,8 @@
 			var viewportX = -map.position().left;
 			var viewportY = -map.position().top;
 			
-			var newViewportX = ((targetlvl.width()  / currentlvl.width())  * (viewportX + halfViewWidth)  - halfViewWidth);
-			var newViewportY = ((targetlvl.height() / currentlvl.height()) * (viewportY + halfViewHeight) - halfViewHeight);
+			var newViewportX = ((newLevel.width()  / oldLevel.width())  * (viewportX + halfViewWidth)  - halfViewWidth);
+			var newViewportY = ((newLevel.height() / oldLevel.height()) * (viewportY + halfViewHeight) - halfViewHeight);
 
 			if (newViewportX < 0) newViewportX = 0;
 			if (newViewportY < 0) newViewportY = 0;
@@ -203,14 +210,13 @@
 			map.css({
 				left : -newViewportX, 
 				top :  -newViewportY, 
-				width : targetlvl.width(),
-				height : targetlvl.height()
+				width : newLevel.width(),
+				height : newLevel.height()
 			});
 			
 			// Since we zoomed to another level we need to recreate constraint div
-			createConstraint();
-			
+			createConstraint();			
 		}
    
-  };
+	};
 })( jQuery );

@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+<!-- 
+  index_local.html loads non-minified javascript files, and doesn't rely on the online (cached) versions of jquery etc.
+  (fonts will still fail though unless you're online)  
+-->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,7 +18,6 @@
 head.js(
    {jquery:            "js/jquery-1.11.0.min.js"},
    {jquery_ui:         "js/jquery-ui-1.10.4.min.js"},
-
    {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
    {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
    {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
