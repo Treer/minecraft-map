@@ -51,6 +51,12 @@
 		<p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration, 
 		<a href="http://overviewer.org">Overviewer</a> provides a nice full online map system)</p>
 		
+		<h2 style="clear:both;">More examples</h2>
+		<ul>
+		<li><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">Map showing all the available location types</a></li>
+		<li><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=example.txt&showcoordinates=true">The example map with ShowCoordinates turned on</a></li>
+		</ul>
+		
         <h1 style="clear:both;">Creating your own</h1>
 		
 		<ol>
@@ -140,7 +146,7 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		
 		<p>(Or with a combination of bullet lists and tables)</p>
 		
-		<p><a href="#Settings">Settings</a> for the map, such as <span class="setting">range</span> can also be specified in your location list file.</p>
+		<p><a href="#Settings">Settings</a> for the map, such as <span class="setting">showcoordinates</span> can also be specified in your location list file.</p>
 		
 		<p>Any line in the file that does not start with one of the <a href="#locationTypes">location-types</a> or a <a href="#SettingNames">setting-name</a> is ignored. So the line containing column headings is ignored, because "type" is not a location name nor the name of a setting.</p>
 		
@@ -228,11 +234,13 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		<span class="setting">showlabelsbelow</span> settings</a>.</p>
 		
 		<h3><span class="columnname">href</span></h3>
-		<p>By placing a URL in this column you can make the map location clickable. Some suggested uses:</p>
+		<p>By placing a URL in this column you can make the map location clickable (and the chain-link icon appears when hovering the 
+		mouse over the location). Some suggested uses:</p>
 		<ul>
 		<li>A link to pictures of the location, or information.</li>
 		<li>A link to information about the player</li>
 		<li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this.</li>
+		<li>If the location is a player town, then link to a town-scale map (the same way the portal in the example map works).</li>
 		</ul>
 
 		<p>If the location-type has a default link but you don't want the location to link to anything,
@@ -252,7 +260,7 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		
 		<h1><a id="Settings"></a>Settings</h1>
 				
-		<p>Map settings such as <span class="setting">range</span> can be specified either in your location-list file, or 
+		<p>Map settings such as <span class="setting">showcoordinates</span> can be specified either in your location-list file, or 
 		in the map's URL. Settings in the URL will override settings in the location-list file, allowing the creation of different URLs
 		for different views of the same location list. For example a portal might link to a the URL of a map for the Nether, but with 
 		<span class="setting">x</span> and <span class="setting">z</span> specified so the Nether map will be centered on the portal that was clicked.</p>
@@ -357,7 +365,7 @@ range = 6400</pre>
 		<h3><span  class="setting">showcoordinates</span></h3>	
 
 		<p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the 
-		mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS.</p>
+		mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS ;)</p>
 
 		<h3><a id="Settings_labels"></a><span class="setting">hidelabelsabove</span></h3>
 		
