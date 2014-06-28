@@ -1222,9 +1222,11 @@ function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedC
 				divElementsAndSize[zoomLevel].width, 
 				divElementsAndSize[zoomLevel].height, 
 				config, 
-				locations
-			);
-			deferredObj.resolve();
+				locations,
+				function() { 
+					deferredObj.resolve();
+				}
+			);			
 		}		
 	}
 	
@@ -1244,7 +1246,7 @@ function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedC
 
 // zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
 // out map, 1 is the first level of zooming in, etc.
-function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations) {
+function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations, finishedCallback) {
 
 	var canvas = document.createElement('canvas');
 	canvas.width = aWidth;
@@ -1266,9 +1268,26 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	// Set the image's display style to block so that it doesn't default to vertically aligning
 	// to the font baseline and leaving 4 pixels of space underneath - that screws up the drag size calculation.
 	var newImage = $(document.createElement('img')).css('display', 'block')[0];	
+	
+	// assigning to newImage.src (even from canvas.toDataURL()) doesn't always update the width and height before 
+	// returning, so we have to defer until the onload event has fired to avoid race condition. (I sure hope onload 
+	// can be relied upon in all browsers).
+	var deferUntilImageLoaded      = $.Deferred();	
+	var deferUntilFunctionFinished = $.Deferred();	
+	var promises = [deferUntilImageLoaded, deferUntilFunctionFinished];		
+	newImage.onload = function() { 
+		deferUntilImageLoaded.resolve(); 
+	}	
+	
 	newImage.src = canvas.toDataURL("image/png");
 	newImage.useMap = '#' + areaMapId;	
-	$(newImage).appendTo(document.getElementById(divElementName));
+	
+	var divElement = document.getElementById(divElementName);
+	$(newImage).appendTo(divElement);
+	
+	// finishedCallback is called once this function has finished AND newImage was updated.
+	$.when.apply($, promises).done(finishedCallback);
+	deferUntilFunctionFinished.resolve();
 }
 
 // returns the name of the map
