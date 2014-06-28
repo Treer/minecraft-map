@@ -128,6 +128,19 @@ aside#sidebar p.repo-owner a {
   margin-bottom: 40px;
 }
 
+.contents ul {
+	margin-left: 0.5em;
+	padding-left: 0.5em;
+	list-style-type: none;
+}
+
+.contents h1 {
+	font-weight: bold;
+	font-size: 140%;
+	font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+	padding-bottom: 10px;
+}
+
 .footer {
   float: none;
   width: 100% ! important;

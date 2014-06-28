@@ -79,6 +79,10 @@ header h2 {
 .footer {
   display: none;
 }
+#sidebar {
+  display: none;
+}
+
 #main_content {
   padding-top: 20px;
 }
