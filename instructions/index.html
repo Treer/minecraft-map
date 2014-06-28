@@ -40,7 +40,7 @@
 		<div style="float:right;">
 		
 			<a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM">		
-				<img src="images/screenshot-small.png" width="400" height="288"/>
+				<img src="images/screenshot-small.png" width="400" height="288" alt="screenshot"/>
 				<br/>
 				<p style="text-align:center;">Explore the example map, using real (SMP) locations</p>		
 			</a>
@@ -131,12 +131,12 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		
 		<p>or by using a table:</p>
 
-		<p><TABLE BORDER='1'>
-		<TR><TD COLSPAN="1"><strong>Type</strong></TD><TD COLSPAN="1"> x    </TD><TD COLSPAN="1">  z    </TD><TD COLSPAN="1"><strong>Description</strong></TD><TD COLSPAN="1"><strong>Owner</strong></TD><TD COLSPAN="1"><strong>href</strong></TD><TD COLSPAN="1"><strong>IconIndex</strong> </TD></TR>
-		<TR><TD colspan='1'> DesertVillage        </TD><TD COLSPAN="1">1245 </TD><TD COLSPAN="1"> 350 </TD><TD COLSPAN="1">Ghost town</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
-		<TR><TD colspan='1'> WitchHut        </TD><TD COLSPAN="1">-2056 </TD><TD COLSPAN="1"> -2487 </TD><TD COLSPAN="1"></TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
-		<TR><TD colspan='1'> PlayerHouse        </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">Dr.Frankenstone's mountain lair</TD><TD COLSPAN="1">Dr.Frankenstone</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">31</TD></TR>
-		</TABLE></p>
+		<TABLE>
+		<TR><TD COLSPAN="1"><strong>Type</strong></TD><TD COLSPAN="1"><strong>x</strong></TD><TD COLSPAN="1"><strong>z</strong></TD><TD COLSPAN="1"><strong>Description</strong></TD><TD COLSPAN="1"><strong>Owner</strong></TD><TD COLSPAN="1"><strong>href</strong></TD><TD COLSPAN="1"><strong>IconIndex</strong> </TD></TR>
+		<TR><TD colspan='1'> DesertVillage       </TD><TD COLSPAN="1">1245 </TD><TD COLSPAN="1">   350 </TD><TD COLSPAN="1">Ghost town</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> WitchHut            </TD><TD COLSPAN="1">-2056</TD><TD COLSPAN="1"> -2487 </TD><TD COLSPAN="1"></TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">  </TD></TR>
+		<TR><TD colspan='1'> PlayerHouse         </TD><TD COLSPAN="1">-400 </TD><TD COLSPAN="1"> -1800 </TD><TD COLSPAN="1">Dr.Frankenstone's mountain lair</TD><TD COLSPAN="1">Dr.Frankenstone</TD><TD COLSPAN="1">  </TD><TD COLSPAN="1">31</TD></TR>
+		</TABLE>
 		
 		<p>(Or with a combination of bullet lists and tables)</p>
 		
@@ -199,28 +199,27 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		
 		<h3><span class="columnname">description</span> and <span class="columnname">owner</span></h3>
 		
-		<p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:
-			<ul> 
-			<li>You can insert a \n in your text if you want to split the line.</li>
-			<li>You can add spaces to pad out the start or end of your label if you want to nudge its position slightly 
-			to avoid something else on the map nearby. <br/>
-			<span class="note">(Note that html collapses multiple spaces into one, so in a wiki you'd 
-			have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span></li>
-			<li>You can use quotation marks inside a label when it's surrounded by quotation marks. Do this by placing two in a row, for 
-			example <code>"My ""Scare quotes"""</code> will be drawn as <code>My "Scare quotes"</code>.<br/>
-			<span class="note">(Note that quotation marks cannot be used in a label unless it's surrounded with quotation 
-			marks)</span></li>
-			<li>You can also use commas inside a label when it's surrounded by quotation marks.</li>
-			</ul>					
-		</p>
+		<p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:</p>
+		<ul> 
+		<li>You can insert a \n in your text if you want to split the line.</li>
+		<li>You can add spaces to pad out the start or end of your label if you want to nudge its position slightly 
+		to avoid something else on the map nearby.<br/>
+		<span class="note">(Note that html collapses multiple spaces into one, so in a wiki you'd 
+		have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span></li>
+		<li>You can use quotation marks inside a label when it's surrounded by quotation marks. Do this by placing two in a row, for 
+		example <code>"My ""Scare quotes"""</code> will be drawn as <code>My "Scare quotes"</code>.<br/>
+		<span class="note">(Note that quotation marks cannot be used in a label unless it's surrounded with quotation 
+		marks)</span></li>
+		<li>You can also use commas inside a label when it's surrounded by quotation marks.</li>
+		</ul>					
 
 		<p>Having full control of this markup is why I recommend editing the file with a text editor instead of a spreadsheet or office application.</p>
 		
-		<p>If you want to make a label invisible, you can surround it with tildes, e.g:
-		<pre>PlayerHouse, 100, 100, Mansion, ~owner~</pre></p>
+		<p>If you want to make a label invisible, you can surround it with tildes, e.g:</p>
+		<pre>PlayerHouse, 100, 100, Mansion, ~owner~</pre>
 		
-		<p>If you want to force a label to always be shown - even when it will overlap another label or icon, you can surround it with exclamation marks, e.g:
-		<pre>PlayerHouse, 100, 100, !Mansion!, owner</pre></p>
+		<p>If you want to force a label to always be shown - even when it will overlap another label or icon, you can surround it with exclamation marks, e.g:</p>
+		<pre>PlayerHouse, 100, 100, !Mansion!, owner</pre>
 		
 		<p>When two labels overlap, locations that are higher in the list will have their label displayed in preference to the label of a 
 		location lower in the list. By default, all labels are shown in the most zoomed-in view.</p>
@@ -229,13 +228,13 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		<span class="setting">showlabelsbelow</span> settings</a>.</p>
 		
 		<h3><span class="columnname">href</span></h3>
-		<p>By placing a URL in this column you can make the map location clickable. Some suggested uses:
+		<p>By placing a URL in this column you can make the map location clickable. Some suggested uses:</p>
 		<ul>
 		<li>A link to pictures of the location, or information.</li>
 		<li>A link to information about the player</li>
 		<li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this.</li>
 		</ul>
-		</p>
+
 		<p>If the location-type has a default link but you don't want the location to link to anything,
 		then place a hyphen in the href column to disable the link.</p>
 
@@ -264,16 +263,15 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 		<p>When text values are specified for a setting in a URL, then if they contain spaces or punctuation you should <a href="UrlEncoder.html">encode the value</a> first, to ensure
 		the URL remains valid.</p>
 		
-		<p>Example of specifying settings in a location file:
+		<p>Example of specifying settings in a location file:</p>
 		<pre>
 title = Map of Treasure Island
 range = 6400</pre>
-		</p>
 		
 		<p>Example of specifying settings on the end of a URL:</p>
-		<pre style="font-size: 80%">https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM<span style="color:green;">&title=Map%20of%20Treasure%20Island&range=1600</span>	</pre>
+		<pre style="font-size: 80%">https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM<span style="color:green;">&amp;title=Map%20of%20Treasure%20Island&amp;range=1600</span>	</pre>
 						
-		<p><a id="SettingNames"></a>The following settings are available:
+		<p><a id="SettingNames"></a>The following settings are available:</p>
 		
 		<ul>
 		<li><span class="setting">range</span></li>
@@ -287,8 +285,7 @@ range = 6400</pre>
 		<li><span class="setting">showcoordinates</span></li>
 		<li><span class="setting">hidelabelsabove</span></li>
 		<li><span class="setting">showlabelsbelow</span></li>
-		</ul>
-		</p>
+		</ul>		
 		
 		<h3><a id="Settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>	
 		
@@ -347,17 +344,17 @@ range = 6400</pre>
 		
 
 		
-		<h3><span  class="setting">showorigin</span></span></h3>	
+		<h3><span  class="setting">showorigin</span></h3>	
 
 		<p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
 
-		<h3><span  class="setting">showscale</span></span></h3>	
+		<h3><span  class="setting">showscale</span></h3>	
 
 		<p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
 		
 		<p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>		
 
-		<h3><span  class="setting">showcoordinates</span></span></h3>	
+		<h3><span  class="setting">showcoordinates</span></h3>	
 
 		<p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the 
 		mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS.</p>
@@ -379,7 +376,7 @@ range = 6400</pre>
 		
 		<h2>Estimating distance</h2>
 		
-		<div style="float:right;"><img src="images/maplines.gif" width="250" height="175"/></div>		
+		<div style="float:right;"><img src="images/maplines.gif" width="250" height="175" alt="map scale example"/></div>		
 		<p>You can use the paper texture to estimate distance, as the distance scale is aligned with it and tells you how far 1 block of the paper texture represents.</p>
 
 		<p>So those two villages are about 3 squares, or 600 meters (Minecraft blocks) apart.</p>
@@ -439,7 +436,7 @@ range = 6400</pre>
 		depend on the server being maintained).		
 		
 		<div class="footer">
-			<div style="float: left"><a href="about.html">About</div>
+			<div style="float: left"><a href="about.html">About/contact</a></div>
 			<div style="float: right"><a href="https://github.com/jasonlong/architect-theme">architect-theme</a> is maintained by <a href="https://github.com/jasonlong">jasonlong</a>.</div>
         </div>
 		</section>
