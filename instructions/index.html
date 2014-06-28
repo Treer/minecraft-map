@@ -346,8 +346,10 @@ range = 6400</pre>
 		<p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background). 
 		You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
 
-		<p>The <span class="setting">icons</span> setting can be a relative or absolute URL, and you should <a href="UrlEncoder.html">encode its value</a> 
-		to help keep the map URL nicely formatted. If your png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
+		<p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to 
+		help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
+		
+		<p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
 		and specify the file's unique code instead of the URL.</p>		
 		
 
