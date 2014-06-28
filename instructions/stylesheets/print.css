@@ -76,8 +76,19 @@ header h2 {
 #downloads {
   display: none;
 }
+.footer {
+  display: none;
+}
 #main_content {
   padding-top: 20px;
+}
+
+.monospace {
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+}
+.menuoptions {
+  color: black;
+  font-style: italic;
 }
 
 code, pre {
@@ -177,9 +188,27 @@ a {
 p a {
   font-weight: 400;
 }
+b {
+	font-weight: bold
+}
+
+.columnname {
+	font-weight: bold;
+}
+
+.locationtype,  .setting {
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-size: 90%;
+  color: #008080
+}
+
+.note {
+  font-size: 80%;
+  font-style: italic;
+}
 
 blockquote {
-  font-size: 1.6em;
+  font-size: 1.4em;
   border-left: 10px solid #e9e9e9;
   margin-bottom: 20px;
   padding: 0 0 0 30px;
