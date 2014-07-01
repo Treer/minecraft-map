@@ -20,7 +20,7 @@ var cLabel_AlwaysDrawChar = '!';   // Designates labels that should always be dr
 var cCustomIconIndexStart = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
 var cShowBoundingBoxes    = false; // This is for debug only
 
-
+var gMapDataUriDefault    = 'default.txt' // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 
@@ -257,34 +257,36 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 		hideLabelsAbove_Default = (head.screen.height < 800 || head.screen.height < 800) ? 1 : 0;		
 	} */
 
-	// MapDataUri has no default - it MUST be set from the "src" param on the URL.
-	if (!('HideLabelsAbove' in this)) this.HideLabelsAbove = hideLabelsAbove_Default;
-	if (!('ShowLabelsBelow' in this)) this.ShowLabelsBelow = 3; // 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
-	if (!('MapRange'        in this)) this.MapRange = cMapRangeDefault;
-	if (!('Title'           in this)) this.Title = 'Map of the Overworld';
-	if (!('Blurb'           in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
-	if (!('CustomIconsUri'  in this)) this.CustomIconsUri = '';
-	if (!('X'               in this)) this.X = 0;
-	if (!('Z'               in this)) this.Z = 0;
-	if (!('ShowOrigin'      in this)) this.ShowOrigin = true;
-	if (!('ShowScale'       in this)) this.ShowScale = true;
-	if (!('ShowCoordinates' in this)) this.ShowCoordinates = false;
+	// MapDataUri has no default - it MUST represent the "src" param on the URL.
+	if (!('HideLabelsAbove'    in this)) this.HideLabelsAbove = hideLabelsAbove_Default;
+	if (!('ShowLabelsBelow'    in this)) this.ShowLabelsBelow = 3; // 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
+	if (!('MapRange'           in this)) this.MapRange = cMapRangeDefault;
+	if (!('Title'              in this)) this.Title = 'Map of the Overworld';
+	if (!('Blurb'              in this)) this.Blurb = 'Use up/down or mousewheel to zoom, drag to scroll';
+	if (!('CustomIconsUri'     in this)) this.CustomIconsUri = '';
+	if (!('X'                  in this)) this.X = 0;
+	if (!('Z'                  in this)) this.Z = 0;
+	if (!('ShowOrigin'         in this)) this.ShowOrigin = true;
+	if (!('ShowScale'          in this)) this.ShowScale = true;
+	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
+	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	
-	if ('MapDataUri'      in sourceConfig) this.MapDataUri      = sourceConfig.MapDataUri;
-	if ('HideLabelsAbove' in sourceConfig) this.HideLabelsAbove = sourceConfig.HideLabelsAbove;
-	if ('ShowLabelsBelow' in sourceConfig) this.ShowLabelsBelow = sourceConfig.ShowLabelsBelow;
-	if ('MapRange'        in sourceConfig) this.MapRange        = sourceConfig.MapRange;
-	if ('Title'           in sourceConfig) this.Title           = sourceConfig.Title;
-	if ('Blurb'           in sourceConfig) this.Blurb           = sourceConfig.Blurb;
-	if ('CustomIconsUri'  in sourceConfig) this.CustomIconsUri  = sourceConfig.CustomIconsUri;
-	if ('X'               in sourceConfig) this.X               = sourceConfig.X;
-	if ('Z'               in sourceConfig) this.Z               = sourceConfig.Z;
-	if ('ShowOrigin'      in sourceConfig) this.ShowOrigin      = sourceConfig.ShowOrigin;
-	if ('ShowScale'       in sourceConfig) this.ShowScale       = sourceConfig.ShowScale;
-	if ('ShowCoordinates' in sourceConfig) this.ShowCoordinates = sourceConfig.ShowCoordinates;	
+	if ('MapDataUri'         in sourceConfig) this.MapDataUri         = sourceConfig.MapDataUri;
+	if ('HideLabelsAbove'    in sourceConfig) this.HideLabelsAbove    = sourceConfig.HideLabelsAbove;
+	if ('ShowLabelsBelow'    in sourceConfig) this.ShowLabelsBelow    = sourceConfig.ShowLabelsBelow;
+	if ('MapRange'           in sourceConfig) this.MapRange           = sourceConfig.MapRange;
+	if ('Title'              in sourceConfig) this.Title              = sourceConfig.Title;
+	if ('Blurb'              in sourceConfig) this.Blurb              = sourceConfig.Blurb;
+	if ('CustomIconsUri'     in sourceConfig) this.CustomIconsUri     = sourceConfig.CustomIconsUri;
+	if ('X'                  in sourceConfig) this.X                  = sourceConfig.X;
+	if ('Z'                  in sourceConfig) this.Z                  = sourceConfig.Z;
+	if ('ShowOrigin'         in sourceConfig) this.ShowOrigin         = sourceConfig.ShowOrigin;
+	if ('ShowScale'          in sourceConfig) this.ShowScale          = sourceConfig.ShowScale;
+	if ('ShowCoordinates'    in sourceConfig) this.ShowCoordinates    = sourceConfig.ShowCoordinates;	
+	if ('DisableCoordinates' in sourceConfig) this.DisableCoordinates = sourceConfig.DisableCoordinates;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -335,6 +337,9 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'showcoordinates' && isString(value)) {
 			this.ShowCoordinates = stringToBool(value);
 		}		
+		if (key == 'disablecoordinates' && isString(value)) {
+			this.DisableCoordinates = stringToBool(value);
+		}				
 	}
 }
 
@@ -508,6 +513,16 @@ Rectangle.prototype.equals = function(rectangle) {
 
 // -----------------------------
 
+// Set url to an empty string if you want to make the ?src= URL parameter required,
+// or use it to avoid needing the ?src= parameter by "hardcoding" where the locations 
+// are loaded from.
+function SetDefaultSrc(url) {
+	if (isString(url)) {
+		gMapDataUriDefault = url;
+	} else {
+		alert("SetDefaultSrc() was passed a non-string value");
+	}
+}
  
 // entryNumber is given to the user if there is an error parsing the entry
 //
@@ -659,9 +674,11 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
 	var configFromUrl = getConfigurationFromUrl();
 	
-	if ('MapDataUri' in configFromUrl) {
+	var srcUri = ('MapDataUri' in configFromUrl) ? configFromUrl.MapDataUri : gMapDataUriDefault;
+	
+	if (isNotEmptyString(srcUri)) {
 		getMapDataAndLocationsFromUrl(
-			configFromUrl.MapDataUri,  
+			srcUri,  
 			function(configFromAjax, locationsFromAjax) {
 			
 				var mapConfig = new MapConfiguration();
@@ -729,7 +746,15 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 					}
 				 },
 				 error:function(jqXHR, textStatus, errorThrown){
-					alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
+					if (dataUrl == gMapDataUriDefault) {
+						// No src parameter was specified, and that's most likely the error - as loading 
+						// from gMapDataUriDefault failed (gMapDataUriDefault is not normally a valid uri - it's
+						// only valid when the map has been set up to not need the src parameter).
+						//alert('no "src=" url was specified to scrape the location data from.\n\n(also failed to load from the fallback: ' + textStatus + ', ' + errorThrown + ')');
+						alert('no "src=" url was specified to scrape the location data from.\n\n(and could not load from the fallback url)');
+					} else {
+						alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
+					}
 				}
 			});
 					
@@ -1272,12 +1297,8 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	// assigning to newImage.src (even from canvas.toDataURL()) doesn't always update the width and height before 
 	// returning, so we have to defer until the onload event has fired to avoid race condition. (I sure hope onload 
 	// can be relied upon in all browsers).
-	var deferUntilImageLoaded      = $.Deferred();	
-	var deferUntilFunctionFinished = $.Deferred();	
-	var promises = [deferUntilImageLoaded, deferUntilFunctionFinished];		
-	newImage.onload = function() { 
-		deferUntilImageLoaded.resolve(); 
-	}	
+	var deferUntilImageLoaded = $.Deferred();	
+	newImage.onload = function() { deferUntilImageLoaded.resolve(); }	
 	
 	newImage.src = canvas.toDataURL("image/png");
 	newImage.useMap = '#' + areaMapId;	
@@ -1286,8 +1307,7 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	$(newImage).appendTo(divElement);
 	
 	// finishedCallback is called once this function has finished AND newImage was updated.
-	$.when.apply($, promises).done(finishedCallback);
-	deferUntilFunctionFinished.resolve();
+	$.when(deferUntilImageLoaded).done(finishedCallback);
 }
 
 // returns the name of the map
@@ -1321,7 +1341,10 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 			includeArea = true;
 		}
 		
-		var htmlString = generateHtmlLabel(location, config.ShowCoordinates);
+		var htmlString = generateHtmlLabel(
+			location, 
+			config.ShowCoordinates && !config.DisableCoordinates
+		);
 		if (htmlString.length > 0) {
 			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
 			$(newArea).mouseout(Handle_mouseout);
