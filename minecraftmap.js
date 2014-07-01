@@ -20,7 +20,7 @@ var cLabel_AlwaysDrawChar = '!';   // Designates labels that should always be dr
 var cCustomIconIndexStart = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
 var cShowBoundingBoxes    = false; // This is for debug only
 
-var gMapDataUriDefault    = 'default.txt' // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL
+var gMapDataUriDefault    = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
 var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 

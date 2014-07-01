@@ -107,10 +107,12 @@ head.ready(
 				$('body').css({ 'background-color': 'rgb(77,100,47)' });
 						
 				// =================
-				// If you wish to specify a src URL in this html file instead of as a ?src= parameter 
-				// added to the URL of this html file, then uncomment the SetDefaultSrc() line below:
+				// This line lets you set the URL where this page will try to load the locations file
+				// from if no 'src=' parameter is specified.
+				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
+				// then uncomment the SetDefaultSrc() line below:
 				// =================				
-				// SetDefaultSrc('http://domain.com/yourlocationsfile.txt');
+				// SetDefaultSrc('default.txt');
 							
 				getSettingsAndMapLocations(
 					head.screen.width,
