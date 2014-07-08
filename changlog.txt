@@ -1,0 +1,29 @@
+* Verticle label alignment now takes icon size into account (this change
+  affects the label positioning of existing maps).
+* Support added for default src URL so none is required on map generator URL
+
+
+v1.63 - Streamline release - 2014-06-28 
+=======================================
+* Significant loading speed improvements, with more files loaded in parallel
+  and large jquery files loaded from browser cache.
+* Significant data improvements, minified javascript files all loaded by 
+  default and large jquery files loaded from browser cache.
+* Link icon on mouse hover now only shown for user specified URLs.
+* Apple-touch icons added.
+* Fixes IE compatibility
+* Fixes many small drag and zoom bugs
+
+
+v1.62 - Seamonster release - 2014-06-22
+=======================================
+* Seamonster location added
+* Many changes to accomodate a bug in Google Drive, which Google have now 
+  mostly fixed.
+
+  
+v1.6 - First public release - 2014-06-15 
+========================================
+* many small bugfixes and improvements
+* licence specified
+* Example map finished, and Nether example added
