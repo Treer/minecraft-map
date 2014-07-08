@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.7
+ v1.63
 
  Copyright 2014 Glenn Fisher
 
@@ -12,7 +12,7 @@
  Note that other files in this project have their own licence, see licence.md
 *****/
 
-var cMapRangeDefault      = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius          = 12;    // How far from the center of the icon is clickable
 var cTextOffset           = 14;    // How far under the center of the icon should the text be drawn
 var cLabel_DontDrawChar   = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
@@ -1165,12 +1165,11 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		multilineCenteredText_draw(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
 	}
 
-	var mapBackground = document.getElementById('map-background');	
-	
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
 	setCanvasScalingToPixelated(ctx);
+	
 	ctx.drawImage(
-		mapBackground,
+		document.getElementById('map-background'),
 		0, 0,
 		canvas.width, canvas.height);
 
@@ -1226,149 +1225,6 @@ function setCanvasScalingToPixelated(ctx) {
 	ctx.imageSmoothingEnabled = false;
 }
 
-function PreRender(config) {
-
-	function renderOcean(mapImage, oceanMaskImage) {
-
-		// OceanMaskImage must be wider than 0 to avoid divide by zero
-	
-		var blocksPerPixel = 16; // scale of the oceanMaskImage
-		var maskCenter_x = oceanMaskImage.width / 2;
-		var maskCenter_z = oceanMaskImage.height / 2;
-		var maskWidth = Math.round((config.MapRange * 2) / blocksPerPixel);
-		var mask_x = Math.round(maskCenter_x + (config.X - config.MapRange) / blocksPerPixel);
-		var mask_z = Math.round(maskCenter_z + (config.Z - config.MapRange) / blocksPerPixel);
-		
-		// adjust the mask co-ords so they stay inside the bounds of the mask
-		var adj_mask_x = mask_x < 0 ? 0 : mask_x;
-		var adj_mask_z = mask_z < 0 ? 0 : mask_z;
-		
-		var adj_mask_width  = maskWidth - (adj_mask_x - mask_x);
-		var adj_mask_height = maskWidth - (adj_mask_z - mask_z);
-		adj_mask_width  = adj_mask_width  > oceanMaskImage.width  ? oceanMaskImage.width  : adj_mask_width;
-		adj_mask_height = adj_mask_height > oceanMaskImage.height ? oceanMaskImage.height : adj_mask_height;
-
-		// adjust the destination coords to take into account any adjustment of the mask co-ords to stay inside the mask bounds
-		var destScale = mapImage.width / maskWidth;
-		var dest_x = Math.round((adj_mask_x - mask_x) * destScale);
-		var dest_z = Math.round((adj_mask_z - mask_z) * destScale);		
-		var dest_width = Math.round(adj_mask_width * destScale);
-		var dest_height = Math.round(adj_mask_height * destScale);
-
-		
-		// create a "workingCanvas" that is much smaller than the ocean mask, and
-		// will take less time to process, but is still detailed enough to scale
-		// down to the map-background size afterwards without aliasing problems.
-		
-		// calculate the working canvas size based off the destination coords
-		var oversample = 4;
-		var working_width = dest_width * oversample;
-		var working_height = dest_height * oversample;
-		
-		var workingCanvas = document.createElement('canvas');
-		workingCanvas.width = working_width;
-		workingCanvas.height = working_height;
-		workingContext = workingCanvas.getContext("2d");
-		workingContext.drawImage(
-			oceanMaskImage,
-			adj_mask_x, 
-			adj_mask_z,
-			adj_mask_width,
-			adj_mask_height,
-			0,
-			0,
-			working_width,
-			working_height
-		);
-					
-		//alert("stackBlurCanvasRGB(" + adj_mask_x + ", " + adj_mask_z + ", " + adj_mask_width + ", " + adj_mask_height + ")");
-		
-		var blurCanvas = cloneCanvas(workingCanvas);		
-		var blurRadius = Math.round(oversample * mapImage.width / 10); // about 6.4 blocks on the final map		
-		stackBlurCanvasRGB( blurCanvas, 0, 0, working_width, working_height, blurRadius );
-
-		
-		var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
-		var workingImageData = workingCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height);
-		var workingPixels = workingImageData.data;
-
-		var x = 0;
-		var y = 0;
-		var index = 0;
-		var alpha = Math.round(0.8 * 255);
-		var land_red  = 241, land_green  = 223, land_blue  = 189;
-		var ocean_red = 146, ocean_green = 120, ocean_blue =  73;
-		var diff_red   = land_red   - ocean_red;
-		var diff_green = land_green - ocean_green;
-		var diff_blue  = land_blue  - ocean_blue;
-		
-		for ( x = 0; x < working_width; x++ ) {
-			for ( y = 0; y < working_height; y++ ) {
-				
-				var shade = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
-				if (shade > 255) {
-					shade = 1;
-				} else {
-					shade = shade / 255.0;
-				}
-				
-				workingPixels[index]     = Math.round(ocean_red   + diff_red   * shade);
-				workingPixels[index + 1] = Math.round(ocean_green + diff_green * shade);
-				workingPixels[index + 2] = Math.round(ocean_blue  + diff_blue  * shade);
-				workingPixels[index + 3] = workingPixels[index] == 255 ? 0 : Math.round(124 + (blurPixels[index]) * 0.5);
-				
-				index += 4;
-			}
-		}
-		workingContext.putImageData( workingImageData, 0, 0);
-		
-		
-		var mapBackgroundCanvas = imageToCanvas(mapImage);
-		var mapBackgroundContext = mapBackgroundCanvas.getContext("2d");
-
-		//alert("drawImage(" + dest_x + ", " + dest_z + ", " + dest_width + ", " + dest_height + ")");		
-		// Scale the processed ocean down to the same size as the mapImage
-		mapBackgroundContext.drawImage(
-			workingCanvas,
-			0, 
-			0,
-			working_width,
-			working_height,
-			dest_x,
-			dest_z,
-			dest_width,
-			dest_height
-		);
-	
-		return mapBackgroundCanvas;
-	}
-	
-	
-	var mapBackground = renderOcean(
-		document.getElementById('map-background'),
-		document.getElementById('oceanmask')
-	);
-	
-	document.getElementById('map-background').src = mapBackground.toDataURL("image/png");
-}
-
-function imageToCanvas(image) {
-	var canvas = document.createElement("canvas");
-	canvas.width = image.width;
-	canvas.height = image.height;
-	canvas.getContext("2d").drawImage(image, 0, 0);
-	return canvas;
-}	
-
-function cloneCanvas(oldCanvas) {
-    var newCanvas = document.createElement('canvas');
-    newCanvas.width = oldCanvas.width;
-    newCanvas.height = oldCanvas.height;
-    var context = newCanvas.getContext('2d');
-    context.drawImage(oldCanvas, 0, 0);
-    return newCanvas;
-}
-
 // config is a MapConfiguration object
 // locations is an array of Location objects
 // divElementsAndSize is an array of { divName: ..., width: ..., height: ... }, one for each level of zoom
@@ -1399,7 +1255,6 @@ function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedC
 		}		
 	}
 	
-	PreRender(config);
 	
 	var functionPromises = [];
 
