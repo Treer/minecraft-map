@@ -296,7 +296,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowScale'          in this)) this.ShowScale = true;
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
-	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueOcean';	
+	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueCoastline';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -1447,14 +1447,15 @@ function parseHtmlLocations(data, callback) {
  	);
  				
  				
- 	return renderTheme_BlueCoastline(
- 		mapImage, 
- 		workingCanvas,
- 		dest_x,
- 		dest_z,
- 		dest_width,
- 		dest_height
- 	);
+ 	var theme = config.OceanTheme.toLowerCase();
+ 				
+ 	if (theme == "darkseas") {
+ 		return renderTheme_DarkSeas(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 	} else if (theme == "coastalrelief") {
+ 		return renderTheme_CoastalRelief(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 	} else {
+ 		return renderTheme_BlueCoastline(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 	}	
  }
  
  // Land is dark-coloured, with blue coastlines fading out to light-coloured oceans
@@ -1467,17 +1468,16 @@ function parseHtmlLocations(data, callback) {
  //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
  function renderTheme_BlueCoastline(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
  
- 	//var cColor_BlueCoast  = new RGB(147, 152, 146); // more of a grey really
  	var cColor_BlueCoast    = new RGB(127, 130, 146); 
  	var cColor_ShallowCoast = new RGB(  0,  30,  30);
  	var cColor_lightOcean   = new RGB(243, 226, 194);
  	var cColor_Land         = new RGB(208, 177, 120);
- 	//var cColor_Land         = new RGB(153, 135, 108);
- 	var cAlpha_Ocean        = Math.round(0.66 * 255);
+ 	var cAlpha_Ocean        = Math.round(0.8 * 255);
+ 	var cAlpha_DeepOcean    = Math.round(0.6 * 255);
  	var cAlpha_Land         = Math.round(0.2  * 255);
  	
  	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
- 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 6.4 blocks on the final map		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map		
  	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
  
  	var working_width  = transformedOceanMask_Canvas.width;
@@ -1488,6 +1488,30 @@ function parseHtmlLocations(data, callback) {
  	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
  	var workingPixels = workingImageData.data;	
  	
+ 	// Build a colour lookup table for the ocean, because anything involving classes is 
+ 	// way too slow (e.g. RGB.Blend())
+ 	var colorTable_R = new Array(256);
+ 	var colorTable_G = new Array(256);
+ 	var colorTable_B = new Array(256);
+ 	var i;
+ 	for (i = 0; i < colorTable_R.length; i++) {
+ 
+ 		var shade = i / 255.0;
+ 		
+ 		// A shade of 0 means coastline (cColor_BlueCoast + cColor_ShallowCoast)
+ 		// A shade of 255 means ocean (cColor_lightOcean)
+ 		
+ 		color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
+ 		// lets make the shading a little non-linear
+ 		if (shade <= 0.5) color = color.Blend(cColor_ShallowCoast, (0.5 - shade));
+ 
+ 		colorTable_R[i] = color.R;
+ 		colorTable_G[i] = color.G;
+ 		colorTable_B[i] = color.B;
+ 	}
+ 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
+ 	
+ 	
  	var x = 0;
  	var z = 0;
  	var index = 0;
@@ -1495,33 +1519,29 @@ function parseHtmlLocations(data, callback) {
  	for ( z = 0; z < working_height; z++ ) {
  		for ( x = 0; x < working_width; x++ ) {
  						
- 			//var mapPixel = GetMapRGBA(x, z);
- 						
- 			var color;
  			var alpha;
- 			if (workingPixels[index] == 255) {
+ 			if (workingPixels[index] > 200) {
  				// land
  				alpha = cAlpha_Land;			
- 				color = cColor_Land;
+ 				
+ 				workingPixels[index]     = colorLand_R;
+ 				workingPixels[index + 1] = colorLand_G;
+ 				workingPixels[index + 2] = colorLand_B;		
  			} else {
  				// ocean
- 				alpha = cAlpha_Ocean;
+ 				var oceanDepth = (255 - blurPixels[index]) / 255.0; // 0 to 1, 1 is deep, 0 is shallow
+ 				alpha = Math.round(cAlpha_Ocean * (1 - oceanDepth) + cAlpha_DeepOcean * oceanDepth);
  				
- 				var shade = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
- 				if (shade > 255) {
- 					shade = 1;
- 				} else {
- 					shade = shade / 255.0;
- 				}
- 								
- 				color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
- 				// lets make the shading a little non-linear
- 				if (shade <= 0.5) color = color.Blend(cColor_ShallowCoast, (0.5 - shade));
- 			}
- 						
- 			workingPixels[index]     = color.R;
- 			workingPixels[index + 1] = color.G;
- 			workingPixels[index + 2] = color.B;
+ 				// After blurring the black ocean-mask with the white land-mask, dark areas in blurPixels[] 
+ 				// means deep ocean, calculate a tableIndex where 0 is coast and 255 is deep ocean.
+ 				// (workingPixels[] is white for land, black for ocean, and grey for both)
+ 				var tableIndex = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
+ 				if (tableIndex > 255) shade = 255;
+ 				
+ 				workingPixels[index]     = colorTable_R[tableIndex];
+ 				workingPixels[index + 1] = colorTable_G[tableIndex];
+ 				workingPixels[index + 2] = colorTable_B[tableIndex];		
+ 			}						
  			workingPixels[index + 3] = alpha;
  			
  			index += 4;
@@ -1546,8 +1566,158 @@ function parseHtmlLocations(data, callback) {
  		dest_height
  	);
  
- 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 2, 2);
+ 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 1, 1);
  }
+ 
+ // Land is light-coloured, with dark coastlines and oceans
+ //
+ // Returns a canvas to use as the map background. The size of the canvas returned should match the size of map_Image
+ // Parameters:
+ //   map_Image - the img object containing the default map-background image
+ //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
+ //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
+ function renderTheme_DarkSeas(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ 
+ 	var cColor_Ocean = new RGB(144, 104,  67); 
+ 	var cColor_Land  = new RGB(249, 232, 206);
+ 	var cAlpha_Ocean = Math.round(0.7 * 255);
+ 	var cAlphaFloor_Ocean = Math.round(0.2 * 255);
+ 	var cAlpha_Land  = Math.round(0.25  * 255);
+ 	
+ 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map		
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+ 
+ 	var working_width  = transformedOceanMask_Canvas.width;
+ 	var working_height = transformedOceanMask_Canvas.height;
+ 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
+ 
+ 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
+ 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
+ 	var workingPixels = workingImageData.data;	
+ 	
+ 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
+ 	var colorOcean_R = cColor_Ocean.R, colorOcean_G = cColor_Ocean.G, colorOcean_B = cColor_Ocean.B; // avoid using classes, for speed.
+ 	
+ 	
+ 	var x = 0;
+ 	var z = 0;
+ 	var index = 0;
+ 	
+ 	for ( z = 0; z < working_height; z++ ) {
+ 		for ( x = 0; x < working_width; x++ ) {
+ 						
+ 			var alpha;
+ 			if (workingPixels[index] > 200) {
+ 				// land
+ 				alpha = cAlpha_Land;			
+ 				
+ 				workingPixels[index]     = colorLand_R;
+ 				workingPixels[index + 1] = colorLand_G;
+ 				workingPixels[index + 2] = colorLand_B;
+ 			} else {
+ 				// ocean
+ 				alpha = Math.round(blurPixels[index] * (cAlpha_Ocean - cAlphaFloor_Ocean) / 255.0) + cAlphaFloor_Ocean;							
+ 				
+ 				workingPixels[index]     = colorOcean_R;
+ 				workingPixels[index + 1] = colorOcean_G;
+ 				workingPixels[index + 2] = colorOcean_B;
+ 			}
+ 						
+ 			workingPixels[index + 3] = alpha;
+ 			
+ 			index += 4;
+ 		}
+ 	}
+ 	workingImage_Context.putImageData( workingImageData, 0, 0);	
+ 
+ 	// Scale the processed ocean down to the same size as the mapImage, and
+ 	// overlay it onto the paper texture of mapImage
+ 	var mapBackgroundCopy_Canvas = cloneCanvas(map_Image);
+ 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
+ 	
+ 	mapBackgroundCopy_Context.drawImage(
+ 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		0, 
+ 		0,
+ 		working_width,
+ 		working_height,
+ 		dest_x,
+ 		dest_z,
+ 		dest_width,
+ 		dest_height
+ 	);
+ 
+ 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 1, 1);
+ }
+ 
+ // Land and ocean are the same colour, only the coastline is drawn in
+ //
+ // Returns a canvas to use as the map background. The size of the canvas returned should match the size of map_Image
+ // Parameters:
+ //   map_Image - the img object containing the default map-background image
+ //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
+ //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
+ function renderTheme_CoastalRelief(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ 
+ 	var cColor_DarkBrown = new RGB(144, 104,  67); 
+ 	var cColor_Coastline = cColor_DarkBrown.Blend(cColor_Black, 0.5);
+ 	
+ 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 20); // about 3 blocks on the final map		
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+ 
+ 	var working_width  = transformedOceanMask_Canvas.width;
+ 	var working_height = transformedOceanMask_Canvas.height;
+ 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
+ 
+ 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
+ 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
+ 	var workingPixels = workingImageData.data;	
+ 	
+ 	var colorCoast_R = cColor_Coastline.R, colorCoast_G = cColor_Coastline.G, colorCoast_B = cColor_Coastline.B; // avoid using classes, for speed.
+ 	
+ 	var x = 0;
+ 	var z = 0;
+ 	var index = 0;
+ 	
+ 	for ( z = 0; z < working_height; z++ ) {
+ 		for ( x = 0; x < working_width; x++ ) {
+ 											
+ 			var landAlpha = 255 - workingPixels[index];
+ 			var oceanAlpha = blurPixels[index];
+ 								
+ 			workingPixels[index]     = colorCoast_R;
+ 			workingPixels[index + 1] = colorCoast_G;
+ 			workingPixels[index + 2] = colorCoast_B;
+ 			workingPixels[index + 3] = landAlpha < oceanAlpha ? landAlpha : oceanAlpha;
+ 			
+ 			index += 4;
+ 		}
+ 	}
+ 	workingImage_Context.putImageData( workingImageData, 0, 0);	
+ 
+ 	// Scale the processed ocean down to the same size as the mapImage, and
+ 	// overlay it onto the paper texture of mapImage
+ 	var mapBackgroundCopy_Canvas = cloneCanvas(map_Image);
+ 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
+ 	
+ 	mapBackgroundCopy_Context.drawImage(
+ 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		0, 
+ 		0,
+ 		working_width,
+ 		working_height,
+ 		dest_x,
+ 		dest_z,
+ 		dest_width,
+ 		dest_height
+ 	);
+ 
+ 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 1, 0);
+ }
+ 
+ 
  
  // Returns a new canvas where interior_Canvas fades out into the edges defined by map_Image
  function ApplyMapEdgesToCanvas(interior_Canvas, map_Image, edgeFadeStart, edgeFadeDistance, edgeFadeAlpha) {
@@ -1583,7 +1753,8 @@ function parseHtmlLocations(data, callback) {
  	var x = 0;
  	var z = 0;
  	var index = 0;
- 	var borderColor = undefined;
+ 	var foundBorder = false;
+ 	var border_R, border_G, border_B;
  	
  	for ( z = 0; z < mapBorders_Canvas.height; z++ ) {
  	
@@ -1591,31 +1762,34 @@ function parseHtmlLocations(data, callback) {
  	
  		for ( x = 0; x < mapBorders_Canvas.width; x++ ) {
  			
- 			var border = new RGB(
- 				mapBordersPixels[index],
- 				mapBordersPixels[index + 1],
- 				mapBordersPixels[index + 2],
- 				mapBordersPixels[index + 3]
- 			);
- 			
- 			if (border.A == 0 || border.Matches(borderColor)) {
- 				// Show only the border from map_Image
+ 			if (mapBordersPixels[index + 3] == 0) {
+ 				// mapBordersPixels is transparent - i.e. beyond the tattered edge of the map
+ 				// Don't show the interior either.
  				interiorPixels[index + 3] = 0;
- 				
- 			} else {
  			
- 				if (borderColor === undefined) {
- 					// This is the first non-transparent pixel in map_Image, assume it
- 					// to be the border colour.
- 					borderColor = border;
- 				}
+ 			} else if (foundBorder) {
+ 			
+ 				if (mapBordersPixels[index] == border_R && mapBordersPixels[index + 1] == border_G && mapBordersPixels[index + 2] == border_B) {
+ 					// Show only the border from map_Image				
+ 					interiorPixels[index + 3] = 0;
  				
- 				// make the interior map transparent near the edges.
- 				var edgeFade_x = edgeFadeTable[x];
- 				var edgeFade = edgeFade_x < edgeFade_z ? edgeFade_x : edgeFade_z;								
- 				interiorPixels[index + 3] = edgeFade; 
+ 				} else {
+ 					// make the interior map transparent near the edges.
+ 					var edgeFade_x = edgeFadeTable[x];
+ 					var edgeFade = edgeFade_x < edgeFade_z ? edgeFade_x : edgeFade_z;								
+ 					interiorPixels[index + 3] = edgeFade; 
+ 				}			
+ 			} else {
+ 				// This is the first non-transparent pixel in map_Image, assume it
+ 				// to be the border colour.
+ 				foundBorder = true;
+ 				border_R = mapBordersPixels[index];
+ 				border_G = mapBordersPixels[index + 1];
+ 				border_B = mapBordersPixels[index + 2];			
+ 				
+ 				// Show only the border from map_Image				
+ 				interiorPixels[index + 3] = 0;				
  			}
- 	
  			index += 4;
  		}
  	}	

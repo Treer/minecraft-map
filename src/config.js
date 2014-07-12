@@ -140,7 +140,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowScale'          in this)) this.ShowScale = true;
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
-	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueOcean';	
+	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueCoastline';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
