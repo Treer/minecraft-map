@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.63
+ v1.7
 
  Copyright 2014 Glenn Fisher
 
@@ -9,10 +9,11 @@
  Licenced under GPL licence, version 3 or later
  https://www.gnu.org/copyleft/gpl.html
 
- Note that other files in this project have their own licence, see licence.md
+ Note that other files in this project have their own licence, see \licence.md
 *****/
 
-var cMapRangeDefault      = 3200; // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+// Constants and global variables
+var cMapRangeDefault      = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
 var cClickRadius          = 12;    // How far from the center of the icon is clickable
 var cTextOffset           = 14;    // How far under the center of the icon should the text be drawn
 var cLabel_DontDrawChar   = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
@@ -25,8 +26,17 @@ var gCustomIcons = new Image();
 var gCustomIconsLoaded = false;
 
 
+/********************************************
+ Javascript miscellaneous helper functions.
+
+ Copyright 2014 Glenn Fisher
+
+ This is not a standalone file, it is part of minecraftmap.pp.js
+****/
+
+
 // ---------------------------------------------
-// Javascript helper functions for type checking.
+// Type checking.
 function isEmpty(str) {
     return (!str || 0 === str.length);
 }
@@ -44,9 +54,36 @@ function isFunction(item) {
 }
 
 // ---------------------------------------------
-// Misc helper functions
+// Type conversion
+function stringToBool(value){
+	switch(trim(value).toLowerCase()){
+		case "true": 
+		case "on":
+		case "yes": 
+		case "1": 
+			return true;
+		case "false": 
+		case "off":
+		case "no": 
+		case "0": 
+		case null: 
+			return false;
+		default: 
+			return Boolean(string);
+	}
+}
 
-// Wow, Internet Explorer doesn't have trim functions.
+function imageToCanvas(image) {
+	var canvas = document.createElement("canvas");
+	canvas.width = image.width;
+	canvas.height = image.height;
+	canvas.getContext("2d").drawImage(image, 0, 0);
+	return canvas;
+}	
+
+
+// ---------------------------------------------
+// Wow, Internet Explorer doesn't have trim functions, include some.
 function trimRight(stringValue){
 	if (isFunction(stringValue.trimRight)) {
 		return stringValue.trimRight();
@@ -66,24 +103,6 @@ function trim(stringValue){
 		return stringValue.trim();
 	} else {
 		return stringValue.replace(/^\s+|\s+$/g, ''); 
-	}
-}
-
-function stringToBool(value){
-	switch(trim(value).toLowerCase()){
-		case "true": 
-		case "on":
-		case "yes": 
-		case "1": 
-			return true;
-		case "false": 
-		case "off":
-		case "no": 
-		case "0": 
-		case null: 
-			return false;
-		default: 
-			return Boolean(string);
 	}
 }
 
@@ -135,6 +154,13 @@ function parseURL(url) {
     };
 }
 
+/********************************************
+ Map configuration and location data code and classes.
+
+ Copyright 2014 Glenn Fisher
+
+ This is not a standalone file, it is part of minecraftmap.pp.js
+*****/
 
 var LocationType = {
   Village:         {iconIndex:  0, name: "Plains Village",  href: "http://minecraft.gamepedia.com/Village#Plains"}, 
@@ -270,6 +296,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowScale'          in this)) this.ShowScale = true;
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
+	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueOcean';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -287,6 +314,7 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('ShowScale'          in sourceConfig) this.ShowScale          = sourceConfig.ShowScale;
 	if ('ShowCoordinates'    in sourceConfig) this.ShowCoordinates    = sourceConfig.ShowCoordinates;	
 	if ('DisableCoordinates' in sourceConfig) this.DisableCoordinates = sourceConfig.DisableCoordinates;	
+	if ('OceanTheme'         in sourceConfig) this.OceanTheme         = sourceConfig.OceanTheme;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -340,7 +368,121 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'disablecoordinates' && isString(value)) {
 			this.DisableCoordinates = stringToBool(value);
 		}				
+		if (key == 'oceantheme' && isString(value)) {
+			this.OceanTheme = unquoteString(value);
+		}				
+		
 	}
+}
+
+MapConfiguration.prototype.AssignFromUrl = function(urlString) {
+
+	var locationInfo = parseURL(urlString);
+	
+	if (Object.keys !== undefined && Object.keys(locationInfo.params).length == 0) {
+		// Check for the Google bug (where GoogleDrive intermittently performs a 301 redirect and 
+		// loses all of the URL paramters in the process)
+		if (location.host.indexOf("googledrive.com") > 20) {
+			// there are no URL parameters and the URL has been changed to something like
+			// https://85b5da109cbab0a781619b9c891f667f8ebe60b8.googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html
+			// (See http://stackoverflow.com/questions/24188499)
+		
+			alert(
+				'no "src=" url was specified to scrape the location data from.\n\n' + 
+				'(On the off-chance you did specify a src parameter and it\'s gone, then Google Drive could be experiencing problems again:\n' +
+				'See http://buildingwithblocks.info/googlebug for more details)'
+			);
+			this.Abort = true;
+		}			
+	}
+	
+	// if "hidelabelsabove" is specified on the URL, then only display labels when
+	// the map is zoomed in more levels than the value of hidelabelsabove.
+	// i.e. 0 means always allow labels, while 2 means don't show labels unless zoomed twice or more.
+	if ('hidelabelsabove' in locationInfo.params) {
+		this.HideLabelsAbove = locationInfo.params.hidelabelsabove;
+	}	
+
+	// if "showlabelsbelow" is specified on the URL, then display all labels when
+	// the map is zoomed in more levels than the value of showlabelsbelow.
+	// 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
+	// i.e. 0 means always show *all* labels, while 2 means force all labels to be shown at level 3 (full zoom)
+	if ('showlabelsbelow' in locationInfo.params) {
+		this.ShowLabelsBelow = locationInfo.params.showlabelsbelow;
+	}			
+	
+	// Set any constants specified by the URL (instead of using the default value)
+	if ('range' in locationInfo.params) {	
+		this.MapRange = locationInfo.params.range;
+	}
+
+	// if "title" is specified on the URL then relabel the page
+	if ('title' in locationInfo.params  && isString(locationInfo.params.title)) {
+		// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
+		// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
+		this.Title = decodeURIComponent(locationInfo.params.title.replace(/\+/g, " "));
+	}	
+
+	// if "blurb" is specified on the URL then change the tag line
+	if ('blurb' in locationInfo.params  && isString(locationInfo.params.blurb)) {
+		// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
+		// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
+		this.Blurb = decodeURIComponent(locationInfo.params.blurb.replace(/\+/g, " "));
+	}	
+	
+	// if "x" is specified on the URL then change the center of the map
+	if ('x' in locationInfo.params) {
+		var new_x = parseInt(locationInfo.params.x);
+		if (!isNaN(new_x)) this.X = new_x
+	}
+
+	// if "z" is specified on the URL then change the center of the map
+	if ('z' in locationInfo.params) {
+		var new_z = parseInt(locationInfo.params.z);
+		if (!isNaN(new_z)) this.Z = new_z
+	}	
+	
+	// if "hideorigin" or "hidescale" is on the url then set ShowOrigin to false, likewise with ShowScale
+	if ('hideorigin' in locationInfo.params) this.ShowOrigin = false;
+	if ('hidescale' in locationInfo.params)  this.ShowScale  = false;
+	// or showoroigin and showscale could be specified explicitly
+	if ('showorigin' in locationInfo.params && isString(locationInfo.params.showorigin)) {
+		this.ShowOrigin = stringToBool(locationInfo.params.showorigin);
+	}
+	if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
+		this.ShowScale = stringToBool(locationInfo.params.showscale);
+	}
+	if ('showcoordinates' in locationInfo.params && isString(locationInfo.params.showcoordinates)) {
+		this.ShowCoordinates = stringToBool(locationInfo.params.showcoordinates);
+	}
+
+	if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
+		this.MapDataUri = decodeURIComponent(locationInfo.params.src);
+	}
+	
+	// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
+	if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
+		this.CustomIconsUri = locationInfo.params.icons;
+	}
+	
+	// Some extra support for hosting via Google Drive, as google drive is a good way to make
+	// the map collaborative while avoiding cross-domain data headaches.
+	if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {
+
+		if (locationInfo.params.googlesrc.toLowerCase().indexOf('http') == 0) {
+			// User has used googlesrc when they should have used src. Rather than 
+			// explain the error just correct it.
+			this.MapDataUri = locationInfo.params.googlesrc;
+		} else {
+			this.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+		}
+	}
+	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
+		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
+	}
+	if ('oceantheme' in locationInfo.params && isString(locationInfo.params.oceantheme)) {		
+		this.OceanTheme = locationInfo.params.oceantheme;
+	}	
 }
 
 // Returns a function that converts Minecraft coordinates into canvas coordinates
@@ -669,11 +811,939 @@ function parseHtmlLocations(data, callback) {
  
  
 
+ /********************************************
+  Javascript map drawing functions.
+ 
+  Copyright 2014 Glenn Fisher
+ 
+  This is not a standalone file, it is part of minecraftmap.pp.js
+ ****/
+ 
+ 
+ // zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
+ // out map, 1 is the first level of zooming in, etc.
+ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations, finishedCallback) {
+ 
+ 	var canvas = document.createElement('canvas');
+ 	canvas.width = aWidth;
+ 	canvas.height = aHeight;
+ 
+ 	var labellingStyle;
+ 
+ 	if (zoomLevelNumber < config.HideLabelsAbove) {
+ 		labellingStyle = LabellingStyle.none;
+ 	} else if (zoomLevelNumber >= config.ShowLabelsBelow) {
+ 		labellingStyle = LabellingStyle.all;	
+ 	} else {
+ 		labellingStyle = LabellingStyle.smart;
+ 	}
+ 	
+ 	drawMapDetails(canvas, config, locations, labellingStyle);	
+ 	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations);
+ 	
+ 	// Set the image's display style to block so that it doesn't default to vertically aligning
+ 	// to the font baseline and leaving 4 pixels of space underneath - that screws up the drag size calculation.
+ 	var newImage = $(document.createElement('img')).css('display', 'block')[0];	
+ 	
+ 	// assigning to newImage.src (even from canvas.toDataURL()) doesn't always update the width and height before 
+ 	// returning, so we have to defer until the onload event has fired to avoid race condition. (I sure hope onload 
+ 	// can be relied upon in all browsers).
+ 	var deferUntilImageLoaded = $.Deferred();	
+ 	newImage.onload = function() { deferUntilImageLoaded.resolve(); }	
+ 	
+ 	newImage.src = canvas.toDataURL("image/png");
+ 	newImage.useMap = '#' + areaMapId;	
+ 	
+ 	var divElement = document.getElementById(divElementName);
+ 	$(newImage).appendTo(divElement);
+ 	
+ 	// finishedCallback is called once this function has finished AND newImage was updated.
+ 	$.when(deferUntilImageLoaded).done(finishedCallback);
+ }
+ 
+ // returns the name of the map
+  function CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations){
+ 
+ 	var result = divElementName + '-areamap';
+ 
+ 	var mapSize = aWidth > aHeight ? aWidth : aHeight;
+ 	
+ 	var translateCoord_x = config.GetXTranslationFunction(mapSize);
+ 	var translateCoord_z = config.GetZTranslationFunction(mapSize);
+ 	
+ 	var newmap = document.createElement('map')
+ 	newmap.name = result;
+ 
+ 	// Start at the top of the list (index = 0), as the first area
+ 	// elements we add appear to occlude later areas we add - in 
+ 	// Firefox at least. And we want higher locations in the list to 
+ 	// have higher priority.	
+ 	var index;
+ 	for (index = 0; index < locations.length; ++index) {
+ 	
+ 		var location = locations[index];
+ 		var href = location.getHref();
+ 		var includeArea = false;
+ 
+ 		var newArea = document.createElement('area');
+ 
+ 		if (!isEmpty(href)) {
+ 			newArea.href = href;
+ 			includeArea = true;
+ 		}
+ 		
+ 		var htmlString = generateHtmlLabel(
+ 			location, 
+ 			config.ShowCoordinates && !config.DisableCoordinates
+ 		);
+ 		if (htmlString.length > 0) {
+ 			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
+ 			$(newArea).mouseout(Handle_mouseout);
+ 			includeArea = true;
+ 		}
+ 		
+ 		if (includeArea) {		
+ 			newArea.shape = 'circle';
+ 			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
+ 			newArea.alt = location.getAlt();
+ 		
+ 			$(newArea).appendTo(newmap);
+ 		}
+ 	}
+ 	$(newmap).appendTo(document.getElementById(divElementName));
+ 	
+ 	return result;
+ }
+ 
+ 
+ function CreateHandler_mouseover(htmlLabel) {
+ 	// Creates a closure so the event handler keeps a reference to the label
+ 	return function(eventObject) { 
+ 		$("#locationDesc").empty();
+ 		$("#locationDesc").append(htmlLabel);
+ 		$("#hoverFrame").removeClass('hidden-hoverFrame');
+ 	}
+ }
+ 
+ function Handle_mouseout(eventObject) {
+ 	$("#hoverFrame").addClass('hidden-hoverFrame');
+ 	$("#locationDesc").empty();
+ }
+ 
+ function generateHtmlLabel(location, includeCoordinates)
+ {
+ 	var result = "";
+ 
+ 	var label = location.getLabel();
+ 	if (isNotEmptyString(label)) label = strToHtml(trim(label));
+ 
+ 	var owner = location.owner.text;
+ 	if (isNotEmptyString(owner)) owner = strToHtml(trim(owner));
+ 
+ 	var ownerPos = isNotEmptyString(owner) ? label.indexOf(owner) : -1;	
+ 	var htmlOwner = '<span class="locationHoverOwner">' + owner + '</span>';
+ 	var showOwner = true;
+ 	
+ 	if (isNotEmptyString(label) && label != owner) {
+ 	
+ 		var htmlLabel = label;
+ 		if (ownerPos >= 0) {
+ 			// The location label contains the owner, mark-up the owner name portion of the label
+ 			htmlLabel = 
+ 				label.substring(0, ownerPos) + 
+ 				htmlOwner +
+ 				label.substring(ownerPos + owner.length);	
+ 			showOwner = false; // Owner is already shown
+ 		}
+ 		htmlLabel = '<span class="locationHoverPlacename">' + htmlLabel + '</span>';
+ 	
+ 		result = htmlLabel;
+ 		if (isNotEmptyString(owner) && showOwner) {
+ 			result += '<br/>';		
+ 		}
+ 	}
+ 	if (isNotEmptyString(owner) && showOwner) result += htmlOwner;		
+ 
+ 	if (isNotEmptyString(result) && includeCoordinates) {
+ 		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
+ 	}
+ 	if (isNotEmptyString(result) && isNotEmptyString(location.getHref(true))) {
+ 		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
+ 	}
+ 	
+ 	
+ 	return result;
+ }
+ 
+ function strToHtml(str) {
+ 	return str.replace("\n", " ").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+ }
+ 
+ 
+ // if labellingStyle is set LabellingStyle.none then no captions will be rendered.
+ function drawMapDetails(canvas, config, locations, labellingStyle)
+ {
+ 	var cTextLineHeight = 10;
+ 
+ 	var ctx = canvas.getContext("2d");
+ 	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
+ 	var halfMapSize = mapSize / 2;
+ 
+ 	var tilesImage = document.getElementById('map-tileset');
+ 	
+ 	var translateCoord_x = config.GetXTranslationFunction(mapSize);
+ 	var translateCoord_z = config.GetZTranslationFunction(mapSize);
+ 	
+ 	var occupiedSpace = []; // an array of Rectangles representing where to not draw labels	
+ 	
+ 	function splitIntoLines(text) {
+ 		return text.split(/\r\n|\n|\r/);
+ 	}
+ 	
+ 	// Returns an array of bounding boxes for the multiline-centered label of a location
+ 	function locationLabel_bounds(locationInstance, finalizedCaption, pixelOffsetFromLocation_y) {
+ 	
+ 		var boundsAtOrigin;
+ 		if ('BoundsAtOrigin' in locationInstance) {
+ 			boundsAtOrigin = locationInstance.BoundsAtOrigin; // It's already been calculated (assumes finalizedCaption doesn't change)
+ 		} else {
+ 			// It hasn't been calculated yet, so do that now.
+ 			// We cache it from a position 0, 0 because the actual translation will
+ 			// change depending on the zoom level.
+ 			// (I'm caching it because I assume that determining graphical text width is slow - could be wrong, need to test)
+ 			boundsAtOrigin = multilineCenteredText_bounds(0, pixelOffsetFromLocation_y, finalizedCaption, 1);
+ 			locationInstance.BoundsAtOrigin = boundsAtOrigin; // cache it
+ 		}
+ 		
+ 		var result = [];
+ 		var i;
+ 		for(i = 0; i < boundsAtOrigin.length; i++) {
+ 			result[i] = boundsAtOrigin[i].copy(translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z));
+ 		}
+ 		
+ 		return result;
+ 	}
+ 	
+ 	// returns an array of bounding Rectangle instances that enclose the text which
+ 	// would be rendered by multilineCenteredText_draw()
+ 	function multilineCenteredText_bounds(x, y, text, padding) {
+ 	
+ 		var result = [];
+ 		if (!(padding < 0) && !(padding > 0)) padding = 0;
+ 
+ 		if (!isEmpty(text)) {
+ 			
+ 			var textOffset = 1; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
+ 			var lines = splitIntoLines(text);
+ 			var lineNo;
+ 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
+ 			
+ 				var lineWidth = ctx.measureText(lines[lineNo]).width;
+ 				var leftTrim_lineWidth = ctx.measureText(trimLeft(lines[lineNo])).width;
+ 				var rightTrim_lineWidth = ctx.measureText(trimRight(lines[lineNo])).width;
+ 				var leftMargin = lineWidth - leftTrim_lineWidth;
+ 				var rightMargin = lineWidth - rightTrim_lineWidth;
+ 				var bound_x = x - (lineWidth - 1) / 2;
+ 				var bound_y = y + textOffset;
+ 				
+ 				result[lineNo] = new Rectangle(
+ 					bound_x + leftMargin - padding,
+ 					bound_y - cTextLineHeight - padding,
+ 					bound_x + (lineWidth - 1) - rightMargin + padding,
+ 					bound_y + padding
+ 				);
+ 				textOffset += cTextLineHeight;
+ 			}
+ 		}
+ 		return result;
+ 	}
+ 	
+ 	function multilineCenteredText_draw(x, y, text) {
+ 
+ 		var textOffset = 0;
+ 		
+ 		if (!isEmpty(text)) {
+ 			var lines = splitIntoLines(text);
+ 			var lineNo;
+ 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
+ 			
+ 				// y value for filltext is the baseline of the text
+ 				ctx.fillText(
+ 					lines[lineNo], 
+ 					x - (ctx.measureText(lines[lineNo]).width / 2),
+ 					y + textOffset
+ 				);
+ 				textOffset += cTextLineHeight;
+ 			}
+ 		}
+ 	}
+ 
+ 	// Returns an array of Rectangle, which will be empty if the
+ 	// index indicates no icon.
+ 	function icon_bounds(index, x, z, margin) {
+ 		// most icons fit in 20x20
+ 		// todo: hardcode any exceptions
+ 		var result = [];
+ 		
+ 		if (isNaN(index) || index < 0) {
+ 			// no icon
+ 		} else {
+ 			var iconBoundsHint = IconBoundsInformation[index];
+ 			if (iconBoundsHint === undefined) {
+ 				// The icon is not specified in IconBoundsInformation array, use default values
+ 				iconBoundsHint = {width: 20, height: 20, yOffset:  0};			
+ 			}
+ 			var topLeft_x = x - iconBoundsHint.width / 2;
+ 			var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
+ 			result[0] = new Rectangle(
+ 				topLeft_x, 
+ 				topLeft_z, 
+ 				topLeft_x + iconBoundsHint.width - 1,
+ 				topLeft_z + iconBoundsHint.height - 1
+ 			);
+ 		}
+ 		
+ 		return result;
+ 	}
+ 	
+ 	
+ 	function icon_draw(index, drawMask, x, z) {
+ 	
+ 		if (!isNaN(index) && index >= 0) {
+ 		
+ 			if (index >= cCustomIconIndexStart) {
+ 				// it's a custom icon				
+ 				if (gCustomIconsLoaded) {
+ 					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, x, z);			
+ 				}				
+ 			} else {			
+ 				drawGlyph(ctx, tilesImage, index, drawMask, x, z);			
+ 			}
+ 		}
+ 	}
+ 	
+ 	// Adjust this to adjust which pass the different map parts are rendered in
+ 	var RenderLayer = {
+ 		Masks:            0,
+ 		Origin:           1,    
+ 		Captions:         2,
+ 		UncaptionedIcons: 3,
+ 		CaptionedIcons:   4,
+ 		Scale:            5,
+ 		
+ 		First:            0,
+ 		Last:             5
+ 	}
+ 			
+ 	function drawLocation(locationInstance, renderLayer) {
+ 			
+ 		var text = "";
+ 		var location_x = translateCoord_x(locationInstance.x);
+ 		var location_z = translateCoord_z(locationInstance.z);
+ 
+ 		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
+ 		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
+ 			if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
+ 		} else {
+ 			text += locationInstance.labelOverride.text;
+ 		}
+ 		
+ 		if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
+ 			// The owner was specified, and is not named in the description, add in brackets at the bottom
+ 			text += '\n(' + locationInstance.owner.text + ')';
+ 		}
+ 
+ 		if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
+ 		
+ 			var iconIndex = locationInstance.getIconIndex();
+ 			
+ 			var textOffset = cTextOffset;
+ 			if (isNaN(iconIndex) || iconIndex < 0) {
+ 				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+ 				textOffset = 3; 
+ 			}
+ 		
+ 			var drawLabel = true;
+ 			var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
+ 			
+ 			if (labellingStyle == LabellingStyle.smart) {			
+ 				// check the space needed by the label isn't already occupied
+ 				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
+ 
+ 				var boxIndex
+ 				for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
+ 				
+ 					var box = boundingboxes[boxIndex];
+ 					var	i;
+ 					for(i = 0; i < occupiedSpace.length; i++) {
+ 						if (box.intersects(occupiedSpace[i])) {
+ 							// a label or icon already occupies this space
+ 							
+ 							// make sure it's not the bounding box of our own icon that we collided with
+ 							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
+ 							if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
+ 								drawLabel = false;
+ 								break;
+ 							}
+ 						}
+ 					}
+ 					if (!drawLabel) break;
+ 				}
+ 				if (drawLabel || drawLabelRegardless) {
+ 					// Add the space taken by this label to occupiedSpace
+ 					occupiedSpace = occupiedSpace.concat(boundingboxes);
+ 				}				
+ 			}
+ 				
+ 			if (drawLabel || drawLabelRegardless) { 
+ 				multilineCenteredText_draw(location_x, location_z + textOffset, text);
+ 			}
+ 			
+ 			if (cShowBoundingBoxes) {
+ 				// debug code for showing bounding boxes
+ 				ctx.lineWidth = 1;
+ 				ctx.strokeStyle="#0000FF";
+ 				var boxes = locationLabel_bounds(locationInstance, text);
+ 				var i;
+ 				for(i = 0; i < boxes.length; i++) {
+ 					boxes[i].stroke(ctx);
+ 				}
+ 			}
+ 		}
+ 		
+ 		if (renderLayer == RenderLayer.Masks) {		
+ 			icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
+ 		}
+ 
+ 		if (isEmpty(text)) {
+ 			if (renderLayer == RenderLayer.UncaptionedIcons) {		
+ 				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+ 			}
+ 		} else {
+ 			if (renderLayer == RenderLayer.CaptionedIcons) {		
+ 				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+ 			}		
+ 		}
+ 		
+ 	}
+ 	
+ 	function drawOrigin() {
+ 		var crosshairSize = 8;
+ 		var originX = Math.round(translateCoord_x(0));
+ 		var originZ = Math.round(translateCoord_z(0));
+ 			
+ 		ctx.lineWidth = 2;
+ 		ctx.strokeStyle="#6e5830";
+ 		ctx.moveTo(originX, originZ - crosshairSize);
+ 		ctx.lineTo(originX, originZ + crosshairSize);
+ 		ctx.moveTo(originX - crosshairSize, originZ);
+ 		ctx.lineTo(originX + crosshairSize, originZ);
+ 		ctx.stroke();
+ 	}
+ 	
+ 	function drawScale() {
+ 		var pixelsInBackground = $('#map-background').width();
+ 		var blockDistance = (config.MapRange * 2) / pixelsInBackground;
+ 		var blockDistance_str = Math.round(blockDistance).toString();
+ 		var blockSize = canvas.width / pixelsInBackground;
+ 		var scaleLength_bl = 5; // with cMapRangeDefault of 6400 and a map-background resolution of 64, 5 blocks is a nice visual size and also gives a nice round 1km 
+ 		var scaleStartX = Math.round(6 * blockSize);
+ 		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
+ 		var notchHeight = Math.round(blockSize * 0.4);
+ 
+ 		ctx.lineWidth = 2;
+ 		ctx.strokeStyle="#6e5830";
+ 		ctx.moveTo(scaleStartX, scaleStartY);
+ 		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
+ 		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY + notchHeight);
+ 		ctx.moveTo(scaleStartX, scaleStartY - notchHeight);
+ 		ctx.lineTo(scaleStartX, scaleStartY + notchHeight);
+ 		ctx.moveTo(scaleStartX + Math.round(blockSize), scaleStartY - notchHeight);
+ 		ctx.lineTo(scaleStartX + Math.round(blockSize), scaleStartY);
+ 		ctx.stroke();
+ 
+ 		var text_y1 = scaleStartY - notchHeight - 4;
+ 		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
+ 		multilineCenteredText_draw(scaleStartX + blockSize, text_y1, blockDistance_str);		
+ 		multilineCenteredText_draw(scaleStartX, text_y2, '0');
+ 		multilineCenteredText_draw(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
+ 	}
+ 
+ 	var mapBackground = document.getElementById('map-background');	
+ 	
+ 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
+ 	setCanvasScalingToPixelated(ctx);
+ 	ctx.drawImage(
+ 		mapBackground,
+ 		0, 0,
+ 		canvas.width, canvas.height);
+ 
+ 	// prefil the occupiedSpace array with boxes indicating where graphics are.
+ 	ctx.lineWidth = 1;
+ 	ctx.strokeStyle="#FF00FF";
+ 	var i;
+ 	for (i = 0; i < locations.length; i++) {
+ 		var locationInstance = locations[i];
+ 		var bounds = icon_bounds(locationInstance.getIconIndex(), translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z), 0);
+ 		if (bounds.length > 0) {
+ 			occupiedSpace[occupiedSpace.length] = bounds[0];
+ 			if (cShowBoundingBoxes) bounds[0].stroke(ctx); // debug code for showing bounding boxes			
+ 		}
+ 	}	
+ 
+ 		
+ 	ctx.font = "10px Arial";	
+ 	ctx.font = "10px 'Merienda', Arial, sans-serif";	
+ 	
+ 	var renderLayer;
+ 	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
+ 	
+ 		if (renderLayer == RenderLayer.Origin) {
+ 			if (config.ShowOrigin) drawOrigin();
+ 			
+ 		} else if (renderLayer == RenderLayer.Scale) {
+ 			if (config.ShowScale)  drawScale();
+ 
+ 		} else if (renderLayer == RenderLayer.Captions) {		
+ 			// Labels are rendered first to last, so that with smart-labels, locations 
+ 			// higher in the list reserve their label space first.
+ 			var index;
+ 			for (index = 0; index < locations.length; index++) {
+ 				drawLocation(locations[index], renderLayer);
+ 			}	
+ 		} else {	
+ 			// Render last to first, so that locations higher in the list are drawn 
+ 			// over the top of locations lower in the list
+ 			var index;
+ 			for (index = locations.length - 1; index >= 0; index--) {
+ 				drawLocation(locations[index], renderLayer);
+ 			}	
+ 		}
+ 	}
+ }
+ 
+ function setCanvasScalingToPixelated(ctx) {
+ 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
+ 	ctx.mozImageSmoothingEnabled = false;
+ 	ctx.webkitImageSmoothingEnabled = false;
+ 	ctx.msImageSmoothingEnabled = false;
+ 	ctx.imageSmoothingEnabled = false;
+ }
+ 
+ // Put any rendering tasks in here that should be performed only once (instead
+ // of being performed for every zoom level)
+ function PreRender(config) {
+ 	
+ 	var oceanmaskImage = document.getElementById('oceanmask');	
+ 	if (oceanmaskImage !== null) {
+ 		// An oceanmask has been provided, render a new map-background with
+ 		// it instead of using the default one.
+ 	
+ 		var mapBackgroundImage = document.getElementById('map-background');
+ 
+ 		var newMapBackgroundCanvas = renderOcean(
+ 			config,
+ 			mapBackgroundImage,
+ 			oceanmaskImage
+ 		);		
+ 		mapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
+ 	}	
+ }
+ 
+ 
+ // Assumes tiles are square, arranged beside each other in the tileImage left to right in two 
+ // rows (top row icons, bottom row masks) and should be drawn centered.
+ // This means user can change size of icons just by changing the images the tiles are in.
+ //
+ // tilesImage: an img element
+ // drawMask: if True, the icon mask will be drawn (i.e. the bottom row)
+ function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
+ 
+ 	var width = tilesImage.height / 2;
+ 	var halfWidth = width / 2;
+ 
+ 	canvasContext.drawImage(
+ 		tilesImage,
+ 		tileIndex * width,
+ 		drawMask ? width : 0,
+ 		width,
+ 		width,
+ 		x - halfWidth,
+ 		y - halfWidth,
+ 		width,
+ 		width
+ 	);
+ }
+ /********************************************
+  renders a new map-background (if an oceanmap has been provided)
+ 
+  Copyright 2014 Glenn Fisher
+ 
+  This is not a standalone file, it is part of minecraftmap.pp.js
+ ****/
+ 
+ var cOceanBlocksPerPixel     = 16; // scale of the oceanMaskImage
+ var cWorkingCanvasOversample = 4;  // the "workingCanvas" should be much smaller than the ocean mask to save processing time, but is still detailed enough to scale down to map-background size afterwards without visible aliasing.	
+ var cColor_Black             = new RGB(0, 0, 0);
+ var cColor_White             = new RGB(255, 255, 255);
+ 
+ 
+ function renderOcean(config, mapImage, oceanMaskImage) {
+ 
+ 	// OceanMaskImage must be wider than 0 to avoid divide by zero
+ 	if (oceanMaskImage.width == 0) {
+ 		alert('Invalid ocean mask - width 0');
+ 		return imageToCanvas(mapImage);
+ 	}
+ 	
+ 	// Work out the bounding box that the map at its current scale and position occupies
+ 	// inside the oceanMaskImage - (mask_x, mask_z) with size (maskWidth, maskWidth)
+ 	var maskCenter_x = oceanMaskImage.width / 2;
+ 	var maskCenter_z = oceanMaskImage.height / 2;
+ 	var maskWidth = Math.round((config.MapRange * 2) / cOceanBlocksPerPixel);
+ 	var mask_x = Math.round(maskCenter_x + (config.X - config.MapRange) / cOceanBlocksPerPixel);
+ 	var mask_z = Math.round(maskCenter_z + (config.Z - config.MapRange) / cOceanBlocksPerPixel);
+ 	
+ 	// adjust the mask co-ords so they stay inside the bounds of the oceanMaskImage
+ 	var adj_mask_x = mask_x < 0 ? 0 : mask_x;
+ 	var adj_mask_z = mask_z < 0 ? 0 : mask_z;
+ 	
+ 	var adj_mask_width  = maskWidth - (adj_mask_x - mask_x);
+ 	var adj_mask_height = maskWidth - (adj_mask_z - mask_z);
+ 	adj_mask_width  = adj_mask_width  > oceanMaskImage.width  ? oceanMaskImage.width  : adj_mask_width;
+ 	adj_mask_height = adj_mask_height > oceanMaskImage.height ? oceanMaskImage.height : adj_mask_height;
+ 
+ 	// adjust the destination coords to take into account any clamping of the mask co-ords done to stay 
+ 	// inside the oceanMaskImage bounds.
+ 	// (If the map range fits entirely in the oceanMaskImage, then (dest_x, dest_z) will be (0, 0) and
+ 	// dest_width and dest_height will match the width and height of mapImage)
+ 	var destScale = mapImage.width / maskWidth;
+ 	var dest_x = Math.round((adj_mask_x - mask_x) * destScale);
+ 	var dest_z = Math.round((adj_mask_z - mask_z) * destScale);		
+ 	var dest_width = Math.round(adj_mask_width * destScale);
+ 	var dest_height = Math.round(adj_mask_height * destScale);
+ 
+ 	
+ 	// create a "workingCanvas" that is much smaller than the ocean mask, and
+ 	// will take less time to process, but is still detailed enough to scale
+ 	// down to the map-background size afterwards without visible aliasing.	
+ 	var working_width = dest_width * cWorkingCanvasOversample; // calculate the working canvas size based off the destination coords
+ 	var working_height = dest_height * cWorkingCanvasOversample;
+ 	
+ 	var workingCanvas = document.createElement('canvas');
+ 	workingCanvas.width = working_width;
+ 	workingCanvas.height = working_height;
+ 	workingContext = workingCanvas.getContext("2d");
+ 	workingContext.drawImage(
+ 		oceanMaskImage,
+ 		adj_mask_x, 
+ 		adj_mask_z,
+ 		adj_mask_width,
+ 		adj_mask_height,
+ 		0,
+ 		0,
+ 		working_width,
+ 		working_height
+ 	);
+ 				
+ 				
+ 	return renderTheme_BlueCoastline(
+ 		mapImage, 
+ 		workingCanvas,
+ 		dest_x,
+ 		dest_z,
+ 		dest_width,
+ 		dest_height
+ 	);
+ }
+ 
+ // Land is dark-coloured, with blue coastlines fading out to light-coloured oceans
+ // Theme inspired by http://www.elfwood.com/~bell1973/Pirate-Treasure-map.2567659.html
+ //
+ // Returns a canvas to use as the map background. The size of the canvas returned should match the size of map_Image
+ // Parameters:
+ //   map_Image - the img object containing the default map-background image
+ //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
+ //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
+ function renderTheme_BlueCoastline(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ 
+ 	//var cColor_BlueCoast  = new RGB(147, 152, 146); // more of a grey really
+ 	var cColor_BlueCoast    = new RGB(127, 130, 146); 
+ 	var cColor_ShallowCoast = new RGB(  0,  30,  30);
+ 	var cColor_lightOcean   = new RGB(243, 226, 194);
+ 	var cColor_Land         = new RGB(208, 177, 120);
+ 	//var cColor_Land         = new RGB(153, 135, 108);
+ 	var cAlpha_Ocean        = Math.round(0.66 * 255);
+ 	var cAlpha_Land         = Math.round(0.2  * 255);
+ 	
+ 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 6.4 blocks on the final map		
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+ 
+ 	var working_width  = transformedOceanMask_Canvas.width;
+ 	var working_height = transformedOceanMask_Canvas.height;
+ 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
+ 
+ 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
+ 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
+ 	var workingPixels = workingImageData.data;	
+ 	
+ 	var x = 0;
+ 	var z = 0;
+ 	var index = 0;
+ 	
+ 	for ( z = 0; z < working_height; z++ ) {
+ 		for ( x = 0; x < working_width; x++ ) {
+ 						
+ 			//var mapPixel = GetMapRGBA(x, z);
+ 						
+ 			var color;
+ 			var alpha;
+ 			if (workingPixels[index] == 255) {
+ 				// land
+ 				alpha = cAlpha_Land;			
+ 				color = cColor_Land;
+ 			} else {
+ 				// ocean
+ 				alpha = cAlpha_Ocean;
+ 				
+ 				var shade = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
+ 				if (shade > 255) {
+ 					shade = 1;
+ 				} else {
+ 					shade = shade / 255.0;
+ 				}
+ 								
+ 				color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
+ 				// lets make the shading a little non-linear
+ 				if (shade <= 0.5) color = color.Blend(cColor_ShallowCoast, (0.5 - shade));
+ 			}
+ 						
+ 			workingPixels[index]     = color.R;
+ 			workingPixels[index + 1] = color.G;
+ 			workingPixels[index + 2] = color.B;
+ 			workingPixels[index + 3] = alpha;
+ 			
+ 			index += 4;
+ 		}
+ 	}
+ 	workingImage_Context.putImageData( workingImageData, 0, 0);	
+ 
+ 	// Scale the processed ocean down to the same size as the mapImage, and
+ 	// overlay it onto the paper texture of mapImage
+ 	var mapBackgroundCopy_Canvas = cloneCanvas(map_Image);
+ 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
+ 	
+ 	mapBackgroundCopy_Context.drawImage(
+ 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		0, 
+ 		0,
+ 		working_width,
+ 		working_height,
+ 		dest_x,
+ 		dest_z,
+ 		dest_width,
+ 		dest_height
+ 	);
+ 
+ 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 2, 2);
+ }
+ 
+ // Returns a new canvas where interior_Canvas fades out into the edges defined by map_Image
+ function ApplyMapEdgesToCanvas(interior_Canvas, map_Image, edgeFadeStart, edgeFadeDistance, edgeFadeAlpha) {
+ 
+ 	if (edgeFadeStart    === undefined) edgeFadeStart    = 2;
+ 	if (edgeFadeDistance === undefined) edgeFadeDistance = 4;
+ 	if (edgeFadeAlpha    === undefined) edgeFadeAlpha    = 0;
+ 
+ 	var mapBorders_Canvas = cloneCanvas(map_Image);
+ 	var mapBorders_Context = mapBorders_Canvas.getContext("2d");
+ 	var mapBordersData = mapBorders_Context.getImageData(0, 0, mapBorders_Canvas.width, mapBorders_Canvas.height);		
+ 	var mapBordersPixels = mapBordersData.data;
+ 	
+ 	var interior_Context = interior_Canvas.getContext("2d");
+ 	var interiorData = interior_Context.getImageData(0, 0, interior_Canvas.width, interior_Canvas.height);		
+ 	var interiorPixels = interiorData.data;
+ 
+ 	// Calculate a table of alpha values for how interior_Canvas should fade into map_Image at the edges
+ 	var edgeFadeTable = new Array(mapBorders_Canvas.width);
+ 	var i = 0;
+ 	for (i = 0; i < edgeFadeTable.length; i++ ) edgeFadeTable[i] = 255;
+ 	for (i = 0; i < edgeFadeStart; i++ ) {
+ 		edgeFadeTable[i] = edgeFadeAlpha;
+ 		edgeFadeTable[edgeFadeTable.length - (i + 1)] = edgeFadeAlpha;
+ 	}
+ 	for (i = 0; i < edgeFadeDistance; i++ ) {
+ 		var alpha = edgeFadeAlpha + Math.round(((255 - edgeFadeAlpha) * (i + 1)) / (edgeFadeDistance + 1));		
+ 		
+ 		edgeFadeTable[i + edgeFadeStart] = alpha;
+ 		edgeFadeTable[edgeFadeTable.length - (i + 1 + edgeFadeStart)] = alpha;
+ 	}
+ 	
+ 	var x = 0;
+ 	var z = 0;
+ 	var index = 0;
+ 	var borderColor = undefined;
+ 	
+ 	for ( z = 0; z < mapBorders_Canvas.height; z++ ) {
+ 	
+ 		var edgeFade_z = edgeFadeTable[z]; // Like a lot of this code, assumes the map_Image is square
+ 	
+ 		for ( x = 0; x < mapBorders_Canvas.width; x++ ) {
+ 			
+ 			var border = new RGB(
+ 				mapBordersPixels[index],
+ 				mapBordersPixels[index + 1],
+ 				mapBordersPixels[index + 2],
+ 				mapBordersPixels[index + 3]
+ 			);
+ 			
+ 			if (border.A == 0 || border.Matches(borderColor)) {
+ 				// Show only the border from map_Image
+ 				interiorPixels[index + 3] = 0;
+ 				
+ 			} else {
+ 			
+ 				if (borderColor === undefined) {
+ 					// This is the first non-transparent pixel in map_Image, assume it
+ 					// to be the border colour.
+ 					borderColor = border;
+ 				}
+ 				
+ 				// make the interior map transparent near the edges.
+ 				var edgeFade_x = edgeFadeTable[x];
+ 				var edgeFade = edgeFade_x < edgeFade_z ? edgeFade_x : edgeFade_z;								
+ 				interiorPixels[index + 3] = edgeFade; 
+ 			}
+ 	
+ 			index += 4;
+ 		}
+ 	}	
+ 	interior_Context.putImageData(interiorData, 0, 0);
+ 	
+ 	mapBorders_Context.drawImage(interior_Canvas, 0, 0);
+ 	return mapBorders_Canvas;
+ }
+ 
+ 
+ // ===========================
+ // functions that could be split off into a helpers_graphics.js file
+ // ===========================
+ 
+ // Constructor
+ // alapha is optional 
+ function RGB(red, green, blue, alpha) {
+ 	this.R = red;
+ 	this.G = green;
+ 	this.B = blue;
+ 	this.A = (alpha === undefined) ? 255 : alpha;
+ }
+ 
+ // weight is a value between 0 and 1 which indicate how the result is 
+ // split between the instance and the colour provided as a parameter 
+ // (1 = 100% the colour provided as a parameter)
+ RGB.prototype.Blend = function(color_rgb, weight) {
+ 	
+ 	// clamp the weight to between 0 and 1
+ 	weight = (weight < 0) ? 0.0 : ((weight > 1) ? 1.0 : weight);
+ 	
+ 	var counterweight = 1.0 - weight;
+ 	
+ 	return new RGB(
+ 		Math.round((color_rgb.R * weight) + (this.R * counterweight)),
+ 		Math.round((color_rgb.G * weight) + (this.G * counterweight)),
+ 		Math.round((color_rgb.B * weight) + (this.B * counterweight))
+ 	);
+ }
+ 
+ // Returns true if the colour components match, regardless of alpha
+ RGB.prototype.MatchesRGB = function(red, green, blue) {
+ 	return red == this.R && green == this.G && blue == this.B;
+ }
+ 
+ // Returns true if the colour components match, regardless of alpha
+ RGB.prototype.Matches = function(color_rgb) {
+ 	return (color_rgb instanceof RGB) && color_rgb.R == this.R && color_rgb.G == this.G && color_rgb.B == this.B;
+ }
+ 
+ 
+ function cloneCanvas(oldCanvasOrImage) {
+     var newCanvas = document.createElement('canvas');
+     newCanvas.width = oldCanvasOrImage.width;
+     newCanvas.height = oldCanvasOrImage.height;
+     var context = newCanvas.getContext('2d');
+     context.drawImage(oldCanvasOrImage, 0, 0);
+     return newCanvas;
+ }
+ /*
+ function cloneCanvasFromImage(oldImage) {
+     var newCanvas = document.createElement('canvas');
+     newCanvas.width = oldImage.width;
+     newCanvas.height = oldImage.height;
+     var context = newCanvas.getContext('2d');
+     context.drawImage(oldImage, 0, 0);
+     return newCanvas;
+ }*/
+ 
+ 
+ 
+
+/********************************************
+ .html entry-point functions
+****/
+
+// config is a MapConfiguration object
+// locations is an array of Location objects
+// divElementsAndSize is an array of { divName: ..., width: ..., height: ... }, one for each level of zoom
+function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedCallback) {
+	// The purpose of createMapsInDivs_Async() was to relinquish CPU - give time back to the 
+	// browser by breaking up the rendering of each zoom level into a separate function invoked 
+	// using setTimeout() so the browser can execute them whenever it gets around to it.
+	// 
+	// This does not appear to have reduced the the browser-lockup observed when the maps are being
+	// rendered, so I'm not going to bother breaking up the rendering up any further.
+	// If this function causes any problems, it can be replaced by a simple loop that sequentially
+	// calls createMapImageInDiv().
+	
+	function CreateDeferredRenderFunction(zoomLevel, deferredObj) {
+	
+		return function() {
+			createMapImageInDiv(
+				zoomLevel, 
+				divElementsAndSize[zoomLevel].divName, 
+				divElementsAndSize[zoomLevel].width, 
+				divElementsAndSize[zoomLevel].height, 
+				config, 
+				locations,
+				function() { 
+					deferredObj.resolve();
+				}
+			);			
+		}		
+	}
+	
+	PreRender(config);
+	
+	var functionPromises = [];
+
+	var i;
+	for(i = 0; i < divElementsAndSize.length; i++) {
+						
+		var newDeferred = $.Deferred();		
+		
+		setTimeout( CreateDeferredRenderFunction(i, newDeferred), 1);		
+		functionPromises[i] = newDeferred;		
+	}
+	$.when.apply($, functionPromises).done(finishedCallback);
+}
+
+
 // callback will be given two arguments - a dictionary of settings and an array of Location instances
 function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 
-	var configFromUrl = getConfigurationFromUrl();
-	
+	var configFromUrl = new MapConfiguration();
+	configFromUrl.AssignFromUrl(location);
+		
 	var srcUri = ('MapDataUri' in configFromUrl) ? configFromUrl.MapDataUri : gMapDataUriDefault;
 	
 	if (isNotEmptyString(srcUri)) {
@@ -762,693 +1832,5 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 			alert('Internal error: dataUrl not string');
 		}	
 	}
-	
-
-	function getConfigurationFromUrl() {
-	
-		var result = new MapConfiguration();
-
-		var locationInfo = parseURL(location);
-		
-		if (Object.keys !== undefined && Object.keys(locationInfo.params).length == 0) {
-			// Check for the Google bug (where GoogleDrive intermittently performs a 301 redirect and 
-			// loses all of the URL paramters in the process)
-			if (location.host.indexOf("googledrive.com") > 20) {
-				// there are no URL parameters and the URL has been changed to something like
-				// https://85b5da109cbab0a781619b9c891f667f8ebe60b8.googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html
-				// (See http://stackoverflow.com/questions/24188499)
-			
-				alert(
-					'no "src=" url was specified to scrape the location data from.\n\n' + 
-					'(On the off-chance you did specify a src parameter and it\'s gone, then Google Drive could be experiencing problems again:\n' +
-					'See http://buildingwithblocks.info/googlebug for more details)'
-				);
-				result.Abort = true;
-			}			
-		}
-		
-		// if "hidelabelsabove" is specified on the URL, then only display labels when
-		// the map is zoomed in more levels than the value of hidelabelsabove.
-		// i.e. 0 means always allow labels, while 2 means don't show labels unless zoomed twice or more.
-		if ('hidelabelsabove' in locationInfo.params) {
-			result.HideLabelsAbove = locationInfo.params.hidelabelsabove;
-		}	
-
-		// if "showlabelsbelow" is specified on the URL, then display all labels when
-		// the map is zoomed in more levels than the value of showlabelsbelow.
-		// 0 is the most zoomed out map, 1 is the first level of zooming in, etc. The levels in between HideLabelsAbove & ShowLabelsBelow will use smart-labels. 
-		// i.e. 0 means always show *all* labels, while 2 means force all labels to be shown at level 3 (full zoom)
-		if ('showlabelsbelow' in locationInfo.params) {
-			result.ShowLabelsBelow = locationInfo.params.showlabelsbelow;
-		}			
-		
-		// Set any constants specified by the URL (instead of using the default value)
-		if ('range' in locationInfo.params) {	
-			result.MapRange = locationInfo.params.range;
-		}
-
-		// if "title" is specified on the URL then relabel the page
-		if ('title' in locationInfo.params  && isString(locationInfo.params.title)) {
-			// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
-			// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
-			result.Title = decodeURIComponent(locationInfo.params.title.replace(/\+/g, " "));
-		}	
-
-		// if "blurb" is specified on the URL then change the tag line
-		if ('blurb' in locationInfo.params  && isString(locationInfo.params.blurb)) {
-			// Google Drive has a bug in its redirect where %20 gets turned into + instead of being
-			// preserved, and decodeURIComponent doesn't decode +, so turn them back into %20 first.
-			result.Blurb = decodeURIComponent(locationInfo.params.blurb.replace(/\+/g, " "));
-		}	
-		
-		// if "x" is specified on the URL then change the center of the map
-		if ('x' in locationInfo.params) {
-			var new_x = parseInt(locationInfo.params.x);
-			if (!isNaN(new_x)) result.X = new_x
-		}
-
-		// if "z" is specified on the URL then change the center of the map
-		if ('z' in locationInfo.params) {
-			var new_z = parseInt(locationInfo.params.z);
-			if (!isNaN(new_z)) result.Z = new_z
-		}	
-		
-		// if "hideorigin" or "hidescale" is on the url then set ShowOrigin to false, likewise with ShowScale
-		if ('hideorigin' in locationInfo.params) result.ShowOrigin = false;
-		if ('hidescale' in locationInfo.params)  result.ShowScale  = false;
-		// or showoroigin and showscale could be specified explicitly
-		if ('showorigin' in locationInfo.params && isString(locationInfo.params.showorigin)) {
-			result.ShowOrigin = stringToBool(locationInfo.params.showorigin);
-		}
-		if ('showscale' in locationInfo.params && isString(locationInfo.params.showscale)) {
-			result.ShowScale = stringToBool(locationInfo.params.showscale);
-		}
-		if ('showcoordinates' in locationInfo.params && isString(locationInfo.params.showcoordinates)) {
-			result.ShowCoordinates = stringToBool(locationInfo.params.showcoordinates);
-		}
-
-		if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
-			result.MapDataUri = decodeURIComponent(locationInfo.params.src);
-		}
-		
-		// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
-		if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
-			result.CustomIconsUri = locationInfo.params.icons;
-		}
-		
-		// Some extra support for hosting via Google Drive, as google drive is a good way to make
-		// the map collaborative while avoiding cross-domain data headaches.
-		if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {
-
-			if (locationInfo.params.googlesrc.toLowerCase().indexOf('http') == 0) {
-				// User has used googlesrc when they should have used src. Rather than 
-				// explain the error just correct it.
-				result.MapDataUri = locationInfo.params.googlesrc;
-			} else {
-				result.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
-			}
-		}
-		if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
-			result.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
-		}
-
-		return result;
-	}
-}
- 
-// if labellingStyle is set LabellingStyle.none then no captions will be rendered.
-function drawMapDetails(canvas, config, locations, labellingStyle)
-{
-	var cTextLineHeight = 10;
-
-	var ctx = canvas.getContext("2d");
-	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
-	var halfMapSize = mapSize / 2;
-
-	var tilesImage = document.getElementById('map-tileset');
-	
-	var translateCoord_x = config.GetXTranslationFunction(mapSize);
-	var translateCoord_z = config.GetZTranslationFunction(mapSize);
-	
-	var occupiedSpace = []; // an array of Rectangles representing where to not draw labels	
-	
-	function splitIntoLines(text) {
-		return text.split(/\r\n|\n|\r/);
-	}
-	
-	// Returns an array of bounding boxes for the multiline-centered label of a location
-	function locationLabel_bounds(locationInstance, finalizedCaption, pixelOffsetFromLocation_y) {
-	
-		var boundsAtOrigin;
-		if ('BoundsAtOrigin' in locationInstance) {
-			boundsAtOrigin = locationInstance.BoundsAtOrigin; // It's already been calculated (assumes finalizedCaption doesn't change)
-		} else {
-			// It hasn't been calculated yet, so do that now.
-			// We cache it from a position 0, 0 because the actual translation will
-			// change depending on the zoom level.
-			// (I'm caching it because I assume that determining graphical text width is slow - could be wrong, need to test)
-			boundsAtOrigin = multilineCenteredText_bounds(0, pixelOffsetFromLocation_y, finalizedCaption, 1);
-			locationInstance.BoundsAtOrigin = boundsAtOrigin; // cache it
-		}
-		
-		var result = [];
-		var i;
-		for(i = 0; i < boundsAtOrigin.length; i++) {
-			result[i] = boundsAtOrigin[i].copy(translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z));
-		}
-		
-		return result;
-	}
-	
-	// returns an array of bounding Rectangle instances that enclose the text which
-	// would be rendered by multilineCenteredText_draw()
-	function multilineCenteredText_bounds(x, y, text, padding) {
-	
-		var result = [];
-		if (!(padding < 0) && !(padding > 0)) padding = 0;
-
-		if (!isEmpty(text)) {
-			
-			var textOffset = 1; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
-			var lines = splitIntoLines(text);
-			var lineNo;
-			for(lineNo = 0; lineNo < lines.length; lineNo++) {
-			
-				var lineWidth = ctx.measureText(lines[lineNo]).width;
-				var leftTrim_lineWidth = ctx.measureText(trimLeft(lines[lineNo])).width;
-				var rightTrim_lineWidth = ctx.measureText(trimRight(lines[lineNo])).width;
-				var leftMargin = lineWidth - leftTrim_lineWidth;
-				var rightMargin = lineWidth - rightTrim_lineWidth;
-				var bound_x = x - (lineWidth - 1) / 2;
-				var bound_y = y + textOffset;
-				
-				result[lineNo] = new Rectangle(
-					bound_x + leftMargin - padding,
-					bound_y - cTextLineHeight - padding,
-					bound_x + (lineWidth - 1) - rightMargin + padding,
-					bound_y + padding
-				);
-				textOffset += cTextLineHeight;
-			}
-		}
-		return result;
-	}
-	
-	function multilineCenteredText_draw(x, y, text) {
-
-		var textOffset = 0;
-		
-		if (!isEmpty(text)) {
-			var lines = splitIntoLines(text);
-			var lineNo;
-			for(lineNo = 0; lineNo < lines.length; lineNo++) {
-			
-				// y value for filltext is the baseline of the text
-				ctx.fillText(
-					lines[lineNo], 
-					x - (ctx.measureText(lines[lineNo]).width / 2),
-					y + textOffset
-				);
-				textOffset += cTextLineHeight;
-			}
-		}
-	}
-
-	// Returns an array of Rectangle, which will be empty if the
-	// index indicates no icon.
-	function icon_bounds(index, x, z, margin) {
-		// most icons fit in 20x20
-		// todo: hardcode any exceptions
-		var result = [];
-		
-		if (isNaN(index) || index < 0) {
-			// no icon
-		} else {
-			var iconBoundsHint = IconBoundsInformation[index];
-			if (iconBoundsHint === undefined) {
-				// The icon is not specified in IconBoundsInformation array, use default values
-				iconBoundsHint = {width: 20, height: 20, yOffset:  0};			
-			}
-			var topLeft_x = x - iconBoundsHint.width / 2;
-			var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
-			result[0] = new Rectangle(
-				topLeft_x, 
-				topLeft_z, 
-				topLeft_x + iconBoundsHint.width - 1,
-				topLeft_z + iconBoundsHint.height - 1
-			);
-		}
-		
-		return result;
-	}
-	
-	
-	function icon_draw(index, drawMask, x, z) {
-	
-		if (!isNaN(index) && index >= 0) {
-		
-			if (index >= cCustomIconIndexStart) {
-				// it's a custom icon				
-				if (gCustomIconsLoaded) {
-					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, x, z);			
-				}				
-			} else {			
-				drawGlyph(ctx, tilesImage, index, drawMask, x, z);			
-			}
-		}
-	}
-	
-	// Adjust this to adjust which pass the different map parts are rendered in
-	var RenderLayer = {
-		Masks:            0,
-		Origin:           1,    
-		Captions:         2,
-		UncaptionedIcons: 3,
-		CaptionedIcons:   4,
-		Scale:            5,
-		
-		First:            0,
-		Last:             5
-	}
-			
-	function drawLocation(locationInstance, renderLayer) {
-			
-		var text = "";
-		var location_x = translateCoord_x(locationInstance.x);
-		var location_z = translateCoord_z(locationInstance.z);
-
-		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
-		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
-			if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
-		} else {
-			text += locationInstance.labelOverride.text;
-		}
-		
-		if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
-			// The owner was specified, and is not named in the description, add in brackets at the bottom
-			text += '\n(' + locationInstance.owner.text + ')';
-		}
-
-		if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
-		
-			var iconIndex = locationInstance.getIconIndex();
-			
-			var textOffset = cTextOffset;
-			if (isNaN(iconIndex) || iconIndex < 0) {
-				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
-				textOffset = 3; 
-			}
-		
-			var drawLabel = true;
-			var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
-			
-			if (labellingStyle == LabellingStyle.smart) {			
-				// check the space needed by the label isn't already occupied
-				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
-
-				var boxIndex
-				for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
-				
-					var box = boundingboxes[boxIndex];
-					var	i;
-					for(i = 0; i < occupiedSpace.length; i++) {
-						if (box.intersects(occupiedSpace[i])) {
-							// a label or icon already occupies this space
-							
-							// make sure it's not the bounding box of our own icon that we collided with
-							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
-							if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
-								drawLabel = false;
-								break;
-							}
-						}
-					}
-					if (!drawLabel) break;
-				}
-				if (drawLabel || drawLabelRegardless) {
-					// Add the space taken by this label to occupiedSpace
-					occupiedSpace = occupiedSpace.concat(boundingboxes);
-				}				
-			}
-				
-			if (drawLabel || drawLabelRegardless) { 
-				multilineCenteredText_draw(location_x, location_z + textOffset, text);
-			}
-			
-			if (cShowBoundingBoxes) {
-				// debug code for showing bounding boxes
-				ctx.lineWidth = 1;
-				ctx.strokeStyle="#0000FF";
-				var boxes = locationLabel_bounds(locationInstance, text);
-				var i;
-				for(i = 0; i < boxes.length; i++) {
-					boxes[i].stroke(ctx);
-				}
-			}
-		}
-		
-		if (renderLayer == RenderLayer.Masks) {		
-			icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
-		}
-
-		if (isEmpty(text)) {
-			if (renderLayer == RenderLayer.UncaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
-			}
-		} else {
-			if (renderLayer == RenderLayer.CaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
-			}		
-		}
-		
-	}
-	
-	function drawOrigin() {
-		var crosshairSize = 8;
-		var originX = Math.round(translateCoord_x(0));
-		var originZ = Math.round(translateCoord_z(0));
-			
-		ctx.lineWidth = 2;
-		ctx.strokeStyle="#6e5830";
-		ctx.moveTo(originX, originZ - crosshairSize);
-		ctx.lineTo(originX, originZ + crosshairSize);
-		ctx.moveTo(originX - crosshairSize, originZ);
-		ctx.lineTo(originX + crosshairSize, originZ);
-		ctx.stroke();
-	}
-	
-	function drawScale() {
-		var pixelsInBackground = $('#map-background').width();
-		var blockDistance = (config.MapRange * 2) / pixelsInBackground;
-		var blockDistance_str = Math.round(blockDistance).toString();
-		var blockSize = canvas.width / pixelsInBackground;
-		var scaleLength_bl = 5; // with cMapRangeDefault of 6400 and a map-background resolution of 64, 5 blocks is a nice visual size and also gives a nice round 1km 
-		var scaleStartX = Math.round(6 * blockSize);
-		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
-		var notchHeight = Math.round(blockSize * 0.4);
-
-		ctx.lineWidth = 2;
-		ctx.strokeStyle="#6e5830";
-		ctx.moveTo(scaleStartX, scaleStartY);
-		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
-		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY + notchHeight);
-		ctx.moveTo(scaleStartX, scaleStartY - notchHeight);
-		ctx.lineTo(scaleStartX, scaleStartY + notchHeight);
-		ctx.moveTo(scaleStartX + Math.round(blockSize), scaleStartY - notchHeight);
-		ctx.lineTo(scaleStartX + Math.round(blockSize), scaleStartY);
-		ctx.stroke();
-
-		var text_y1 = scaleStartY - notchHeight - 4;
-		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
-		multilineCenteredText_draw(scaleStartX + blockSize, text_y1, blockDistance_str);		
-		multilineCenteredText_draw(scaleStartX, text_y2, '0');
-		multilineCenteredText_draw(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
-	}
-
-	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
-	setCanvasScalingToPixelated(ctx);
-	
-	ctx.drawImage(
-		document.getElementById('map-background'),
-		0, 0,
-		canvas.width, canvas.height);
-
-	// prefil the occupiedSpace array with boxes indicating where graphics are.
-	ctx.lineWidth = 1;
-	ctx.strokeStyle="#FF00FF";
-	var i;
-	for (i = 0; i < locations.length; i++) {
-		var locationInstance = locations[i];
-		var bounds = icon_bounds(locationInstance.getIconIndex(), translateCoord_x(locationInstance.x), translateCoord_z(locationInstance.z), 0);
-		if (bounds.length > 0) {
-			occupiedSpace[occupiedSpace.length] = bounds[0];
-			if (cShowBoundingBoxes) bounds[0].stroke(ctx); // debug code for showing bounding boxes			
-		}
-	}	
-
-		
-	ctx.font = "10px Arial";	
-	ctx.font = "10px 'Merienda', Arial, sans-serif";	
-	
-	var renderLayer;
-	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
-	
-		if (renderLayer == RenderLayer.Origin) {
-			if (config.ShowOrigin) drawOrigin();
-			
-		} else if (renderLayer == RenderLayer.Scale) {
-			if (config.ShowScale)  drawScale();
-
-		} else if (renderLayer == RenderLayer.Captions) {		
-			// Labels are rendered first to last, so that with smart-labels, locations 
-			// higher in the list reserve their label space first.
-			var index;
-			for (index = 0; index < locations.length; index++) {
-				drawLocation(locations[index], renderLayer);
-			}	
-		} else {	
-			// Render last to first, so that locations higher in the list are drawn 
-			// over the top of locations lower in the list
-			var index;
-			for (index = locations.length - 1; index >= 0; index--) {
-				drawLocation(locations[index], renderLayer);
-			}	
-		}
-	}
-}
-
-function setCanvasScalingToPixelated(ctx) {
-	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.webkitImageSmoothingEnabled = false;
-	ctx.msImageSmoothingEnabled = false;
-	ctx.imageSmoothingEnabled = false;
-}
-
-// config is a MapConfiguration object
-// locations is an array of Location objects
-// divElementsAndSize is an array of { divName: ..., width: ..., height: ... }, one for each level of zoom
-function createMapsInDivs_Async(config, locations, divElementsAndSize, finishedCallback) {
-	// The purpose of createMapsInDivs_Async() was to relinquish CPU - give time back to the 
-	// browser by breaking up the rendering of each zoom level into a separate function invoked 
-	// using setTimeout() so the browser can execute them whenever it gets around to it.
-	// 
-	// This does not appear to have reduced the the browser-lockup observed when the maps are being
-	// rendered, so I'm not going to bother breaking up the rendering up any further.
-	// If this function causes any problems, it can be replaced by a simple loop that sequentially
-	// calls createMapImageInDiv().
-	
-	function CreateDeferredRenderFunction(zoomLevel, deferredObj) {
-	
-		return function() {
-			createMapImageInDiv(
-				zoomLevel, 
-				divElementsAndSize[zoomLevel].divName, 
-				divElementsAndSize[zoomLevel].width, 
-				divElementsAndSize[zoomLevel].height, 
-				config, 
-				locations,
-				function() { 
-					deferredObj.resolve();
-				}
-			);			
-		}		
-	}
-	
-	
-	var functionPromises = [];
-
-	var i;
-	for(i = 0; i < divElementsAndSize.length; i++) {
-						
-		var newDeferred = $.Deferred();		
-		
-		setTimeout( CreateDeferredRenderFunction(i, newDeferred), 1);		
-		functionPromises[i] = newDeferred;		
-	}
-	$.when.apply($, functionPromises).done(finishedCallback);
-}
-
-// zoomLevelNumber indicates which level of zoom we are creating the map for. 0 is the most zoomed
-// out map, 1 is the first level of zooming in, etc.
-function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, config, locations, finishedCallback) {
-
-	var canvas = document.createElement('canvas');
-	canvas.width = aWidth;
-	canvas.height = aHeight;
-
-	var labellingStyle;
-
-	if (zoomLevelNumber < config.HideLabelsAbove) {
-		labellingStyle = LabellingStyle.none;
-	} else if (zoomLevelNumber >= config.ShowLabelsBelow) {
-		labellingStyle = LabellingStyle.all;	
-	} else {
-		labellingStyle = LabellingStyle.smart;
-	}
-	
-	drawMapDetails(canvas, config, locations, labellingStyle);	
-	var areaMapId = CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations);
-	
-	// Set the image's display style to block so that it doesn't default to vertically aligning
-	// to the font baseline and leaving 4 pixels of space underneath - that screws up the drag size calculation.
-	var newImage = $(document.createElement('img')).css('display', 'block')[0];	
-	
-	// assigning to newImage.src (even from canvas.toDataURL()) doesn't always update the width and height before 
-	// returning, so we have to defer until the onload event has fired to avoid race condition. (I sure hope onload 
-	// can be relied upon in all browsers).
-	var deferUntilImageLoaded = $.Deferred();	
-	newImage.onload = function() { deferUntilImageLoaded.resolve(); }	
-	
-	newImage.src = canvas.toDataURL("image/png");
-	newImage.useMap = '#' + areaMapId;	
-	
-	var divElement = document.getElementById(divElementName);
-	$(newImage).appendTo(divElement);
-	
-	// finishedCallback is called once this function has finished AND newImage was updated.
-	$.when(deferUntilImageLoaded).done(finishedCallback);
-}
-
-// returns the name of the map
- function CreateAreaMapInDiv(divElementName, aWidth, aHeight, config, locations){
-
-	var result = divElementName + '-areamap';
-
-	var mapSize = aWidth > aHeight ? aWidth : aHeight;
-	
-	var translateCoord_x = config.GetXTranslationFunction(mapSize);
-	var translateCoord_z = config.GetZTranslationFunction(mapSize);
-	
-	var newmap = document.createElement('map')
-	newmap.name = result;
-
-	// Start at the top of the list (index = 0), as the first area
-	// elements we add appear to occlude later areas we add - in 
-	// Firefox at least. And we want higher locations in the list to 
-	// have higher priority.	
-	var index;
-	for (index = 0; index < locations.length; ++index) {
-	
-		var location = locations[index];
-		var href = location.getHref();
-		var includeArea = false;
-
-		var newArea = document.createElement('area');
-
-		if (!isEmpty(href)) {
-			newArea.href = href;
-			includeArea = true;
-		}
-		
-		var htmlString = generateHtmlLabel(
-			location, 
-			config.ShowCoordinates && !config.DisableCoordinates
-		);
-		if (htmlString.length > 0) {
-			$(newArea).mouseover(CreateHandler_mouseover(htmlString));
-			$(newArea).mouseout(Handle_mouseout);
-			includeArea = true;
-		}
-		
-		if (includeArea) {		
-			newArea.shape = 'circle';
-			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
-			newArea.alt = location.getAlt();
-		
-			$(newArea).appendTo(newmap);
-		}
-	}
-	$(newmap).appendTo(document.getElementById(divElementName));
-	
-	return result;
-}
-
-
-function CreateHandler_mouseover(htmlLabel) {
-	// Creates a closure so the event handler keeps a reference to the label
-	return function(eventObject) { 
-		$("#locationDesc").empty();
-		$("#locationDesc").append(htmlLabel);
-		$("#hoverFrame").removeClass('hidden-hoverFrame');
-	}
-}
-
-function Handle_mouseout(eventObject) {
-	$("#hoverFrame").addClass('hidden-hoverFrame');
-	$("#locationDesc").empty();
-}
-
-function generateHtmlLabel(location, includeCoordinates)
-{
-	var result = "";
-
-	var label = location.getLabel();
-	if (isNotEmptyString(label)) label = strToHtml(trim(label));
-
-	var owner = location.owner.text;
-	if (isNotEmptyString(owner)) owner = strToHtml(trim(owner));
-
-	var ownerPos = isNotEmptyString(owner) ? label.indexOf(owner) : -1;	
-	var htmlOwner = '<span class="locationHoverOwner">' + owner + '</span>';
-	var showOwner = true;
-	
-	if (isNotEmptyString(label) && label != owner) {
-	
-		var htmlLabel = label;
-		if (ownerPos >= 0) {
-			// The location label contains the owner, mark-up the owner name portion of the label
-			htmlLabel = 
-				label.substring(0, ownerPos) + 
-				htmlOwner +
-				label.substring(ownerPos + owner.length);	
-			showOwner = false; // Owner is already shown
-		}
-		htmlLabel = '<span class="locationHoverPlacename">' + htmlLabel + '</span>';
-	
-		result = htmlLabel;
-		if (isNotEmptyString(owner) && showOwner) {
-			result += '<br/>';		
-		}
-	}
-	if (isNotEmptyString(owner) && showOwner) result += htmlOwner;		
-
-	if (isNotEmptyString(result) && includeCoordinates) {
-		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
-	}
-	if (isNotEmptyString(result) && isNotEmptyString(location.getHref(true))) {
-		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
-	}
-	
-	
-	return result;
-}
-
-function strToHtml(str) {
-	return str.replace("\n", " ").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-}
-
-// Assumes tiles are square, arranged beside each other in the tileImage left to right in two 
-// rows (top row icons, bottom row masks) and should be drawn centered.
-// This means user can change size of icons just by changing the images the tiles are in.
-//
-// tilesImage: an img element
-// drawMask: if True, the icon mask will be drawn (i.e. the bottom row)
-function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
-
-	var width = tilesImage.height / 2;
-	var halfWidth = width / 2;
-
-	canvasContext.drawImage(
-		tilesImage,
-		tileIndex * width,
-		drawMask ? width : 0,
-		width,
-		width,
-		x - halfWidth,
-		y - halfWidth,
-		width,
-		width
-	);
 }
 

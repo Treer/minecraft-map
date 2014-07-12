@@ -517,146 +517,25 @@ function setCanvasScalingToPixelated(ctx) {
 	ctx.imageSmoothingEnabled = false;
 }
 
+// Put any rendering tasks in here that should be performed only once (instead
+// of being performed for every zoom level)
 function PreRender(config) {
-
-	function renderOcean(mapImage, oceanMaskImage) {
-
-		// OceanMaskImage must be wider than 0 to avoid divide by zero
 	
-		var blocksPerPixel = 16; // scale of the oceanMaskImage
-		var maskCenter_x = oceanMaskImage.width / 2;
-		var maskCenter_z = oceanMaskImage.height / 2;
-		var maskWidth = Math.round((config.MapRange * 2) / blocksPerPixel);
-		var mask_x = Math.round(maskCenter_x + (config.X - config.MapRange) / blocksPerPixel);
-		var mask_z = Math.round(maskCenter_z + (config.Z - config.MapRange) / blocksPerPixel);
-		
-		// adjust the mask co-ords so they stay inside the bounds of the mask
-		var adj_mask_x = mask_x < 0 ? 0 : mask_x;
-		var adj_mask_z = mask_z < 0 ? 0 : mask_z;
-		
-		var adj_mask_width  = maskWidth - (adj_mask_x - mask_x);
-		var adj_mask_height = maskWidth - (adj_mask_z - mask_z);
-		adj_mask_width  = adj_mask_width  > oceanMaskImage.width  ? oceanMaskImage.width  : adj_mask_width;
-		adj_mask_height = adj_mask_height > oceanMaskImage.height ? oceanMaskImage.height : adj_mask_height;
-
-		// adjust the destination coords to take into account any adjustment of the mask co-ords to stay inside the mask bounds
-		var destScale = mapImage.width / maskWidth;
-		var dest_x = Math.round((adj_mask_x - mask_x) * destScale);
-		var dest_z = Math.round((adj_mask_z - mask_z) * destScale);		
-		var dest_width = Math.round(adj_mask_width * destScale);
-		var dest_height = Math.round(adj_mask_height * destScale);
-
-		
-		// create a "workingCanvas" that is much smaller than the ocean mask, and
-		// will take less time to process, but is still detailed enough to scale
-		// down to the map-background size afterwards without aliasing problems.
-		
-		// calculate the working canvas size based off the destination coords
-		var oversample = 4;
-		var working_width = dest_width * oversample;
-		var working_height = dest_height * oversample;
-		
-		var workingCanvas = document.createElement('canvas');
-		workingCanvas.width = working_width;
-		workingCanvas.height = working_height;
-		workingContext = workingCanvas.getContext("2d");
-		workingContext.drawImage(
-			oceanMaskImage,
-			adj_mask_x, 
-			adj_mask_z,
-			adj_mask_width,
-			adj_mask_height,
-			0,
-			0,
-			working_width,
-			working_height
-		);
-					
-		//alert("stackBlurCanvasRGB(" + adj_mask_x + ", " + adj_mask_z + ", " + adj_mask_width + ", " + adj_mask_height + ")");
-		
-		var blurCanvas = cloneCanvas(workingCanvas);		
-		var blurRadius = Math.round(oversample * mapImage.width / 10); // about 6.4 blocks on the final map		
-		stackBlurCanvasRGB( blurCanvas, 0, 0, working_width, working_height, blurRadius );
-
-		
-		var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
-		var workingImageData = workingCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height);
-		var workingPixels = workingImageData.data;
-
-		var x = 0;
-		var y = 0;
-		var index = 0;
-		var alpha = Math.round(0.8 * 255);
-		var land_red  = 241, land_green  = 223, land_blue  = 189;
-		var ocean_red = 146, ocean_green = 120, ocean_blue =  73;
-		var diff_red   = land_red   - ocean_red;
-		var diff_green = land_green - ocean_green;
-		var diff_blue  = land_blue  - ocean_blue;
-		
-		for ( x = 0; x < working_width; x++ ) {
-			for ( y = 0; y < working_height; y++ ) {
-				
-				var shade = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
-				if (shade > 255) {
-					shade = 1;
-				} else {
-					shade = shade / 255.0;
-				}
-				
-				workingPixels[index]     = Math.round(ocean_red   + diff_red   * shade);
-				workingPixels[index + 1] = Math.round(ocean_green + diff_green * shade);
-				workingPixels[index + 2] = Math.round(ocean_blue  + diff_blue  * shade);
-				workingPixels[index + 3] = workingPixels[index] == 255 ? 0 : Math.round(124 + (blurPixels[index]) * 0.5);
-				
-				index += 4;
-			}
-		}
-		workingContext.putImageData( workingImageData, 0, 0);
-		
-		
-		var mapBackgroundCanvas = imageToCanvas(mapImage);
-		var mapBackgroundContext = mapBackgroundCanvas.getContext("2d");
-
-		//alert("drawImage(" + dest_x + ", " + dest_z + ", " + dest_width + ", " + dest_height + ")");		
-		// Scale the processed ocean down to the same size as the mapImage
-		mapBackgroundContext.drawImage(
-			workingCanvas,
-			0, 
-			0,
-			working_width,
-			working_height,
-			dest_x,
-			dest_z,
-			dest_width,
-			dest_height
-		);
+	var oceanmaskImage = document.getElementById('oceanmask');	
+	if (oceanmaskImage !== null) {
+		// An oceanmask has been provided, render a new map-background with
+		// it instead of using the default one.
 	
-		return mapBackgroundCanvas;
-	}
-	
-	var oceanmaskImage     = document.getElementById('oceanmask');
-	var mapBackgroundImage = document.getElementById('map-background');
-	
-	if (undefined === oceanmaskImage) {
+		var mapBackgroundImage = document.getElementById('map-background');
 
 		var newMapBackgroundCanvas = renderOcean(
+			config,
 			mapBackgroundImage,
 			oceanmaskImage
 		);		
 		mapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
 	}	
 }
-
-function cloneCanvas(oldCanvas) {
-    var newCanvas = document.createElement('canvas');
-    newCanvas.width = oldCanvas.width;
-    newCanvas.height = oldCanvas.height;
-    var context = newCanvas.getContext('2d');
-    context.drawImage(oldCanvas, 0, 0);
-    return newCanvas;
-}
-
-
 
 
 // Assumes tiles are square, arranged beside each other in the tileImage left to right in two 

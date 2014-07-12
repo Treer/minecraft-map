@@ -140,6 +140,7 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowScale'          in this)) this.ShowScale = true;
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
+	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueOcean';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -157,6 +158,7 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('ShowScale'          in sourceConfig) this.ShowScale          = sourceConfig.ShowScale;
 	if ('ShowCoordinates'    in sourceConfig) this.ShowCoordinates    = sourceConfig.ShowCoordinates;	
 	if ('DisableCoordinates' in sourceConfig) this.DisableCoordinates = sourceConfig.DisableCoordinates;	
+	if ('OceanTheme'         in sourceConfig) this.OceanTheme         = sourceConfig.OceanTheme;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -210,6 +212,10 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'disablecoordinates' && isString(value)) {
 			this.DisableCoordinates = stringToBool(value);
 		}				
+		if (key == 'oceantheme' && isString(value)) {
+			this.OceanTheme = unquoteString(value);
+		}				
+		
 	}
 }
 
@@ -318,6 +324,9 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
 		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
 	}
+	if ('oceantheme' in locationInfo.params && isString(locationInfo.params.oceantheme)) {		
+		this.OceanTheme = locationInfo.params.oceantheme;
+	}	
 }
 
 // Returns a function that converts Minecraft coordinates into canvas coordinates

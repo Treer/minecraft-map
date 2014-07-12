@@ -1,4 +1,4 @@
-* Verticle label alignment now takes icon size into account (this change
+* Todo - Verticle label alignment now takes icon size into account (this change
   affects the label positioning of existing maps).
 * Support added for default src URL so none is required on map generator URL
 
@@ -15,7 +15,7 @@ v1.63 - Streamline release - 2014-06-28
 * Fixes many small drag and zoom bugs
 
 
-v1.62 - Seamonster release - 2014-06-22
+v1.62 - SeaMonster release - 2014-06-22
 =======================================
 * Seamonster location added
 * Many changes to accomodate a bug in Google Drive, which Google have now 
