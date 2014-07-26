@@ -28,7 +28,7 @@
     <header>
       <div class="inner">
         <h1>Exporting from a seed</h1>        
-		<h2>How to automatically get all the locations</h2>
+		<h2>How to automatically get <span style="font-weight: bold;">all</span> the locations</h2>
 		<a href="https://github.com/Treer/AMIDST" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
@@ -38,17 +38,18 @@
         <section id="main-content">
 
 		<p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
-
-		<p>I've modified a version of <a href="http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/1262200-v3-6-amidst-strongholds-village-biome-etc-finder">AMIDST</a> so
-		that it can export location files for any world you have the seed to. You can download the modified version from this page.</p>
 		
-		<p>It can also export ocean-maps, which means you'll be able to have the ocean shown on the parchment of the map once I release the next version (v1.7)</p>
+		<p>I've modified a version of <a href="http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/1262200-v3-6-amidst-strongholds-village-biome-etc-finder">AMIDST</a> so
+		it can export location files for any world you have the seed to. You can download the modified version from this page.</p>
+		
+		<p>A location file exported from the seed is pre-filled with all the locations that were created by Minecraft (e.g. villages, temples, mushroom islands, etc), and the application can 
+		also export ocean-maps, which means you'll be able to have the ocean shown on the parchment of the map once I release the next version of the map viewer (v1.7)</p>
 			
 		<h2>Requirements</h2>
 		
 		
 		<ul>
-		<li>800 MB of RAM - This is because it generates a large area of map before exporting the locations.</li>
+		<li>800 MB of RAM - This is because it must generate a large area of the Minecraft map before exporting the locations.</li>
 		<li>A version of Minecraft installed on the computer. The AMIDST Exporter will list all the versions it can find on the computer, pick
 		the one the map was originally generated with, or something close.</li>
 		</ul>
@@ -56,11 +57,15 @@
 		<h2>Using Amidst Exporter</h2>
 
 		<ul>
-		<li>When prompted, click the <span style="font-size: 130%">&#10689;</span> button for the version of Minecraft the map was originally generated with.</li>
-		<li>Select: File &rarr; New &rarr; From seed, then follow the prompts to enter the seed for your world and the type of world.
-		<li>Once the world has loaded, select: File &rarr; Export &rarr; Locations.
+		<li>When prompted, click the <span style="font-size: 130%">&#10689;</span> button for the version of Minecraft that your world was originally generated with.</li>
+		<li>Select: <span class="menuoptions">"File" &rarr; "New" &rarr; "From seed"</span>, then follow the prompts to enter the seed for your world and the type of world.
+		<li>Once the world has loaded, select: <span class="menuoptions">"File" &rarr; "Export" &rarr; "Locations"</span>.
 		</ul>
-				
+
+		<h2>Tip</h2>
+		The list of locations generated will probably cover a much greater area than the range of your map, so the locations have been grouped by map size -you should delete the ones you don't need.
+		
+		
 		<h2>OS X users</h2>
 		<p>The .jar file should run on a Mac, I apologise for not providing a native OS X app to download - I don't currently have access to a Mac.</p>
 		
