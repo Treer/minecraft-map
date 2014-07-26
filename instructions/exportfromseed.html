@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon-precomposed.png"><!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="images/apple-touch-icon-72x72-precomposed.png"><!-- For the iPad mini and the first- and second-generation iPad on iOS ≤ 6: -->
+    <link rel="apple-touch-icon-precomposed" sizes="76x76"   href="images/apple-touch-icon-76x76-precomposed.png"><!-- For the iPad mini and the first- and second-generation iPad on iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="images/apple-touch-icon-120x120-precomposed.png"><!-- For iPhone with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="images/apple-touch-icon-152x152-precomposed.png"><!-- For iPad with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="icon" sizes="196x196" href="images/apple-touch-icon.png"><!-- Chrome v31+ for Android -->
+    <link rel="icon" sizes="16x16" type="image/png" href="images/favicon.png" />
+	
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Exporting from a seed</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Exporting from a seed</h1>        
+		<h2>How to automatically get all the locations</h2>
+		<a href="https://github.com/Treer/AMIDST" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+		<p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
+
+		<p>I've modified a version of <a href="http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/1262200-v3-6-amidst-strongholds-village-biome-etc-finder">AMIDST</a> so
+		that it can export location files for any world you have the seed to. You can download the modified version from this page.</p>
+		
+		<p>It can also export ocean-maps, which means you'll be able to have the ocean shown on the parchment of the map once I release the next version (v1.7)</p>
+			
+		<h2>Requirements</h2>
+		
+		
+		<ul>
+		<li>800 MB of RAM - This is because it generates a large area of map before exporting the locations.</li>
+		<li>A version of Minecraft installed on the computer. The AMIDST Exporter will list all the versions it can find on the computer, pick
+		the one the map was originally generated with, or something close.</li>
+		</ul>
+
+		<h2>Using Amidst Exporter</h2>
+
+		<ul>
+		<li>When prompted, click the <span style="font-size: 130%">&#10689;</span> button for the version of Minecraft the map was originally generated with.</li>
+		<li>Select: File &rarr; New &rarr; From seed, then follow the prompts to enter the seed for your world and the type of world.
+		<li>Once the world has loaded, select: File &rarr; Export &rarr; Locations.
+		</ul>
+				
+		<h2>OS X users</h2>
+		<p>The .jar file should run on a Mac, I apologise for not providing a native OS X app to download - I don't currently have access to a Mac.</p>
+		
+		<p>To launch in OS X, open a terminal window and type:</p>
+		<pre>java -Xmx1024M -jar AmidstExporter.jar</pre>
+				
+		<p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
+		
+		</section>
+        <aside id="sidebar">			
+				
+		  <a href="download/AmidstExporter.exe" class="downloadappbutton">
+            <small>Windows download</small>
+            .exe file
+          </a>
+		  <a href="download/AmidstExporter.jar" class="downloadappbutton">
+            <small>OS X or Linux Download</small>
+            .jar file
+          </a>
+		
+		</aside>
+
+      </div>
+    </div>
+
+  </body>
+</html>
