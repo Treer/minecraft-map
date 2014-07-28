@@ -19,6 +19,13 @@ function renderOcean(config, mapImage, oceanMaskImage) {
 		alert('Invalid ocean mask - width 0');
 		return imageToCanvas(mapImage);
 	}
+
+	var theme = config.OceanTheme.toLowerCase();
+	if (theme.lastIndexOf("hard") == theme.length - 4) {
+		config.HardOcean = true;
+		theme = theme.substr(0, theme.length - 4);
+	}
+
 	
 	// Work out the bounding box that the map at its current scale and position occupies
 	// inside the oceanMaskImage - (mask_x, mask_z) with size (maskWidth, maskWidth)
@@ -70,9 +77,8 @@ function renderOcean(config, mapImage, oceanMaskImage) {
 		working_height
 	);
 				
-				
-	var theme = config.OceanTheme.toLowerCase();
-				
+					
+
 	if (theme == "darkseas") {
 		return renderTheme_DarkSeas(config, mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
 	} else if (theme == "coastalrelief") {
@@ -118,9 +124,38 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 		
 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
 
-	var working_width  = transformedOceanMask_Canvas.width;
-	var working_height = transformedOceanMask_Canvas.height;
-	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
+	var working_width;
+	var working_height;
+	var workingImage;
+	var workingImage_Context;
+	if (config.HardOcean == true) {
+		// Now that blurCanvas has been calculated at the oversampled resolution (where small islands will be nicely removed)
+		// drop the working canvas to the same as the destination resolution, since a "hard" oceantheme has been selected
+		// (i.e. fully pixelated)
+		var workingImage = document.createElement('canvas');
+		workingImage.width  = dest_width;
+		workingImage.height = dest_height;
+		workingImage_Context = workingImage.getContext('2d');	
+		
+		workingImage_Context.drawImage(
+			transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+			0, 
+			0,
+			transformedOceanMask_Canvas.width,
+			transformedOceanMask_Canvas.height,
+			0,
+			0,
+			dest_width,
+			dest_height
+		);
+		working_width  = dest_width;
+		working_height = dest_height;		
+	} else {
+		workingImage   = transformedOceanMask_Canvas;
+		working_width  = transformedOceanMask_Canvas.width;
+		working_height = transformedOceanMask_Canvas.height;
+		workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
+	}
 
 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
@@ -134,14 +169,18 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 	var i;
 	for (i = 0; i < colorTable_R.length; i++) {
 
-		var shade = i / 255.0;
+		// A shade of 0.0 means coastline (cColor_BlueCoast + cColor_ShallowCoast)
+		// A shade of 1.0 means ocean (cColor_lightOcean)
+		var shade = i / 255.0;				
+		var color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
 		
-		// A shade of 0 means coastline (cColor_BlueCoast + cColor_ShallowCoast)
-		// A shade of 255 means ocean (cColor_lightOcean)
+		// lets make the shading a little non-linear (but include the blurScale so that our
+		// coastlines don't get too sharp and pixelated as the map zooms out).
+		var coastBlendStartShade = 0.5 / blurScale;
+		// Clamp coastBlendStartShade between 0.5 and 0.7
+		if (coastBlendStartShade < 0.5) { coastBlendStartShade = 0.5; } else if (coastBlendStartShade > 0.7) { coastBlendStartShade = 0.7; } 
 		
-		color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
-		// lets make the shading a little non-linear
-		if (shade <= 0.6) color = color.Blend(cColor_ShallowCoast, (0.6 - shade));
+		if (shade <= coastBlendStartShade) color = color.Blend(cColor_ShallowCoast, 0.5 - (0.5 * shade / coastBlendStartShade));
 
 		colorTable_R[i] = color.R;
 		colorTable_G[i] = color.G;
@@ -149,13 +188,20 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 	}
 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
 	
+	// the blurCanvas might be higher resolution than the workingImage and need different increments
+	// (if a "hard" ocean theme is selected)
+	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.width / working_width) - 1);
 	
 	var x = 0;
 	var z = 0;
 	var index = 0;
+	var blurIndex = 0;
 	
 	for ( z = 0; z < working_height; z++ ) {
 		for ( x = 0; x < working_width; x++ ) {
+			
+			blurPixel = blurPixels[blurIndex];
 						
 			// the blurPixels value of the tip of peninsulas (for a range 3200 map) sometimes gets as low as 80, 
 			// and we want the value as high as we can get away with to eliminate small islands, as they turn 
@@ -164,7 +210,7 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 			//			
 			// 75 is perfect for a map range of 3200. But doesn't work well for a map range of 5000 etc, because
 			// of this we have changed the blurRadius using blurScale - now 75 should be perfect for all ranges.			
-			var isLand = workingPixels[index] > 128 && blurPixels[index] > 75; 
+			var isLand = workingPixels[index] > 128 && blurPixel > 75; 
 						
 			var alpha;
 			if (isLand) {
@@ -176,17 +222,16 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 				workingPixels[index + 2] = colorLand_B;		
 				
 				//alpha = 255;	
-				//workingPixels[index]     = 255;
 				//workingPixels[index + 2] = blurPixels[index] > 75 ? 0 : 255;
 			} else {
 				// ocean
-				var oceanDepth = (255 - blurPixels[index]) / 255.0; // 0 to 1, 1 is deep, 0 is shallow
+				var oceanDepth = (255 - blurPixel) / 255.0; // 0 to 1, 1 is deep, 0 is shallow
 				alpha = Math.round(cAlpha_Ocean * (1 - oceanDepth) + cAlpha_DeepOcean * oceanDepth); // chooses an alpha value between cAlpha_Ocean and cAlpha_DeepOcean, depending on oceanDepth
 				
 				// After blurring the black ocean-mask with the white land-mask, dark areas in blurPixels[] 
 				// means deep ocean, calculate a tableIndex where 0 is coast and 255 is deep ocean.
 				// (workingPixels[] is white for land, black for ocean, and grey for both)
-				var tableIndex = Math.round((255 - blurPixels[index]) * 0.7);
+				var tableIndex = Math.round((255 - blurPixel) * 0.7);
 				if (tableIndex > 255) tableIndex = 255;
 				if (tableIndex < 0)   tableIndex = 0;
 				
@@ -197,7 +242,9 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 			workingPixels[index + 3] = alpha;
 			
 			index += 4;
+			blurIndex += blurPixelXInc;
 		}
+		blurIndex += blurPixelYInc;
 	}
 	workingImage_Context.putImageData( workingImageData, 0, 0);	
 
@@ -207,7 +254,7 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
 	
 	mapBackgroundCopy_Context.drawImage(
-		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+		workingImage,
 		0, 
 		0,
 		working_width,
