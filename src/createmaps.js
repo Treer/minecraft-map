@@ -521,8 +521,7 @@ function setCanvasScalingToPixelated(ctx) {
 // of being performed for every zoom level)
 function PreRender(config) {
 	
-	var oceanmaskImage = document.getElementById('oceanmask');	
-	if (oceanmaskImage !== null) {
+	if (gOceanMapImage != null) {
 		// An oceanmask has been provided, render a new map-background with
 		// it instead of using the default one.
 	
@@ -531,7 +530,7 @@ function PreRender(config) {
 		var newMapBackgroundCanvas = renderOcean(
 			config,
 			mapBackgroundImage,
-			oceanmaskImage
+			gOceanMapImage
 		);		
 		mapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
 	}	

@@ -1,7 +1,7 @@
 /********************************************
  Javascript miscellaneous helper functions.
 
- Copyright 2014 Glenn Fisher
+ Copyright 2014 Glenn Fisher (except for attributed code snippets)
 
  This is not a standalone file, it is part of minecraftmap.pp.js
 ****/
@@ -124,5 +124,27 @@ function parseURL(url) {
         relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1],
         segments: a.pathname.replace(/^\//,'').split('/')
     };
+}
+
+// ---------------------------------------------
+// code snippet from https://stereochro.me/ideas/detecting-broken-images-js
+// Returns true if the image is loaded
+function isImageOk(img) {
+    // During the onload event, IE correctly identifies any images that
+    // weren't downloaded as not complete. Others should too. Gecko-based
+    // browsers act like NS4 in that they report this incorrectly.
+    if (!img.complete) {
+        return false;
+    }
+
+    // However, they do have two very useful properties: naturalWidth and
+    // naturalHeight. These give the true size of the image. If it failed
+    // to load, either of these should be zero.
+    if (typeof img.naturalWidth != "undefined" && img.naturalWidth == 0) {
+        return false;
+    }
+
+    // No other way of checking: assume it's ok.
+    return true;
 }
 
