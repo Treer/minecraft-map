@@ -209,8 +209,9 @@ var LabellingStyleOverride = {
 
 // This array allows hints to be given about how labels should avoid the stock icons.
 // The earth won't end if this data is a little wrong, and working it out from the icon
-// images would waste a lot of time.
+// images would waste a lot of CPU time.
 // Icons not in this list are assumed to be 20x20.
+// Overlays have their width and height set to 0, but text offset information can be stored in the yOffset instead(?)
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
 	 0: {width: 14, height: 16, yOffset: -1}, // village plain
@@ -297,6 +298,8 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
 	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueCoastline';	
+	if (!('HardCoastlines'     in this)) this.HardCoastlines = false;	
+	if (!('OceanMapUri'        in this)) this.OceanMapUri = '';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -315,6 +318,8 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('ShowCoordinates'    in sourceConfig) this.ShowCoordinates    = sourceConfig.ShowCoordinates;	
 	if ('DisableCoordinates' in sourceConfig) this.DisableCoordinates = sourceConfig.DisableCoordinates;	
 	if ('OceanTheme'         in sourceConfig) this.OceanTheme         = sourceConfig.OceanTheme;	
+	if ('HardCoastlines'     in sourceConfig) this.HardCoastlines     = sourceConfig.HardCoastlines;	
+	if ('OceanMapUri'        in sourceConfig) this.OceanMapUri        = sourceConfig.OceanMapUri;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -327,51 +332,58 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'z') {
 			var new_z = parseInt(value);
 			if (!isNaN(new_z)) this.Z = new_z;
-		}
-		if (key == 'x') {
+			
+		} else if (key == 'x') {
 			var new_x = parseInt(value);
 			if (!isNaN(new_x)) this.X = new_x;
-		}
-		if (key == 'hidelabelsabove') {
+			
+		} else if (key == 'hidelabelsabove') {
 			var new_HideLabelsAbove = parseInt(value);
 			if (!isNaN(new_HideLabelsAbove)) this.HideLabelsAbove = new_HideLabelsAbove;
-		}
-		if (key == 'showlabelsbelow') {
+			
+		} else if (key == 'showlabelsbelow') {
 			var new_ShowLabelsBelow = parseInt(value);
 			if (!isNaN(new_ShowLabelsBelow)) this.ShowLabelsBelow = new_ShowLabelsBelow;
-		}
-		if (key == 'range') {
+			
+		} else if (key == 'range') {
 			var new_MapRange = parseInt(value);
 			if (!isNaN(new_MapRange)) this.MapRange = new_MapRange;
-		}
-		if (key == 'title' && isString(value)) {
+			
+		} else if (key == 'title' && isString(value)) {
 			this.Title = unquoteString(value);
-		}
-		if (key == 'blurb' && isString(value)) {
+			
+		} else if (key == 'blurb' && isString(value)) {
 			this.Blurb = unquoteString(value);
-		}
-		if (key == 'icons' && isString(value)) {
+			
+		} else if (key == 'icons' && isString(value)) {
 			this.CustomIconsUri = unquoteString(value);
-		}
-		if (key == 'googleicons' && isString(value)) {
+			
+		} else if (key == 'googleicons' && isString(value)) {
 			this.CustomIconsUri = 'https://googledrive.com/host/' + unquoteString(value);
-		}
-		if (key == 'showorigin' && isString(value)) {
+			
+		} else if (key == 'showorigin' && isString(value)) {
 			this.ShowOrigin = stringToBool(value);
-		}
-		if (key == 'showscale' && isString(value)) {
+			
+		} else if (key == 'showscale' && isString(value)) {
 			this.ShowScale = stringToBool(value);
-		}
-		if (key == 'showcoordinates' && isString(value)) {
+			
+		} else if (key == 'showcoordinates' && isString(value)) {
 			this.ShowCoordinates = stringToBool(value);
-		}		
-		if (key == 'disablecoordinates' && isString(value)) {
+			
+		} else if (key == 'disablecoordinates' && isString(value)) {
 			this.DisableCoordinates = stringToBool(value);
-		}				
-		if (key == 'oceantheme' && isString(value)) {
+			
+		} else if (key == 'oceantheme' && isString(value)) {
 			this.OceanTheme = unquoteString(value);
-		}				
-		
+			this.HardCoastlines = this.OceanTheme.lastIndexOf("hard") == (this.OceanTheme.length - 4) && (this.OceanTheme.length > 3);
+			if (this.HardCoastlines) this.OceanTheme = this.OceanTheme.substr(0, this.OceanTheme.length - 4);
+			
+		} else if (key == 'oceansrc' && isString(value)) {
+			this.OceanMapUri = unquoteString(value);
+			
+		} else if (key == 'oceangooglesrc' && isString(value)) {
+			this.OceanMapUri = 'https://googledrive.com/host/' + unquoteString(value);
+		}
 	}
 }
 
@@ -456,15 +468,17 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 		this.ShowCoordinates = stringToBool(locationInfo.params.showcoordinates);
 	}
 
-	if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
-		this.MapDataUri = decodeURIComponent(locationInfo.params.src);
-	}
-	
 	// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
 	if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
 		this.CustomIconsUri = locationInfo.params.icons;
 	}
+	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
+		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
+	}
 	
+	if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
+		this.MapDataUri = decodeURIComponent(locationInfo.params.src);
+	}	
 	// Some extra support for hosting via Google Drive, as google drive is a good way to make
 	// the map collaborative while avoiding cross-domain data headaches.
 	if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {
@@ -477,11 +491,25 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 			this.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
 		}
 	}
-	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
-		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
+		
+	if ('oceansrc' in locationInfo.params && isString(locationInfo.params.oceansrc)) {
+		this.OceanMapUri = locationInfo.params.oceansrc;
 	}
+	if ('oceangooglesrc' in locationInfo.params && isString(locationInfo.params.oceangooglesrc)) {
+
+		if (locationInfo.params.oceangooglesrc.toLowerCase().indexOf('http') == 0) {
+			// User has used googlesrc when they should have used src. Rather than 
+			// explain the error just correct it.
+			this.OceanMapUri = locationInfo.params.oceangooglesrc;
+		} else {
+			this.OceanMapUri = 'https://googledrive.com/host/' + locationInfo.params.oceangooglesrc;
+		}
+	}
+
 	if ('oceantheme' in locationInfo.params && isString(locationInfo.params.oceantheme)) {		
 		this.OceanTheme = locationInfo.params.oceantheme;
+		this.HardCoastlines = this.OceanTheme.lastIndexOf("hard") == (this.OceanTheme.length - 4) && (this.OceanTheme.length > 3);
+		if (this.HardCoastlines) this.OceanTheme = this.OceanTheme.substr(0, this.OceanTheme.length - 4);		
 	}	
 }
 
@@ -1395,7 +1423,7 @@ function parseHtmlLocations(data, callback) {
  		alert('Invalid ocean mask - width 0');
  		return imageToCanvas(mapImage);
  	}
- 	
+ 
  	// Work out the bounding box that the map at its current scale and position occupies
  	// inside the oceanMaskImage - (mask_x, mask_z) with size (maskWidth, maskWidth)
  	var maskCenter_x = oceanMaskImage.width / 2;
@@ -1446,15 +1474,14 @@ function parseHtmlLocations(data, callback) {
  		working_height
  	);
  				
- 				
+ 					
  	var theme = config.OceanTheme.toLowerCase();
- 				
  	if (theme == "darkseas") {
- 		return renderTheme_DarkSeas(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 		return renderTheme_DarkSeas(config, mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
  	} else if (theme == "coastalrelief") {
- 		return renderTheme_CoastalRelief(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 		return renderTheme_CoastalRelief(config, mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
  	} else {
- 		return renderTheme_BlueCoastline(mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
+ 		return renderTheme_BlueCoastline(config, mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
  	}	
  }
  
@@ -1466,7 +1493,7 @@ function parseHtmlLocations(data, callback) {
  //   map_Image - the img object containing the default map-background image
  //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
  //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
- function renderTheme_BlueCoastline(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
  
  	var cColor_BlueCoast    = new RGB(127, 130, 146); 
  	var cColor_ShallowCoast = new RGB(  0,  30,  30);
@@ -1476,14 +1503,31 @@ function parseHtmlLocations(data, callback) {
  	var cAlpha_DeepOcean    = Math.round(0.6 * 255);
  	var cAlpha_Land         = Math.round(0.2  * 255);
  	
- 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
- 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map		
- 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+ 	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+ 	var workingImage_Context = workingImage.getContext('2d');	
+ 	var working_width  = workingImage.width;
+ 	var working_height = workingImage.height;		
+ 	
+ 	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+ 	// our blurCanvas and not worry about losing its unblurred image.
+ 	var blurCanvas = transformedOceanMask_Canvas;		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map
+ 	
+ 	// The blur radius is balancing two roles - providing a nice ocean gradient, and removing small islands from the 
+ 	// map (kind of like a low pass filter) - since the islands make the final map look noisy. (We could separate these 
+ 	// roles but it would require a second blurCanvas, and a second blur operation).
+ 	//
+ 	// blurRadius is currently tuned for the first role (providing a nice ocean gradient), we're now going to adjust it
+ 	// to make it complete the second role. The blurRadius is currently perfect for Minecraft 1.7 land shapes shown on a map 
+ 	// with range 3200, but if you increase the map range, the oceans get smaller, and the blurPixels become too white to 
+ 	// use to remove islands, so we will scale the blurRadius with the map range. Plus this way a deep ocean should look like a
+ 	// deep ocean no matter what scale the map.
+ 	var blurScale = 3200.0 / config.MapRange;
+ 	if (blurScale > 3) blurScale = 3; // Put a cap on it to stop stupid extremes
+ 	blurRadius *= blurScale;		
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
  
- 	var working_width  = transformedOceanMask_Canvas.width;
- 	var working_height = transformedOceanMask_Canvas.height;
- 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
- 
+ 	
  	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
  	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
  	var workingPixels = workingImageData.data;	
@@ -1496,47 +1540,72 @@ function parseHtmlLocations(data, callback) {
  	var i;
  	for (i = 0; i < colorTable_R.length; i++) {
  
- 		var shade = i / 255.0;
+ 		// A shade of 0.0 means coastline (cColor_BlueCoast + cColor_ShallowCoast)
+ 		// A shade of 1.0 means ocean (cColor_lightOcean)
+ 		var shade = i / 255.0;				
+ 		var color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
  		
- 		// A shade of 0 means coastline (cColor_BlueCoast + cColor_ShallowCoast)
- 		// A shade of 255 means ocean (cColor_lightOcean)
+ 		// lets make the shading a little non-linear (but include the blurScale so that our
+ 		// coastlines don't get too sharp and pixelated as the map zooms out).
+ 		var coastBlendStartShade = 0.5 / blurScale;
+ 		// Clamp coastBlendStartShade between 0.5 and 0.7
+ 		if (coastBlendStartShade < 0.5) { coastBlendStartShade = 0.5; } else if (coastBlendStartShade > 0.7) { coastBlendStartShade = 0.7; } 
  		
- 		color = cColor_BlueCoast.Blend(cColor_lightOcean, shade);
- 		// lets make the shading a little non-linear
- 		if (shade <= 0.5) color = color.Blend(cColor_ShallowCoast, (0.5 - shade));
+ 		if (shade <= coastBlendStartShade) color = color.Blend(cColor_ShallowCoast, 0.5 - (0.5 * shade / coastBlendStartShade));
  
  		colorTable_R[i] = color.R;
  		colorTable_G[i] = color.G;
  		colorTable_B[i] = color.B;
  	}
- 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
+ 	// avoid using classes, for speed.
+ 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; 
  	
+ 	// the blurCanvas might be higher resolution than the workingImage and need different increments
+ 	// (if a "hard" ocean theme is selected)
+ 	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+ 	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
  	
  	var x = 0;
  	var z = 0;
  	var index = 0;
+ 	var blurIndex = 0;
  	
  	for ( z = 0; z < working_height; z++ ) {
  		for ( x = 0; x < working_width; x++ ) {
+ 			
+ 			blurPixel = blurPixels[blurIndex];
+ 						
+ 			// the blurPixels value of the tip of peninsulas (for a range 3200 map) sometimes gets as low as 80, 
+ 			// and we want the value as high as we can get away with to eliminate small islands, as they turn 
+ 			// the map parchment texture to noise, but still keep the larger land masses. Looks like the sweet 
+ 			// spot is between 70 to 80.
+ 			//			
+ 			// 75 is perfect for a map range of 3200. But doesn't work well for a map range of 5000 etc, because
+ 			// of this we have changed the blurRadius using blurScale - now 75 should be perfect for all ranges.			
+ 			var isLand = workingPixels[index] > 128 && blurPixel > 75; 
  						
  			var alpha;
- 			if (workingPixels[index] > 200) {
+ 			if (isLand) {
  				// land
  				alpha = cAlpha_Land;			
  				
  				workingPixels[index]     = colorLand_R;
  				workingPixels[index + 1] = colorLand_G;
  				workingPixels[index + 2] = colorLand_B;		
+ 				
+ 				//alpha = 255;	
+ 				//workingPixels[index + 2] = blurPixels[index] > 75 ? 0 : 255;
  			} else {
  				// ocean
- 				var oceanDepth = (255 - blurPixels[index]) / 255.0; // 0 to 1, 1 is deep, 0 is shallow
- 				alpha = Math.round(cAlpha_Ocean * (1 - oceanDepth) + cAlpha_DeepOcean * oceanDepth);
+ 				var oceanDepth = (255 - blurPixel) / 255.0; // 0 to 1, 1 is deep, 0 is shallow
+ 				alpha = Math.round(cAlpha_Ocean * (1 - oceanDepth) + cAlpha_DeepOcean * oceanDepth); // chooses an alpha value between cAlpha_Ocean and cAlpha_DeepOcean, depending on oceanDepth
  				
  				// After blurring the black ocean-mask with the white land-mask, dark areas in blurPixels[] 
  				// means deep ocean, calculate a tableIndex where 0 is coast and 255 is deep ocean.
  				// (workingPixels[] is white for land, black for ocean, and grey for both)
- 				var tableIndex = workingPixels[index] + Math.round((255 - blurPixels[index]) * 0.7);
- 				if (tableIndex > 255) shade = 255;
+ 				var tableIndex = Math.round((255 - blurPixel) * 0.7);
+ 				if (tableIndex > 255) tableIndex = 255;
+ 				if (tableIndex < 0)   tableIndex = 0;
  				
  				workingPixels[index]     = colorTable_R[tableIndex];
  				workingPixels[index + 1] = colorTable_G[tableIndex];
@@ -1545,7 +1614,9 @@ function parseHtmlLocations(data, callback) {
  			workingPixels[index + 3] = alpha;
  			
  			index += 4;
+ 			blurIndex += blurPixelXInc;
  		}
+ 		blurIndex += blurPixelYInc;
  	}
  	workingImage_Context.putImageData( workingImageData, 0, 0);	
  
@@ -1555,7 +1626,7 @@ function parseHtmlLocations(data, callback) {
  	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
  	
  	mapBackgroundCopy_Context.drawImage(
- 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		workingImage,
  		0, 
  		0,
  		working_width,
@@ -1576,7 +1647,7 @@ function parseHtmlLocations(data, callback) {
  //   map_Image - the img object containing the default map-background image
  //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
  //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
- function renderTheme_DarkSeas(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ function renderTheme_DarkSeas(config, map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
  
  	var cColor_Ocean = new RGB(144, 104,  67); 
  	var cColor_Land  = new RGB(249, 232, 206);
@@ -1584,31 +1655,65 @@ function parseHtmlLocations(data, callback) {
  	var cAlphaFloor_Ocean = Math.round(0.2 * 255);
  	var cAlpha_Land  = Math.round(0.25  * 255);
  	
- 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
- 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map		
- 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+ 	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+ 	var workingImage_Context = workingImage.getContext('2d');	
+ 	var working_width  = workingImage.width;
+ 	var working_height = workingImage.height;		
+ 	
+ 	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+ 	// our blurCanvas and not worry about losing its unblurred image.
+ 	var blurCanvas = transformedOceanMask_Canvas;		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map
+ 	
+ 	// The blur radius is balancing two roles - providing a nice ocean gradient, and removing small islands from the 
+ 	// map (kind of like a low pass filter) - since the islands make the final map look noisy. (We could separate these 
+ 	// roles but it would require a second blurCanvas, and a second blur operation).
+ 	//
+ 	// blurRadius is currently tuned for the first role (providing a nice ocean gradient), we're now going to adjust it
+ 	// to make it complete the second role. The blurRadius is currently perfect for Minecraft 1.7 land shapes shown on a map 
+ 	// with range 3200, but if you increase the map range, the oceans get smaller, and the blurPixels become too white to 
+ 	// use to remove islands, so we will scale the blurRadius with the map range. Plus this way a deep ocean should look like a
+ 	// deep ocean no matter what scale the map.
+ 	var blurScale = 3200.0 / config.MapRange;
+ 	if (blurScale > 3) blurScale = 3; // Put a cap on it to stop stupid extremes
+ 	blurRadius *= blurScale;		
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
  
- 	var working_width  = transformedOceanMask_Canvas.width;
- 	var working_height = transformedOceanMask_Canvas.height;
- 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
- 
+ 	
  	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
  	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
  	var workingPixels = workingImageData.data;	
  	
- 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
- 	var colorOcean_R = cColor_Ocean.R, colorOcean_G = cColor_Ocean.G, colorOcean_B = cColor_Ocean.B; // avoid using classes, for speed.
- 	
+ 	// avoid using classes, for speed.
+ 	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; 
+ 	var colorOcean_R = cColor_Ocean.R, colorOcean_G = cColor_Ocean.G, colorOcean_B = cColor_Ocean.B;
+ 
+ 	// the blurCanvas might be higher resolution than the workingImage and need different increments
+ 	// (if a "hard" ocean theme is selected)
+ 	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+ 	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
  	
  	var x = 0;
  	var z = 0;
  	var index = 0;
+ 	var blurIndex = 0;
  	
  	for ( z = 0; z < working_height; z++ ) {
  		for ( x = 0; x < working_width; x++ ) {
  						
+ 			blurPixel = blurPixels[blurIndex];
+ 						
+ 			// the blurPixels value of the tip of peninsulas (for a range 3200 map) sometimes gets as low as 80, 
+ 			// and we want the value as high as we can get away with to eliminate small islands, as they turn 
+ 			// the map parchment texture to noise, but still keep the larger land masses. Looks like the sweet 
+ 			// spot is between 70 to 80.
+ 			//			
+ 			// 75 is perfect for a map range of 3200. But doesn't work well for a map range of 5000 etc, because
+ 			// of this we have changed the blurRadius using blurScale - now 75 should be perfect for all ranges.			
+ 			var isLand = workingPixels[index] > 128 && blurPixel > 75; 
+ 						
  			var alpha;
- 			if (workingPixels[index] > 200) {
+ 			if (isLand) {
  				// land
  				alpha = cAlpha_Land;			
  				
@@ -1617,17 +1722,20 @@ function parseHtmlLocations(data, callback) {
  				workingPixels[index + 2] = colorLand_B;
  			} else {
  				// ocean
- 				alpha = Math.round(blurPixels[index] * (cAlpha_Ocean - cAlphaFloor_Ocean) / 255.0) + cAlphaFloor_Ocean;							
+ 				// pick an alpha between cAlpha_Ocean and cAlphaFloor_Ocean based on blurPixel, where
+ 				// blurPixel of 255 = cAlpha_Ocean and blurPixel of 0 = cAlphaFloor_Ocean
+ 				alpha = Math.round(blurPixel * (cAlpha_Ocean - cAlphaFloor_Ocean) / 255.0) + cAlphaFloor_Ocean;							
  				
  				workingPixels[index]     = colorOcean_R;
  				workingPixels[index + 1] = colorOcean_G;
  				workingPixels[index + 2] = colorOcean_B;
- 			}
- 						
+ 			}						
  			workingPixels[index + 3] = alpha;
  			
  			index += 4;
+ 			blurIndex += blurPixelXInc;
  		}
+ 		blurIndex += blurPixelYInc;
  	}
  	workingImage_Context.putImageData( workingImageData, 0, 0);	
  
@@ -1637,7 +1745,7 @@ function parseHtmlLocations(data, callback) {
  	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
  	
  	mapBackgroundCopy_Context.drawImage(
- 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		workingImage, 
  		0, 
  		0,
  		working_width,
@@ -1658,34 +1766,45 @@ function parseHtmlLocations(data, callback) {
  //   map_Image - the img object containing the default map-background image
  //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into map_Image
  //   dest_x, dest_z, dest_width, dest_height - the position to place transformedOceanMask_Context into map_Image
- function renderTheme_CoastalRelief(map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
+ function renderTheme_CoastalRelief(config, map_Image, transformedOceanMask_Canvas, dest_x, dest_z, dest_width, dest_height) {
  
  	var cColor_DarkBrown = new RGB(144, 104,  67); 
- 	var cColor_Coastline = cColor_DarkBrown.Blend(cColor_Black, 0.5);
+ 	var cColor_Coastline = cColor_DarkBrown.Blend(cColor_Black, 0.45);
  	
- 	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
- 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 20); // about 3 blocks on the final map		
- 	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
- 
- 	var working_width  = transformedOceanMask_Canvas.width;
- 	var working_height = transformedOceanMask_Canvas.height;
- 	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
- 
+ 	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+ 	var workingImage_Context = workingImage.getContext('2d');	
+ 	var working_width  = workingImage.width;
+ 	var working_height = workingImage.height;		
+ 	
+ 	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+ 	// our blurCanvas and not worry about losing its unblurred value.
+ 	var blurCanvas = transformedOceanMask_Canvas;		
+ 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 20); // about 3 blocks on the final map, regardless of MapRange
+ 	
+ 	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
+ 	
  	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
  	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
  	var workingPixels = workingImageData.data;	
  	
- 	var colorCoast_R = cColor_Coastline.R, colorCoast_G = cColor_Coastline.G, colorCoast_B = cColor_Coastline.B; // avoid using classes, for speed.
+ 	// avoid using classes, for speed.
+ 	var colorCoast_R = cColor_Coastline.R, colorCoast_G = cColor_Coastline.G, colorCoast_B = cColor_Coastline.B; 
+ 	
+ 	// the blurCanvas might be higher resolution than the workingImage and need different increments
+ 	// (if a "hard" ocean theme is selected)
+ 	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+ 	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
  	
  	var x = 0;
  	var z = 0;
  	var index = 0;
+ 	var blurIndex = 0;
  	
  	for ( z = 0; z < working_height; z++ ) {
  		for ( x = 0; x < working_width; x++ ) {
- 											
+ 						
  			var landAlpha = 255 - workingPixels[index];
- 			var oceanAlpha = blurPixels[index];
+ 			var oceanAlpha = blurPixels[blurIndex];
  								
  			workingPixels[index]     = colorCoast_R;
  			workingPixels[index + 1] = colorCoast_G;
@@ -1693,7 +1812,9 @@ function parseHtmlLocations(data, callback) {
  			workingPixels[index + 3] = landAlpha < oceanAlpha ? landAlpha : oceanAlpha;
  			
  			index += 4;
+ 			blurIndex += blurPixelXInc;
  		}
+ 		blurIndex += blurPixelYInc;
  	}
  	workingImage_Context.putImageData( workingImageData, 0, 0);	
  
@@ -1703,7 +1824,7 @@ function parseHtmlLocations(data, callback) {
  	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
  	
  	mapBackgroundCopy_Context.drawImage(
- 		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+ 		workingImage,
  		0, 
  		0,
  		working_width,
@@ -1717,6 +1838,47 @@ function parseHtmlLocations(data, callback) {
  	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 1, 0);
  }
  
+ // Returns a canvas that's a copy of transformedOceanMask_Canvas, either at the same size as transformedOceanMask_Canvas, or at
+ // the size of the map background image (dest_width, dest_height), depending on whether config.HardCoastlines is set.
+ // transformedOceanMask_Canvas should be oversampled by cWorkingCanvasOversample, but if HardCoastlines is set then we want pixels
+ // in the final map background to be either land or ocean - rather than the combination of several land and several ocean pixels, so
+ // by returning a working canvas that won't be scaled when copied onto the map background we can enable hard pixelated coastlines.
+ //
+ // Parameters:
+ //   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into the map background image
+ //   dest_width, dest_height - the size of the eventual destination map background image.
+ function CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height) {
+ 
+ 	if (transformedOceanMask_Canvas.width % dest_width != 0 || transformedOceanMask_Canvas.height % dest_height != 0 || transformedOceanMask_Canvas.width / dest_width != cWorkingCanvasOversample) {
+ 		// Assert this here, if it fails then the logic for stepping through image data (in later code) will not be reliable.
+ 		// (transformedOceanMask_Canvas.width divided by dest_width should exactly equal cWorkingCanvasOversample)
+ 		alert("CreateWorkingCanvas called with transformedOceanMask_Canvas size not a multiple of output size");
+ 	}
+ 
+ 	var result = document.createElement('canvas');
+ 
+ 	if (config.HardCoastlines) {
+ 	
+ 		result.width  = dest_width;
+ 		result.height = dest_height;
+ 		var context = result.getContext('2d');	
+ 		
+ 		context.drawImage(
+ 			transformedOceanMask_Canvas,
+ 			0, 
+ 			0,
+ 			transformedOceanMask_Canvas.width,
+ 			transformedOceanMask_Canvas.height,
+ 			0,
+ 			0,
+ 			dest_width,
+ 			dest_height
+ 		);
+ 	} else {
+ 		result = cloneCanvas(transformedOceanMask_Canvas);
+ 	}
+ 	return result;
+ }
  
  
  // Returns a new canvas where interior_Canvas fades out into the edges defined by map_Image

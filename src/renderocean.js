@@ -20,13 +20,6 @@ function renderOcean(config, mapImage, oceanMaskImage) {
 		return imageToCanvas(mapImage);
 	}
 
-	var theme = config.OceanTheme.toLowerCase();
-	if (theme.lastIndexOf("hard") == theme.length - 4) {
-		config.HardOcean = true;
-		theme = theme.substr(0, theme.length - 4);
-	}
-
-	
 	// Work out the bounding box that the map at its current scale and position occupies
 	// inside the oceanMaskImage - (mask_x, mask_z) with size (maskWidth, maskWidth)
 	var maskCenter_x = oceanMaskImage.width / 2;
@@ -78,7 +71,7 @@ function renderOcean(config, mapImage, oceanMaskImage) {
 	);
 				
 					
-
+	var theme = config.OceanTheme.toLowerCase();
 	if (theme == "darkseas") {
 		return renderTheme_DarkSeas(config, mapImage, workingCanvas, dest_x, dest_z, dest_width, dest_height);
 	} else if (theme == "coastalrelief") {
@@ -106,7 +99,14 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 	var cAlpha_DeepOcean    = Math.round(0.6 * 255);
 	var cAlpha_Land         = Math.round(0.2  * 255);
 	
-	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
+	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+	var workingImage_Context = workingImage.getContext('2d');	
+	var working_width  = workingImage.width;
+	var working_height = workingImage.height;		
+	
+	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+	// our blurCanvas and not worry about losing its unblurred image.
+	var blurCanvas = transformedOceanMask_Canvas;		
 	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map
 	
 	// The blur radius is balancing two roles - providing a nice ocean gradient, and removing small islands from the 
@@ -120,43 +120,10 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 	// deep ocean no matter what scale the map.
 	var blurScale = 3200.0 / config.MapRange;
 	if (blurScale > 3) blurScale = 3; // Put a cap on it to stop stupid extremes
-	blurRadius *= blurScale;
-		
-	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+	blurRadius *= blurScale;		
+	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
 
-	var working_width;
-	var working_height;
-	var workingImage;
-	var workingImage_Context;
-	if (config.HardOcean == true) {
-		// Now that blurCanvas has been calculated at the oversampled resolution (where small islands will be nicely removed)
-		// drop the working canvas to the same as the destination resolution, since a "hard" oceantheme has been selected
-		// (i.e. fully pixelated)
-		var workingImage = document.createElement('canvas');
-		workingImage.width  = dest_width;
-		workingImage.height = dest_height;
-		workingImage_Context = workingImage.getContext('2d');	
-		
-		workingImage_Context.drawImage(
-			transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
-			0, 
-			0,
-			transformedOceanMask_Canvas.width,
-			transformedOceanMask_Canvas.height,
-			0,
-			0,
-			dest_width,
-			dest_height
-		);
-		working_width  = dest_width;
-		working_height = dest_height;		
-	} else {
-		workingImage   = transformedOceanMask_Canvas;
-		working_width  = transformedOceanMask_Canvas.width;
-		working_height = transformedOceanMask_Canvas.height;
-		workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
-	}
-
+	
 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
 	var workingPixels = workingImageData.data;	
@@ -186,12 +153,13 @@ function renderTheme_BlueCoastline(config, map_Image, transformedOceanMask_Canva
 		colorTable_G[i] = color.G;
 		colorTable_B[i] = color.B;
 	}
-	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
+	// avoid using classes, for speed.
+	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; 
 	
 	// the blurCanvas might be higher resolution than the workingImage and need different increments
 	// (if a "hard" ocean theme is selected)
 	var blurPixelXInc = 4 * blurCanvas.width / working_width;
-	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.width / working_width) - 1);
+	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
 	
 	var x = 0;
 	var z = 0;
@@ -283,31 +251,65 @@ function renderTheme_DarkSeas(config, map_Image, transformedOceanMask_Canvas, de
 	var cAlphaFloor_Ocean = Math.round(0.2 * 255);
 	var cAlpha_Land  = Math.round(0.25  * 255);
 	
-	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
-	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map		
-	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
+	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+	var workingImage_Context = workingImage.getContext('2d');	
+	var working_width  = workingImage.width;
+	var working_height = workingImage.height;		
+	
+	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+	// our blurCanvas and not worry about losing its unblurred image.
+	var blurCanvas = transformedOceanMask_Canvas;		
+	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 8); // about 8 blocks on the final map
+	
+	// The blur radius is balancing two roles - providing a nice ocean gradient, and removing small islands from the 
+	// map (kind of like a low pass filter) - since the islands make the final map look noisy. (We could separate these 
+	// roles but it would require a second blurCanvas, and a second blur operation).
+	//
+	// blurRadius is currently tuned for the first role (providing a nice ocean gradient), we're now going to adjust it
+	// to make it complete the second role. The blurRadius is currently perfect for Minecraft 1.7 land shapes shown on a map 
+	// with range 3200, but if you increase the map range, the oceans get smaller, and the blurPixels become too white to 
+	// use to remove islands, so we will scale the blurRadius with the map range. Plus this way a deep ocean should look like a
+	// deep ocean no matter what scale the map.
+	var blurScale = 3200.0 / config.MapRange;
+	if (blurScale > 3) blurScale = 3; // Put a cap on it to stop stupid extremes
+	blurRadius *= blurScale;		
+	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
 
-	var working_width  = transformedOceanMask_Canvas.width;
-	var working_height = transformedOceanMask_Canvas.height;
-	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
-
+	
 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
 	var workingPixels = workingImageData.data;	
 	
-	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; // avoid using classes, for speed.
-	var colorOcean_R = cColor_Ocean.R, colorOcean_G = cColor_Ocean.G, colorOcean_B = cColor_Ocean.B; // avoid using classes, for speed.
-	
+	// avoid using classes, for speed.
+	var colorLand_R = cColor_Land.R, colorLand_G = cColor_Land.G, colorLand_B = cColor_Land.B; 
+	var colorOcean_R = cColor_Ocean.R, colorOcean_G = cColor_Ocean.G, colorOcean_B = cColor_Ocean.B;
+
+	// the blurCanvas might be higher resolution than the workingImage and need different increments
+	// (if a "hard" ocean theme is selected)
+	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
 	
 	var x = 0;
 	var z = 0;
 	var index = 0;
+	var blurIndex = 0;
 	
 	for ( z = 0; z < working_height; z++ ) {
 		for ( x = 0; x < working_width; x++ ) {
 						
+			blurPixel = blurPixels[blurIndex];
+						
+			// the blurPixels value of the tip of peninsulas (for a range 3200 map) sometimes gets as low as 80, 
+			// and we want the value as high as we can get away with to eliminate small islands, as they turn 
+			// the map parchment texture to noise, but still keep the larger land masses. Looks like the sweet 
+			// spot is between 70 to 80.
+			//			
+			// 75 is perfect for a map range of 3200. But doesn't work well for a map range of 5000 etc, because
+			// of this we have changed the blurRadius using blurScale - now 75 should be perfect for all ranges.			
+			var isLand = workingPixels[index] > 128 && blurPixel > 75; 
+						
 			var alpha;
-			if (workingPixels[index] > 200) {
+			if (isLand) {
 				// land
 				alpha = cAlpha_Land;			
 				
@@ -316,17 +318,20 @@ function renderTheme_DarkSeas(config, map_Image, transformedOceanMask_Canvas, de
 				workingPixels[index + 2] = colorLand_B;
 			} else {
 				// ocean
-				alpha = Math.round(blurPixels[index] * (cAlpha_Ocean - cAlphaFloor_Ocean) / 255.0) + cAlphaFloor_Ocean;							
+				// pick an alpha between cAlpha_Ocean and cAlphaFloor_Ocean based on blurPixel, where
+				// blurPixel of 255 = cAlpha_Ocean and blurPixel of 0 = cAlphaFloor_Ocean
+				alpha = Math.round(blurPixel * (cAlpha_Ocean - cAlphaFloor_Ocean) / 255.0) + cAlphaFloor_Ocean;							
 				
 				workingPixels[index]     = colorOcean_R;
 				workingPixels[index + 1] = colorOcean_G;
 				workingPixels[index + 2] = colorOcean_B;
-			}
-						
+			}						
 			workingPixels[index + 3] = alpha;
 			
 			index += 4;
+			blurIndex += blurPixelXInc;
 		}
+		blurIndex += blurPixelYInc;
 	}
 	workingImage_Context.putImageData( workingImageData, 0, 0);	
 
@@ -336,7 +341,7 @@ function renderTheme_DarkSeas(config, map_Image, transformedOceanMask_Canvas, de
 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
 	
 	mapBackgroundCopy_Context.drawImage(
-		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+		workingImage, 
 		0, 
 		0,
 		working_width,
@@ -362,29 +367,40 @@ function renderTheme_CoastalRelief(config, map_Image, transformedOceanMask_Canva
 	var cColor_DarkBrown = new RGB(144, 104,  67); 
 	var cColor_Coastline = cColor_DarkBrown.Blend(cColor_Black, 0.45);
 	
-	var blurCanvas = cloneCanvas(transformedOceanMask_Canvas);		
-	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 20); // about 3 blocks on the final map		
-	stackBlurCanvasRGB( blurCanvas, 0, 0, transformedOceanMask_Canvas.width, transformedOceanMask_Canvas.height, blurRadius );
-
-	var working_width  = transformedOceanMask_Canvas.width;
-	var working_height = transformedOceanMask_Canvas.height;
-	var workingImage_Context = transformedOceanMask_Canvas.getContext("2d");
-
+	var workingImage = CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height);
+	var workingImage_Context = workingImage.getContext('2d');	
+	var working_width  = workingImage.width;
+	var working_height = workingImage.height;		
+	
+	// Now that workingImage is a copy of transformedOceanMask_Canvas, we can use transformedOceanMask_Canvas as 
+	// our blurCanvas and not worry about losing its unblurred value.
+	var blurCanvas = transformedOceanMask_Canvas;		
+	var blurRadius = Math.round(cWorkingCanvasOversample * map_Image.width / 20); // about 3 blocks on the final map, regardless of MapRange
+	
+	stackBlurCanvasRGB( blurCanvas, 0, 0, blurCanvas.width, blurCanvas.height, blurRadius );
+	
 	var blurPixels = blurCanvas.getContext("2d").getImageData(0, 0, blurCanvas.width, blurCanvas.height).data;
 	var workingImageData = workingImage_Context.getImageData(0, 0, working_width, working_height);
 	var workingPixels = workingImageData.data;	
 	
-	var colorCoast_R = cColor_Coastline.R, colorCoast_G = cColor_Coastline.G, colorCoast_B = cColor_Coastline.B; // avoid using classes, for speed.
+	// avoid using classes, for speed.
+	var colorCoast_R = cColor_Coastline.R, colorCoast_G = cColor_Coastline.G, colorCoast_B = cColor_Coastline.B; 
+	
+	// the blurCanvas might be higher resolution than the workingImage and need different increments
+	// (if a "hard" ocean theme is selected)
+	var blurPixelXInc = 4 * blurCanvas.width / working_width;
+	var blurPixelYInc = 4 * blurCanvas.width * ((blurCanvas.height / working_height) - 1);
 	
 	var x = 0;
 	var z = 0;
 	var index = 0;
+	var blurIndex = 0;
 	
 	for ( z = 0; z < working_height; z++ ) {
 		for ( x = 0; x < working_width; x++ ) {
-											
+						
 			var landAlpha = 255 - workingPixels[index];
-			var oceanAlpha = blurPixels[index];
+			var oceanAlpha = blurPixels[blurIndex];
 								
 			workingPixels[index]     = colorCoast_R;
 			workingPixels[index + 1] = colorCoast_G;
@@ -392,7 +408,9 @@ function renderTheme_CoastalRelief(config, map_Image, transformedOceanMask_Canva
 			workingPixels[index + 3] = landAlpha < oceanAlpha ? landAlpha : oceanAlpha;
 			
 			index += 4;
+			blurIndex += blurPixelXInc;
 		}
+		blurIndex += blurPixelYInc;
 	}
 	workingImage_Context.putImageData( workingImageData, 0, 0);	
 
@@ -402,7 +420,7 @@ function renderTheme_CoastalRelief(config, map_Image, transformedOceanMask_Canva
 	var mapBackgroundCopy_Context = mapBackgroundCopy_Canvas.getContext("2d");
 	
 	mapBackgroundCopy_Context.drawImage(
-		transformedOceanMask_Canvas, // we've updated transformedOceanMask_Canvas with putImageData()
+		workingImage,
 		0, 
 		0,
 		working_width,
@@ -416,6 +434,47 @@ function renderTheme_CoastalRelief(config, map_Image, transformedOceanMask_Canva
 	return ApplyMapEdgesToCanvas(mapBackgroundCopy_Canvas, map_Image, 1, 0);
 }
 
+// Returns a canvas that's a copy of transformedOceanMask_Canvas, either at the same size as transformedOceanMask_Canvas, or at
+// the size of the map background image (dest_width, dest_height), depending on whether config.HardCoastlines is set.
+// transformedOceanMask_Canvas should be oversampled by cWorkingCanvasOversample, but if HardCoastlines is set then we want pixels
+// in the final map background to be either land or ocean - rather than the combination of several land and several ocean pixels, so
+// by returning a working canvas that won't be scaled when copied onto the map background we can enable hard pixelated coastlines.
+//
+// Parameters:
+//   transformedOceanMask_Context - oceanMask that has been cropped and translated so it can be copied straight into the map background image
+//   dest_width, dest_height - the size of the eventual destination map background image.
+function CreateWorkingCanvas(config, transformedOceanMask_Canvas, dest_width, dest_height) {
+
+	if (transformedOceanMask_Canvas.width % dest_width != 0 || transformedOceanMask_Canvas.height % dest_height != 0 || transformedOceanMask_Canvas.width / dest_width != cWorkingCanvasOversample) {
+		// Assert this here, if it fails then the logic for stepping through image data (in later code) will not be reliable.
+		// (transformedOceanMask_Canvas.width divided by dest_width should exactly equal cWorkingCanvasOversample)
+		alert("CreateWorkingCanvas called with transformedOceanMask_Canvas size not a multiple of output size");
+	}
+
+	var result = document.createElement('canvas');
+
+	if (config.HardCoastlines) {
+	
+		result.width  = dest_width;
+		result.height = dest_height;
+		var context = result.getContext('2d');	
+		
+		context.drawImage(
+			transformedOceanMask_Canvas,
+			0, 
+			0,
+			transformedOceanMask_Canvas.width,
+			transformedOceanMask_Canvas.height,
+			0,
+			0,
+			dest_width,
+			dest_height
+		);
+	} else {
+		result = cloneCanvas(transformedOceanMask_Canvas);
+	}
+	return result;
+}
 
 
 // Returns a new canvas where interior_Canvas fades out into the edges defined by map_Image

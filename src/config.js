@@ -53,8 +53,9 @@ var LabellingStyleOverride = {
 
 // This array allows hints to be given about how labels should avoid the stock icons.
 // The earth won't end if this data is a little wrong, and working it out from the icon
-// images would waste a lot of time.
+// images would waste a lot of CPU time.
 // Icons not in this list are assumed to be 20x20.
+// Overlays have their width and height set to 0, but text offset information can be stored in the yOffset instead(?)
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
 	 0: {width: 14, height: 16, yOffset: -1}, // village plain
@@ -141,6 +142,8 @@ MapConfiguration.prototype.SetDefaults = function(screenWidth, screenHeight) {
 	if (!('ShowCoordinates'    in this)) this.ShowCoordinates = false;
 	if (!('DisableCoordinates' in this)) this.DisableCoordinates = false;
 	if (!('OceanTheme'         in this)) this.OceanTheme = 'BlueCoastline';	
+	if (!('HardCoastlines'     in this)) this.HardCoastlines = false;	
+	if (!('OceanMapUri'        in this)) this.OceanMapUri = '';	
 }
 
 MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
@@ -159,6 +162,8 @@ MapConfiguration.prototype.AssignFrom = function(sourceConfig) {
 	if ('ShowCoordinates'    in sourceConfig) this.ShowCoordinates    = sourceConfig.ShowCoordinates;	
 	if ('DisableCoordinates' in sourceConfig) this.DisableCoordinates = sourceConfig.DisableCoordinates;	
 	if ('OceanTheme'         in sourceConfig) this.OceanTheme         = sourceConfig.OceanTheme;	
+	if ('HardCoastlines'     in sourceConfig) this.HardCoastlines     = sourceConfig.HardCoastlines;	
+	if ('OceanMapUri'        in sourceConfig) this.OceanMapUri        = sourceConfig.OceanMapUri;	
 }
 
 MapConfiguration.prototype.AssignFromRow = function(rowString) {
@@ -171,51 +176,58 @@ MapConfiguration.prototype.AssignFromRow = function(rowString) {
 		if (key == 'z') {
 			var new_z = parseInt(value);
 			if (!isNaN(new_z)) this.Z = new_z;
-		}
-		if (key == 'x') {
+			
+		} else if (key == 'x') {
 			var new_x = parseInt(value);
 			if (!isNaN(new_x)) this.X = new_x;
-		}
-		if (key == 'hidelabelsabove') {
+			
+		} else if (key == 'hidelabelsabove') {
 			var new_HideLabelsAbove = parseInt(value);
 			if (!isNaN(new_HideLabelsAbove)) this.HideLabelsAbove = new_HideLabelsAbove;
-		}
-		if (key == 'showlabelsbelow') {
+			
+		} else if (key == 'showlabelsbelow') {
 			var new_ShowLabelsBelow = parseInt(value);
 			if (!isNaN(new_ShowLabelsBelow)) this.ShowLabelsBelow = new_ShowLabelsBelow;
-		}
-		if (key == 'range') {
+			
+		} else if (key == 'range') {
 			var new_MapRange = parseInt(value);
 			if (!isNaN(new_MapRange)) this.MapRange = new_MapRange;
-		}
-		if (key == 'title' && isString(value)) {
+			
+		} else if (key == 'title' && isString(value)) {
 			this.Title = unquoteString(value);
-		}
-		if (key == 'blurb' && isString(value)) {
+			
+		} else if (key == 'blurb' && isString(value)) {
 			this.Blurb = unquoteString(value);
-		}
-		if (key == 'icons' && isString(value)) {
+			
+		} else if (key == 'icons' && isString(value)) {
 			this.CustomIconsUri = unquoteString(value);
-		}
-		if (key == 'googleicons' && isString(value)) {
+			
+		} else if (key == 'googleicons' && isString(value)) {
 			this.CustomIconsUri = 'https://googledrive.com/host/' + unquoteString(value);
-		}
-		if (key == 'showorigin' && isString(value)) {
+			
+		} else if (key == 'showorigin' && isString(value)) {
 			this.ShowOrigin = stringToBool(value);
-		}
-		if (key == 'showscale' && isString(value)) {
+			
+		} else if (key == 'showscale' && isString(value)) {
 			this.ShowScale = stringToBool(value);
-		}
-		if (key == 'showcoordinates' && isString(value)) {
+			
+		} else if (key == 'showcoordinates' && isString(value)) {
 			this.ShowCoordinates = stringToBool(value);
-		}		
-		if (key == 'disablecoordinates' && isString(value)) {
+			
+		} else if (key == 'disablecoordinates' && isString(value)) {
 			this.DisableCoordinates = stringToBool(value);
-		}				
-		if (key == 'oceantheme' && isString(value)) {
+			
+		} else if (key == 'oceantheme' && isString(value)) {
 			this.OceanTheme = unquoteString(value);
-		}				
-		
+			this.HardCoastlines = this.OceanTheme.lastIndexOf("hard") == (this.OceanTheme.length - 4) && (this.OceanTheme.length > 3);
+			if (this.HardCoastlines) this.OceanTheme = this.OceanTheme.substr(0, this.OceanTheme.length - 4);
+			
+		} else if (key == 'oceansrc' && isString(value)) {
+			this.OceanMapUri = unquoteString(value);
+			
+		} else if (key == 'oceangooglesrc' && isString(value)) {
+			this.OceanMapUri = 'https://googledrive.com/host/' + unquoteString(value);
+		}
 	}
 }
 
@@ -300,15 +312,17 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 		this.ShowCoordinates = stringToBool(locationInfo.params.showcoordinates);
 	}
 
-	if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
-		this.MapDataUri = decodeURIComponent(locationInfo.params.src);
-	}
-	
 	// if "icons" is specified on the URL then set the CustomIconsUri to load the images.
 	if ('icons' in locationInfo.params && isString(locationInfo.params.icons)) {
 		this.CustomIconsUri = locationInfo.params.icons;
 	}
+	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
+		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
+	}
 	
+	if ('src' in locationInfo.params && isString(locationInfo.params.src)) {		
+		this.MapDataUri = decodeURIComponent(locationInfo.params.src);
+	}	
 	// Some extra support for hosting via Google Drive, as google drive is a good way to make
 	// the map collaborative while avoiding cross-domain data headaches.
 	if ('googlesrc' in locationInfo.params && isString(locationInfo.params.googlesrc)) {
@@ -321,11 +335,25 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 			this.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
 		}
 	}
-	if ('googleicons' in locationInfo.params && isString(locationInfo.params.googleicons)) {
-		this.CustomIconsUri = 'https://googledrive.com/host/' + locationInfo.params.googleicons;
+		
+	if ('oceansrc' in locationInfo.params && isString(locationInfo.params.oceansrc)) {
+		this.OceanMapUri = locationInfo.params.oceansrc;
 	}
+	if ('oceangooglesrc' in locationInfo.params && isString(locationInfo.params.oceangooglesrc)) {
+
+		if (locationInfo.params.oceangooglesrc.toLowerCase().indexOf('http') == 0) {
+			// User has used googlesrc when they should have used src. Rather than 
+			// explain the error just correct it.
+			this.OceanMapUri = locationInfo.params.oceangooglesrc;
+		} else {
+			this.OceanMapUri = 'https://googledrive.com/host/' + locationInfo.params.oceangooglesrc;
+		}
+	}
+
 	if ('oceantheme' in locationInfo.params && isString(locationInfo.params.oceantheme)) {		
 		this.OceanTheme = locationInfo.params.oceantheme;
+		this.HardCoastlines = this.OceanTheme.lastIndexOf("hard") == (this.OceanTheme.length - 4) && (this.OceanTheme.length > 3);
+		if (this.HardCoastlines) this.OceanTheme = this.OceanTheme.substr(0, this.OceanTheme.length - 4);		
 	}	
 }
 
