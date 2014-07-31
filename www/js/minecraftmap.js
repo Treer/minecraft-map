@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.7
+ v1.7.0
 
  Copyright 2014 Glenn Fisher
 
@@ -512,6 +512,16 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 			this.MapDataUri = locationInfo.params.googlesrc;
 		} else {
 			this.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+			
+			// People frequently create location files in Google Documents instead of .txt files,
+			// until support for Google docs can be added, try to detect this mistake so the error
+			// message can be meaningful. I don't know much about Google's id strings, but the doc
+			// ones always seem to long and the file ones short, e.g:
+			//
+			// Example Google Doc id:        1nKzgtZKPzY8UKAGVtcktIAaU8cukUTjOg--ObQbMtPs
+			// Example Google Drive file id: 0B35KCzsTLKY1YkVMeWRBemtKdHM
+			// (28 chars vs 44)
+			if (locationInfo.params.googlesrc.length > 40) this.GoogleSrcLooksLikeDoc = true;			
 		}
 	}
 		
@@ -2113,7 +2123,8 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 	
 	if (isNotEmptyString(srcUri)) {
 		getMapDataAndLocationsFromUrl(
-			srcUri,  
+			srcUri, 
+			(configFromUrl.GoogleSrcLooksLikeDoc == true),
 			function(configFromAjax, locationsFromAjax) {
 			
 				var mapConfig = new MapConfiguration();
@@ -2141,6 +2152,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 						error: function() {
 							// Image didn't load, probably a 404
 							loadCustomIcons_deferredObj.resolve();
+							alert('Could not load custom icons image at "' + mapConfig.CustomIconsUri + '"');							
 						}
 					});		
 					gCustomIcons.src = mapConfig.CustomIconsUri;
@@ -2177,7 +2189,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 	}	
 
 		
-	function getMapDataAndLocationsFromUrl(dataUrl, callback) {
+	function getMapDataAndLocationsFromUrl(dataUrl, dataUriSuspectedToBeGoogleDoc, callback) {
 		if (isString(dataUrl)) {	
 			// Assume HTML unless the dataUrl ends in .txt or .csv (wikis etc often won't end in .html)
 			var testDataType = new RegExp("\.txt$|\.csv$", "i");
@@ -2203,6 +2215,13 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 						// only valid when the map has been set up to not need the src parameter).
 						//alert('no "src=" url was specified to scrape the location data from.\n\n(also failed to load from the fallback: ' + textStatus + ', ' + errorThrown + ')');
 						alert('no "src=" url was specified to scrape the location data from.\n\n(and could not load from the fallback url)');
+
+					} else if (dataUriSuspectedToBeGoogleDoc) {
+						// People frequently create location files in Google Documents instead of .txt files,
+						// until support for Google docs can be added, try to detect this mistake and give
+						// a more helpful error message.
+						alert('Failed to load locations from src "' + dataUrl + '"\nThis might be a Google Doc file instead of a .txt file on Google Drive.\n\nThe map viewer cannot read Doc format.');
+					
 					} else {
 						alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
 					}

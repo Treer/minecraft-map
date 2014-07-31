@@ -97,7 +97,8 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 	
 	if (isNotEmptyString(srcUri)) {
 		getMapDataAndLocationsFromUrl(
-			srcUri,  
+			srcUri, 
+			(configFromUrl.GoogleSrcLooksLikeDoc == true),
 			function(configFromAjax, locationsFromAjax) {
 			
 				var mapConfig = new MapConfiguration();
@@ -125,6 +126,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 						error: function() {
 							// Image didn't load, probably a 404
 							loadCustomIcons_deferredObj.resolve();
+							alert('Could not load custom icons image at "' + mapConfig.CustomIconsUri + '"');							
 						}
 					});		
 					gCustomIcons.src = mapConfig.CustomIconsUri;
@@ -161,7 +163,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 	}	
 
 		
-	function getMapDataAndLocationsFromUrl(dataUrl, callback) {
+	function getMapDataAndLocationsFromUrl(dataUrl, dataUriSuspectedToBeGoogleDoc, callback) {
 		if (isString(dataUrl)) {	
 			// Assume HTML unless the dataUrl ends in .txt or .csv (wikis etc often won't end in .html)
 			var testDataType = new RegExp("\.txt$|\.csv$", "i");
@@ -187,6 +189,13 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 						// only valid when the map has been set up to not need the src parameter).
 						//alert('no "src=" url was specified to scrape the location data from.\n\n(also failed to load from the fallback: ' + textStatus + ', ' + errorThrown + ')');
 						alert('no "src=" url was specified to scrape the location data from.\n\n(and could not load from the fallback url)');
+
+					} else if (dataUriSuspectedToBeGoogleDoc) {
+						// People frequently create location files in Google Documents instead of .txt files,
+						// until support for Google docs can be added, try to detect this mistake and give
+						// a more helpful error message.
+						alert('Failed to load locations from src "' + dataUrl + '"\nThis might be a Google Doc file instead of a txt file on Google Drive.\n\nThe map viewer cannot read Doc format.');
+					
 					} else {
 						alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);
 					}

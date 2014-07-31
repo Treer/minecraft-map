@@ -333,6 +333,16 @@ MapConfiguration.prototype.AssignFromUrl = function(urlString) {
 			this.MapDataUri = locationInfo.params.googlesrc;
 		} else {
 			this.MapDataUri = 'https://googledrive.com/host/' + locationInfo.params.googlesrc;
+			
+			// People frequently create location files in Google Documents instead of .txt files,
+			// until support for Google docs can be added, try to detect this mistake so the error
+			// message can be meaningful. I don't know much about Google's id strings, but the doc
+			// ones always seem to long and the file ones short, e.g:
+			//
+			// Example Google Doc id:        1nKzgtZKPzY8UKAGVtcktIAaU8cukUTjOg--ObQbMtPs
+			// Example Google Drive file id: 0B35KCzsTLKY1YkVMeWRBemtKdHM
+			// (28 chars vs 44)
+			if (locationInfo.params.googlesrc.length > 40) this.GoogleSrcLooksLikeDoc = true;			
 		}
 	}
 		
