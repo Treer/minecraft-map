@@ -603,11 +603,14 @@ function parseTextLocations(data, callback) {
 	var lines = data.split('\n');
 	var i = 0;
 	for(i = 0; i < lines.length; i++) {
-		var newLocation = createLocationFromRow(i + 1, lines[i]);	
-		if (newLocation instanceof Location) {
-			locationList.push(newLocation);		
-		} else {
-			config.AssignFromRow(lines[i]);
+		var line = lines[i];
+		if (line[0] != '/') { // Comments don't need to start with // since any non-valid line is just ignored, but perhaps skipping these will save some time or RAM?
+			var newLocation = createLocationFromRow(i + 1, lines[i]);	
+			if (newLocation instanceof Location) {
+				locationList.push(newLocation);		
+			} else {
+				config.AssignFromRow(lines[i]);
+			}
 		}
 	}
 	callback(config, locationList);

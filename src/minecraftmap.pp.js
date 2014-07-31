@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.7
+ v1.7.0
 
  Copyright 2014 Glenn Fisher
 
@@ -89,6 +89,10 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 	var configFromUrl = new MapConfiguration();
 	configFromUrl.AssignFromUrl(location);
 		
+	// Load the ocean mask asynchronously if possible while we load the locations file, 
+	// to avoid adding delay to the pipeline.
+	var loadingOceanMap_deferredObj = loadOceanMap_Async(configFromUrl, false);		
+		
 	var srcUri = ('MapDataUri' in configFromUrl) ? configFromUrl.MapDataUri : gMapDataUriDefault;
 	
 	if (isNotEmptyString(srcUri)) {
@@ -107,11 +111,10 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 				// an image to load, see caveats in http://api.jquery.com/load-event/		
 				// If that's the case then ocean maps and custom icons won't work on 
 				// browsers with broken onload event.
-				var loadCustomIcons_deferredObj = $.Deferred();		
-				var loadOceanMap_deferredObj    = $.Deferred();		
-
-				
-				
+				var deferreds = [];
+				var loadCustomIcons_deferredObj = $.Deferred();						
+				deferreds[0] = loadCustomIcons_deferredObj;
+								
 				// Load the custom icons
 				if (!isEmpty(mapConfig.CustomIconsUri)) {					
 					$(gCustomIcons).bind({
@@ -130,36 +133,16 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 					loadCustomIcons_deferredObj.resolve();
 				}
 
-				// Load the ocean map
-				if (!isEmpty(mapConfig.OceanMapUri)) {					
-					gOceanMapImage = new Image();
-					$(gOceanMapImage).bind({
-						load: function() {
-							// Excellent, ocean mask is loaded
-							loadOceanMap_deferredObj.resolve();
-						},
-						error: function() {
-							// Image didn't load, probably a 404
-							gOceanMapImage = null;
-							loadOceanMap_deferredObj.resolve();
-						}
-					});		
-					gOceanMapImage.src = mapConfig.OceanMapUri;
-					
-				} else {	
-					// Oceanmap wasn't specified in settings, but might have been loaded by index.html
-					gOceanMapImage = document.getElementById('oceanmask');	
-					if (gOceanMapImage != null && !isImageOk(gOceanMapImage)) {
-						// The oceanmask img appears to be present in the HTML, but was a broken link
-						// (It feels wrong to assign an error handler in order to figure this out, so I'm 
-						// going with isImageOk() instead, unless it turns out to be less cross-browser compatible)
-						gOceanMapImage = null;
-					}
-					
-					loadOceanMap_deferredObj.resolve();
+				if (loadingOceanMap_deferredObj == null) {
+					// The ocean map hasn't been loaded yet, perhaps the configFromAjax
+					// has provided a URL to load it from, or the HTML has loaded it.
+					loadingOceanMap_deferredObj = loadOceanMap_Async(mapConfig, true);						
 				}
-
-				$.when(loadCustomIcons_deferredObj, loadOceanMap_deferredObj).done(
+				if (loadingOceanMap_deferredObj != null) {
+					deferreds[1] = loadingOceanMap_deferredObj;
+				}
+				
+				$.when.apply($,deferreds).done(
 					function() { callback(mapConfig, locationsFromAjax); }
 				);
 			}
@@ -213,5 +196,69 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 		} else {
 			alert('Internal error: dataUrl not string');
 		}	
+	}
+	
+	// Loads the oceanmap into the global variable gOceanMapImage. If 
+	// the config contains an OceanMapUri then the load is attempted from 
+	// the Uri, otherwise attempts to load from the "oceanmask" img tag in the HTML.
+	//
+	// Returns null if there was nothing to load, or a jquery Deferred object
+	// which will be resolved when the oceanmap is loaded
+	function loadOceanMap_Async(config, tryImgTag) {
+
+		var result_deferredObj = $.Deferred();				
+	
+		// Load the ocean map
+		if (!isEmpty(config.OceanMapUri)) {		
+			// I'm getting the impression there is no reliable way to wait for
+			// an image to load, see caveats in http://api.jquery.com/load-event/		
+			// If that's the case then ocean maps and custom icons won't work on 
+			// browsers with broken onload event.
+			gOceanMapImage = new Image();
+			$(gOceanMapImage).bind({
+				load: function() {
+					// Excellent, ocean mask is loaded
+					result_deferredObj.resolve();
+				},
+				error: function() {
+					// Image didn't load, probably a 404
+					gOceanMapImage = null;
+					result_deferredObj.resolve();
+					alert('Could not load oceam-map image at "' + config.OceanMapUri + '"');
+				}
+			});		
+			gOceanMapImage.src = config.OceanMapUri;
+			
+		} else if (tryImgTag) {	
+			// Oceanmap wasn't specified in settings, but might have been loaded in an img tag in index.html
+			gOceanMapImage = document.getElementById('oceanmask');	
+			if (gOceanMapImage != null) {
+				// The "oceanmask" img appears to be present in the HTML
+				
+				// (It feels wrong to assign an error handler in the html just to figure out if the image is good, 
+				// so I'm going with isImageOk() instead, unless it turns out to be less cross-browser compatible)
+				if (!isImageOk(gOceanMapImage)) {
+					// It's a broken link.
+					gOceanMapImage = null;
+					// return null to indicate the map is not loading
+					result_deferredObj = null;
+				} else {
+					// image was already loaded with the html
+					result_deferredObj.resolve();
+				}
+			} else {			
+				// The oceanmask tag is commented out, or otherwise missing.
+				
+				// return null to indicate the map is not loading
+				result_deferredObj = null;
+			}
+		} else {
+			// Oceanmap wasn't specified in settings, and the value of tryImgTag says not to bother checking the img tag in index.html
+			
+			// return null to indicate the map is not loading
+			result_deferredObj = null;		
+		}
+		
+		return result_deferredObj;	
 	}
 }

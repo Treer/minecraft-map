@@ -136,7 +136,7 @@
 					
 					var coords = $(this).attr('coords').split(',');
 					
-					for(c in coords) {
+					for(var c in coords) {
 						coords[c] = Math.ceil(coords[c] * scale);
 					}
 					
@@ -205,8 +205,8 @@
 			
 			var halfViewWidth = viewport.width()  / 2;
 			var halfViewHeight = viewport.height() / 2;
-			var viewportX = -map.position().left;
-			var viewportY = -map.position().top;
+			var viewportX = -pos.left;
+			var viewportY = -pos.top;
 			
 			var newViewportX = ((newLevel.width()  / oldLevel.width())  * (viewportX + halfViewWidth)  - halfViewWidth);
 			var newViewportY = ((newLevel.height() / oldLevel.height()) * (viewportY + halfViewHeight) - halfViewHeight);
