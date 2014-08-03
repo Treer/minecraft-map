@@ -202,9 +202,10 @@ var LocationType = {
   Horse:           {iconIndex: 34, name: "",                href: "http://minecraft.gamepedia.com/Horse"},
   Wolf:            {iconIndex: 35, name: "",                href: "http://minecraft.gamepedia.com/Wolf"},
   Dragon:          {iconIndex: 36, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
-  SeaMonster:      {iconIndex: 45, name: "",                href: ""}, 
+  SeaMonster:      {iconIndex: 46, name: "",                href: ""}, 
   Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
-  
+  IcePlainsSpikes: {iconIndex: 47, name: "Ice plains spikes", href: "http://minecraft.gamepedia.com/Biome/Ice_Plains_Spikes"}, 
+
   Spawn:           {iconIndex: 40, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex:  8, name: "",      href: ""},  
   PlayerCastle:    {iconIndex:  9, name: "",      href: ""},  
@@ -283,7 +284,9 @@ var IconBoundsInformation = {
 	42: {width: 14, height: 22, yOffset: -4}, // Marker2
 	43: {width: 14, height: 16, yOffset: -1}, // Chest
 	44: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
-	45: {width: 28, height: 18, yOffset:  1}  // Sea monster
+	45: {width: 11, height: 13, yOffset:  0}, // Anvil
+	46: {width: 28, height: 18, yOffset:  1}, // Sea monster
+	47: {width: 28, height: 30, yOffset:  1}  // Ice spikes
 }
 
 
