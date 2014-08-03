@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.7.0
+ The Ink & Parchment Map v1.7.0
 
  Copyright 2014 Glenn Fisher
 
@@ -12,19 +12,20 @@
  Note that other files in this project have their own licence, see \licence.md
 *****/
 
-// Constants and global variables
-var cMapRangeDefault      = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
-var cClickRadius          = 12;    // How far from the center of the icon is clickable
-var cTextOffset           = 14;    // How far under the center of the icon should the text be drawn
-var cLabel_DontDrawChar   = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cLabel_AlwaysDrawChar = '!';   // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cCustomIconIndexStart = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
-var cShowBoundingBoxes    = false; // This is for debug only
+// Constants 
+var cMapRangeDefault        = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+var cClickRadius            = 12;    // How far from the center of the icon is clickable
+var cCaptionSpacer_vertical = 8;     // How far under the bottom of the icon should the text be drawn. The canvas textBaseline is "alphabetic", so cCaptionSpacer_vertical should be set to roughly the ascent of the font.
+var cLabel_DontDrawChar     = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cLabel_AlwaysDrawChar   = '!';   // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cCustomIconIndexStart   = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cShowBoundingBoxes      = false; // This is for debug only
 
-var gMapDataUriDefault    = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
-var gCustomIcons          = new Image();
-var gCustomIconsLoaded    = false;
-var gOceanMapImage        = null; // will be set to an Image if an ocean mask is provided.
+// Global variables
+var gMapDataUriDefault      = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
+var gCustomIcons            = new Image();
+var gCustomIconsLoaded      = false;
+var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
 
 
 /********************************************
@@ -234,23 +235,23 @@ var LabellingStyleOverride = {
 // The earth won't end if this data is a little wrong, and working it out from the icon
 // images would waste a lot of CPU time.
 // Icons not in this list are assumed to be 20x20.
-// Overlays have their width and height set to 0, but text offset information can be stored in the yOffset instead(?)
+// Overlays have their width set to 0, but text offset information can be stored in the height.
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
-	 0: {width: 14, height: 16, yOffset: -1}, // village plain
+	 0: {width: 14, height: 14, yOffset: -1}, // village plain
 	 1: {width: 14, height: 16, yOffset: -1}, // village desert
 	 2: {width: 12, height: 20, yOffset:  0}, // skull
-	 3: {width: 14, height: 20, yOffset: -5}, // witch
+	 3: {width: 14, height: 20, yOffset: -4}, // witch
 	 4: {width: 16, height: 17, yOffset: -2}, // jungle temple
 	 5: {width: 10, height: 17, yOffset:  0}, // desert temple
 	 6: {width: 10, height: 14, yOffset: -2}, // Nether fortress
 	 7: {width: 10, height: 13, yOffset: -1}, // Portal
 	 8: {width: 10, height: 10, yOffset:  0}, // PlayerStructure
 	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
-	10: {width: 12, height: 11, yOffset: -1}, // PlayerHouse
+	10: {width: 12, height: 11, yOffset:  0}, // PlayerHouse
 	11: {width: 15, height:  8, yOffset:  0}, // Rail
-	12: {width: 10, height: 16, yOffset: -4}, // PlayerMachine
-	13: {width:  0, height:  0, yOffset: -8}, // fence overlay
+	12: {width: 10, height: 18, yOffset: -4}, // PlayerMachine
+	13: {width:  0, height:  8, yOffset:  5}, // fence overlay
 	14: {width: 16, height: 16, yOffset: -1}, // wheat
 	15: {width: 12, height: 13, yOffset:  0}, // chicken
 	16: {width: 10, height: 10, yOffset:  0}, // pig
@@ -266,14 +267,14 @@ var IconBoundsInformation = {
 	26: {width: 14, height: 14, yOffset: -1}, // flower forest
 	27: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
 	28: {width: 24, height: 22, yOffset: -4}, // Forest 
-	29: {width: 17, height: 16, yOffset: -2}, // Mushroom
-	30: {width:  0, height:  0, yOffset: -8}, // island overlay
+	29: {width: 17, height: 16, yOffset: -1}, // Mushroom
+	30: {width:  0, height: 16, yOffset:  8}, // island overlay
 	31: {width: 30, height: 18, yOffset:  0}, // Mountains
 	32: {width: 30, height: 20, yOffset: -1}, // Mountain
 	33: {width: 18, height: 16, yOffset: -1}, // Cave	
 	34: {width: 18, height: 17, yOffset:  0}, // Horse
 	35: {width: 17, height: 13, yOffset:  0}, // Wolf
-	36: {width: 30, height: 28, yOffset:  1}, // Dragon
+	36: {width: 30, height: 26, yOffset:  1}, // Dragon
 	37: {width: 27, height: 27, yOffset:  1}, // Ship 1
 	38: {width: 29, height: 30, yOffset:  0}, // Ship 2
 	39: {width: 20, height: 27, yOffset: -2}, // Compass points	
@@ -282,7 +283,7 @@ var IconBoundsInformation = {
 	42: {width: 14, height: 22, yOffset: -4}, // Marker2
 	43: {width: 14, height: 16, yOffset: -1}, // Chest
 	44: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
-	45: {width: 28, height: 16, yOffset:  1}  // Sea monster
+	45: {width: 28, height: 18, yOffset:  1}  // Sea monster
 }
 
 
@@ -1142,8 +1143,27 @@ function parseHtmlLocations(data, callback) {
  		}
  	}
  
+ 	// returns the IconBoundsInformation for the specified icon, or width/height/offset
+ 	// information of 0 if there is no icon.
+ 	function getIconBoundsHint(iconIndex) {
+ 		
+ 		var result;
+ 		
+ 		if (isNaN(iconIndex) || iconIndex < 0) {
+ 			result = {width: 0, height: 0, yOffset:  0};			
+ 		} else {	
+ 			result = IconBoundsInformation[iconIndex];
+ 			if (result === undefined) {
+ 				// The icon is not specified in IconBoundsInformation array, use default values
+ 				result = {width: 20, height: 20, yOffset:  0};			
+ 			}
+ 		}
+ 		return result;
+ 	}
+ 	
  	// Returns an array of Rectangle, which will be empty if the
- 	// index indicates no icon.
+ 	// index indicates no icon, or if the IconBoundsInformation 
+ 	// indicates a 0 width or 0 height.
  	function icon_bounds(index, x, z, margin) {
  		// most icons fit in 20x20
  		// todo: hardcode any exceptions
@@ -1152,19 +1172,17 @@ function parseHtmlLocations(data, callback) {
  		if (isNaN(index) || index < 0) {
  			// no icon
  		} else {
- 			var iconBoundsHint = IconBoundsInformation[index];
- 			if (iconBoundsHint === undefined) {
- 				// The icon is not specified in IconBoundsInformation array, use default values
- 				iconBoundsHint = {width: 20, height: 20, yOffset:  0};			
+ 			var iconBoundsHint = getIconBoundsHint(index);
+ 			if (iconBoundsHint.width != 0 && iconBoundsHint.height != 0) {
+ 				var topLeft_x = x - iconBoundsHint.width / 2;
+ 				var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
+ 				result[0] = new Rectangle(
+ 					topLeft_x, 
+ 					topLeft_z, 
+ 					topLeft_x + iconBoundsHint.width - 1,
+ 					topLeft_z + iconBoundsHint.height - 1
+ 				);
  			}
- 			var topLeft_x = x - iconBoundsHint.width / 2;
- 			var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
- 			result[0] = new Rectangle(
- 				topLeft_x, 
- 				topLeft_z, 
- 				topLeft_x + iconBoundsHint.width - 1,
- 				topLeft_z + iconBoundsHint.height - 1
- 			);
  		}
  		
  		return result;
@@ -1221,10 +1239,13 @@ function parseHtmlLocations(data, callback) {
  		
  			var iconIndex = locationInstance.getIconIndex();
  			
- 			var textOffset = cTextOffset;
+ 			var textOffset;
  			if (isNaN(iconIndex) || iconIndex < 0) {
  				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
  				textOffset = 3; 
+ 			} else {
+ 				var boundsInfo = getIconBoundsHint(iconIndex);
+ 				textOffset = cCaptionSpacer_vertical + boundsInfo.yOffset + (boundsInfo.height / 2);
  			}
  		
  			var drawLabel = true;
@@ -1327,7 +1348,7 @@ function parseHtmlLocations(data, callback) {
  		ctx.stroke();
  
  		var text_y1 = scaleStartY - notchHeight - 4;
- 		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
+ 		var text_y2 = scaleStartY + notchHeight + cTextLineHeight;
  		multilineCenteredText_draw(scaleStartX + blockSize, text_y1, blockDistance_str);		
  		multilineCenteredText_draw(scaleStartX, text_y2, '0');
  		multilineCenteredText_draw(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
@@ -2220,7 +2241,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 						// People frequently create location files in Google Documents instead of .txt files,
 						// until support for Google docs can be added, try to detect this mistake and give
 						// a more helpful error message.
-						alert('Failed to load locations from src "' + dataUrl + '"\nThis might be a Google Doc file instead of a .txt file on Google Drive.\n\nThe map viewer cannot read Doc format.');
+						alert('Failed to load locations from src "' + dataUrl + '"\nThis might be a Google Doc file instead of a txt file on Google Drive.\n\nThe map viewer cannot read Doc format.');
 					
 					} else {
 						alert('Failed to load locations from src "' + dataUrl + '", something went wrong: ' + textStatus + ', ' + errorThrown);

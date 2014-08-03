@@ -1,5 +1,5 @@
 /**** @Preserve
- v1.7.0
+ The Ink & Parchment Map v1.7.0
 
  Copyright 2014 Glenn Fisher
 
@@ -12,19 +12,20 @@
  Note that other files in this project have their own licence, see \licence.md
 *****/
 
-// Constants and global variables
-var cMapRangeDefault      = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
-var cClickRadius          = 12;    // How far from the center of the icon is clickable
-var cTextOffset           = 14;    // How far under the center of the icon should the text be drawn
-var cLabel_DontDrawChar   = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cLabel_AlwaysDrawChar = '!';   // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
-var cCustomIconIndexStart = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
-var cShowBoundingBoxes    = false; // This is for debug only
+// Constants 
+var cMapRangeDefault        = 3200;  // measured in minecraft blocks from the center. (Since the map we use for the background is 64 pixels wide, a range of 3200 gives map squares of a nice round scale of 100)
+var cClickRadius            = 12;    // How far from the center of the icon is clickable
+var cCaptionSpacer_vertical = 8;     // How far under the bottom of the icon should the text be drawn. The canvas textBaseline is "alphabetic", so cCaptionSpacer_vertical should be set to roughly the ascent of the font.
+var cLabel_DontDrawChar     = '~';   // Designates labels that shouldn't be drawn on the map. The tilde is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cLabel_AlwaysDrawChar   = '!';   // Designates labels that should always be drawn on the map. The exclamation mark is illegal in a Minecraft name, so should make a good character to enclose labels with.
+var cCustomIconIndexStart   = 64;    // IconIndexes with this value or higher should be loaded from gCustomIcons
+var cShowBoundingBoxes      = false; // This is for debug only
 
-var gMapDataUriDefault    = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
-var gCustomIcons          = new Image();
-var gCustomIconsLoaded    = false;
-var gOceanMapImage        = null; // will be set to an Image if an ocean mask is provided.
+// Global variables
+var gMapDataUriDefault      = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
+var gCustomIcons            = new Image();
+var gCustomIconsLoaded      = false;
+var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
 
 
 // #include "helpers.js"

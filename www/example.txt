@@ -26,8 +26,8 @@ FlowerForest   , 4800 ,	-1500
 // Two flower forests and about 5 herds of horses on the same island!
 FlowerForest   , 4343 , -2813 , ~Flower forest on Equine Island~
 FlowerForest   , 4228 , -2819 , ~Flower forest on Equine Island~
-Horse          , 4250 , -2500 , "\nEquine Island", "~Black horses, other horses, donkeys, and lots of flowers~" 
-IslandOverlay  , 4250 , -2500
+Horse          , 4250 , -2500 , "~Equine Island~", "~Black horses, other horses, donkeys, and lots of flowers~" 
+IslandOverlay  , 4250 , -2500 , "Equine Island"
 
 MushroomIsland , 3560 ,  2460
 IslandOverlay  , 3560 ,  2460

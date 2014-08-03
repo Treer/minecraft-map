@@ -265,8 +265,27 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		}
 	}
 
+	// returns the IconBoundsInformation for the specified icon, or width/height/offset
+	// information of 0 if there is no icon.
+	function getIconBoundsHint(iconIndex) {
+		
+		var result;
+		
+		if (isNaN(iconIndex) || iconIndex < 0) {
+			result = {width: 0, height: 0, yOffset:  0};			
+		} else {	
+			result = IconBoundsInformation[iconIndex];
+			if (result === undefined) {
+				// The icon is not specified in IconBoundsInformation array, use default values
+				result = {width: 20, height: 20, yOffset:  0};			
+			}
+		}
+		return result;
+	}
+	
 	// Returns an array of Rectangle, which will be empty if the
-	// index indicates no icon.
+	// index indicates no icon, or if the IconBoundsInformation 
+	// indicates a 0 width or 0 height.
 	function icon_bounds(index, x, z, margin) {
 		// most icons fit in 20x20
 		// todo: hardcode any exceptions
@@ -275,19 +294,17 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		if (isNaN(index) || index < 0) {
 			// no icon
 		} else {
-			var iconBoundsHint = IconBoundsInformation[index];
-			if (iconBoundsHint === undefined) {
-				// The icon is not specified in IconBoundsInformation array, use default values
-				iconBoundsHint = {width: 20, height: 20, yOffset:  0};			
+			var iconBoundsHint = getIconBoundsHint(index);
+			if (iconBoundsHint.width != 0 && iconBoundsHint.height != 0) {
+				var topLeft_x = x - iconBoundsHint.width / 2;
+				var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
+				result[0] = new Rectangle(
+					topLeft_x, 
+					topLeft_z, 
+					topLeft_x + iconBoundsHint.width - 1,
+					topLeft_z + iconBoundsHint.height - 1
+				);
 			}
-			var topLeft_x = x - iconBoundsHint.width / 2;
-			var topLeft_z = z + iconBoundsHint.yOffset - iconBoundsHint.height / 2;
-			result[0] = new Rectangle(
-				topLeft_x, 
-				topLeft_z, 
-				topLeft_x + iconBoundsHint.width - 1,
-				topLeft_z + iconBoundsHint.height - 1
-			);
 		}
 		
 		return result;
@@ -344,10 +361,13 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		
 			var iconIndex = locationInstance.getIconIndex();
 			
-			var textOffset = cTextOffset;
+			var textOffset;
 			if (isNaN(iconIndex) || iconIndex < 0) {
 				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
 				textOffset = 3; 
+			} else {
+				var boundsInfo = getIconBoundsHint(iconIndex);
+				textOffset = cCaptionSpacer_vertical + boundsInfo.yOffset + (boundsInfo.height / 2);
 			}
 		
 			var drawLabel = true;
@@ -450,7 +470,7 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		ctx.stroke();
 
 		var text_y1 = scaleStartY - notchHeight - 4;
-		var text_y2 = scaleStartY + notchHeight + cTextOffset - 4;
+		var text_y2 = scaleStartY + notchHeight + cTextLineHeight;
 		multilineCenteredText_draw(scaleStartX + blockSize, text_y1, blockDistance_str);		
 		multilineCenteredText_draw(scaleStartX, text_y2, '0');
 		multilineCenteredText_draw(scaleStartX + blockSize * scaleLength_bl, text_y2, Math.round(blockDistance * scaleLength_bl).toString());
