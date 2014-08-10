@@ -85,7 +85,7 @@ var IconBoundsInformation = {
 	23: {width: 15, height: 16, yOffset: -1}, // tree
 	24: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
 	25: {width: 15, height: 16, yOffset: -1}, // tree (palms)	
-	26: {width: 14, height: 14, yOffset: -1}, // flower forest
+	26: {width: 20, height: 22, yOffset:  0}, // flower forest
 	27: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
 	28: {width: 24, height: 22, yOffset: -4}, // Forest 
 	29: {width: 17, height: 16, yOffset: -1}, // Mushroom

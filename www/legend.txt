@@ -31,11 +31,12 @@ PlayerStructure,      0, -3200, "22) Monument (Maoi)", "", "", 22
 Forest,               0, -2400, "23) Forest 1 (Oak)", "", "", 23
 Forest,               0, -1600, "24) Forest 2 (Sapling)", "", "", 24
 Forest,               0,  -800, "25) Forest 3 (Pirate palms)", "", "", 25
-FlowerForest,         0,   800, "26) Flower forest"
-Forest,               0,  1600, "27) Forest 4 (dark)", "", "", 27
-Forest,               0,  2400, "28) Forest 5 (default)"            
+FlowerForest,         0,   800, "26) Forest 4 (flower forest)"
+Forest,               0,  1600, "27) Forest 5 (dark)", "", "", 27
+Forest,               0,  2400, "28) Forest 6 (default)"            
 MushroomIsland,       0,  3200, "29) MushroomIsland,\nor savannah/acacia Trees",
 IslandOverlay,        0,  4000, "30) Island overlay"
+IcePlainsSpikes,      0,  4800, "47) Ice plains spikes"
 
 Label,             2400, -4800, "31) Mountains 1", "", "", 31
 Label,             2400, -4000, "32) Mountains 2", "", "", 32
@@ -43,7 +44,7 @@ Label,             2400, -3200, "33) Cave", "", "", 33
 Horse,             2400, -2400, "34) Horse"
 Wolf,              2400, -1600, "35) Wolf"
 Dragon,            2400,  -800, "36) Dragon"
-SeaMonster,        2400,     0, "45) SeaMonster"
+SeaMonster,        2400,     0, "46) SeaMonster"
 Label,             2400,   800, "37) Ship 1", "", "", 37
 Label,             2400,  1600, "38) Ship 2", "", "", 38
 Label,             2400,  2400, "39) Compass points", "", "", 39
@@ -53,6 +54,7 @@ Label,             2400,  4800, "42) Marker 3", "", "", 42
 
 Label,             4800, -4800, "43) Chest", "", "", 43
 EnchantingRoom,    4800, -4000, "44) EnchantingRoom"
+Label,             4800, -3200, "45) Anvil",,,45
 
 
 MushroomIsland,    4800,  4000

@@ -1,7 +1,15 @@
-* Todo - Verticle label alignment now takes icon size into account (this change
+v1.70 - Oceans release - 
+====================================
+* Oceans and coastlines can now be shown on the map, if you know the seed 
+  for the world.
+* Ice Plains Spikes map icon added.
+* Flower Forest map icon changed from Minecraft style to parchment map style.
+* Vertical label alignment now takes icon size into account (this change
   affects the label positioning of existing maps).
 * Support added for default src URL so none is required on map generator URL
-
+  (useful for those hosting their own maps).
+* googlesrc ids that point to Google Doc files instead of txt files raise
+  a more specific warning.
 
 v1.63 - Streamline release - 2014-06-28 
 =======================================
