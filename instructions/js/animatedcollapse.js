@@ -50,6 +50,20 @@ addDiv:function(divid, attrstring){ //public function
 	return this
 },
 
+expandAnchor:function(){
+
+	var anchor = location.hash;
+	anchor = anchor.substr(1, anchor.length - 1);
+	
+	if (this.divholders[anchor]) {
+		var $divref=this.divholders[anchor].$divref
+		if ($divref.length==1) { 
+			// A DIV for this hash-anchor exists
+			this.show(anchor);
+		}
+	}
+},
+
 showhide:function(divid, action){
 	var $divref=this.divholders[divid].$divref //reference collapsible DIV
 	if (this.divholders[divid] && $divref.length==1){ //if DIV exists
@@ -70,9 +84,21 @@ slideengine:function(divid, action){
 	var $divref=this.divholders[divid].$divref
 	var $togglerimage=this.divholders[divid].$togglerimage
 	if (this.divholders[divid] && $divref.length==1){ //if this DIV exists
+	
+		if (animatedcollapse.onbeforetoggle){
+			try{
+				var newStateVisible = (action=="show" || action=="toggle" && $divref.css('display')=='none');
+				animatedcollapse.onbeforetoggle(jQuery, $divref.get(0), $divref.css('display'), newStateVisible ? "block" : "none");
+			}
+			catch(e){
+				alert("An error exists inside your \"ontoggle\" function:\n\n"+e+"\n\nAborting execution of function.")
+			}
+		}
+	
+	
 		var animateSetting={height: action}
 		if ($divref.attr('fade'))
-			animateSetting.opacity=action
+			animateSetting.opacity=action			
 		$divref.animate(animateSetting, $divref.attr('speed')? parseInt($divref.attr('speed')) : 500, function(){
 			if ($togglerimage){
 				$togglerimage.attr('src', ($divref.css('display')=="none")? $togglerimage.data('srcs').closed : $togglerimage.data('srcs').open)
@@ -142,6 +168,12 @@ init:function(){
 			if (this.lastactivedivid && urlparamopenids[0]!="none") //show last "active" DIV within each group (one that should be expanded), unless url param="none"
 				ac.divholders[this.lastactivedivid].$divref.show()
 		})
+		
+		if (animatedcollapse.onbeforetoggle){
+			jQuery.each(ac.divholders, function(){ //loop through each collapsible DIV object and fire onbeforetoggle event
+				animatedcollapse.onbeforetoggle(jQuery, this.$divref.get(0), this.$divref.css('display'), this.$divref.css('display'))
+			})
+		}
 		if (animatedcollapse.ontoggle){
 			jQuery.each(ac.divholders, function(){ //loop through each collapsible DIV object and fire ontoggle event
 				animatedcollapse.ontoggle(jQuery, this.$divref.get(0), this.$divref.css('display'))
@@ -161,12 +193,15 @@ init:function(){
 				var relattr=this.getAttribute('rel')
 				var divids=(this._divids=="")? [] : this._divids.split(',') //convert 'div1,div2,etc' to array 
 				if (divids.length>0){
-					animatedcollapse[/expand/i.test(relattr)? 'show' : /collapse/i.test(relattr)? 'hide' : 'toggle'](divids) //call corresponding public function
+					animatedcollapse[/expand\[/i.test(relattr)? 'show' : /collapse\[/i.test(relattr)? 'hide' : 'toggle'](divids) //call corresponding public function
 					return false
 				}
 			}) //end control.click
 		})// end control.each
 
+		// expand any sections linked to in the URL
+		animatedcollapse.expandAnchor();		
+		
 		$(window).bind('unload', function(){
 			ac.uninit()
 		})
