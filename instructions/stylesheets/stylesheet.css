@@ -575,9 +575,9 @@ h2.header-collapsed, h2.header-expanded {
 
 
 .header-collapsed .expander, .header-collapsed .expander-content {
-  -moz-box-shadow:    5px 5px 4px 1px rgba(65,65,65,0.6);
-  -webkit-box-shadow: 5px 5px 4px 1px rgba(65,65,65,0.6);
-  box-shadow:         5px 5px 4px 1px rgba(65,65,65,0.6);
+  -moz-box-shadow:    4px 4px 3px 1px rgba(80,80,80,0.6);
+  -webkit-box-shadow: 4px 4px 3px 1px rgba(80,80,80,0.6);
+  box-shadow:         4px 4px 3px 1px rgba(80,80,80,0.6);
 }
 
 .header-collapsed .expander-content {

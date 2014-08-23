@@ -38,11 +38,31 @@
     ***********************************************/
   </script>
   <script type="text/javascript">
-    animatedcollapse.addDiv('locationTypes', 'fade=1');
-    animatedcollapse.addDiv('locationCoords', 'fade=0.3');
-    animatedcollapse.addDiv('locationCaption', 'fade=1');
-    animatedcollapse.addDiv('locationHref', 'fade=0.7');
-    animatedcollapse.addDiv('locationIconIndex', 'fade=0.5');
+    animatedcollapse.addDiv('locationTypes',     'fade=1');
+    animatedcollapse.addDiv('locationCoords',    'fade=1, speed=200');
+    animatedcollapse.addDiv('locationCaption',   'fade=1');
+    animatedcollapse.addDiv('locationHref',      'fade=1, speed=350');
+    animatedcollapse.addDiv('locationIconIndex', 'fade=1, speed=250');
+
+    animatedcollapse.addDiv('settings_src',        'fade=1, speed=450');
+    animatedcollapse.addDiv('settings_range',      'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_title',      'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_blurb',      'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_coords',     'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_icons',      'fade=1, speed=450');
+    animatedcollapse.addDiv('settings_showorigin', 'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_showscale',  'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_showcoords', 'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_hidelabels', 'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_showlabels', 'fade=1, speed=350');
+
+    animatedcollapse.addDiv('Tips_distance',  'fade=1, speed=450');
+    animatedcollapse.addDiv('Tips_overlays',  'fade=1, speed=250');
+    animatedcollapse.addDiv('Tips_labels',    'fade=1, speed=350');
+    animatedcollapse.addDiv('Tips_shorturls', 'fade=1, speed=200');
+    animatedcollapse.addDiv('Tips_rei',       'fade=1, speed=500');
+
+
 
 
     $(document).ready(function(){
@@ -86,6 +106,12 @@
         }
     }
     animatedcollapse.init()
+
+    $(document).ready(function(){
+      // expand any sections linked to in the URL that have a _heading suffix
+      animatedcollapse.expandAnchor("_heading");
+    });
+
   </script>
   </#if>
 
@@ -409,23 +435,29 @@ range = 6400</pre>
     <p>Example of specifying settings on the end of a URL:</p>
     <pre style="font-size: 80%">https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM<span style="color:green;">&amp;title=Map%20of%20Treasure%20Island&amp;range=1600</span>  </pre>
 
-    <p><a id="SettingNames"></a>The following settings are available:</p>
+    <h2><a id="SettingNames"></a>The following settings are available:</h2>
 
-    <ul>
-    <li><span class="setting">range</span></li>
-    <li><span class="setting">title</span></li>
-    <li><span class="setting">blurb</span></li>
-    <li><span class="setting">x</span></li>
-    <li><span class="setting">z</span></li>
-    <li><span class="setting">icons</span></li>
-    <li><span class="setting">showorigin</span></li>
-    <li><span class="setting">showscale</span></li>
-    <li><span class="setting">showcoordinates</span></li>
-    <li><span class="setting">hidelabelsabove</span></li>
-    <li><span class="setting">showlabelsbelow</span></li>
-    </ul>
+    <#if !enable_dynamic>
+      <#-- If the settings cant be collapsed, then we provide a summary in bullet-list form -->
+      <ul>
+      <li><span class="setting">range</span></li>
+      <li><span class="setting">title</span></li>
+      <li><span class="setting">blurb</span></li>
+      <li><span class="setting">x</span></li>
+      <li><span class="setting">z</span></li>
+      <li><span class="setting">icons</span></li>
+      <li><span class="setting">showorigin</span></li>
+      <li><span class="setting">showscale</span></li>
+      <li><span class="setting">showcoordinates</span></li>
+      <li><span class="setting">hidelabelsabove</span></li>
+      <li><span class="setting">showlabelsbelow</span></li>
+      </ul>
+    </#if>
 
-    <h3><a id="settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>
+
+    <@OpenCollapsableSection headingLevel="3" id="settings_src" title="Required URL setting: <span class=\"setting\">src</span> or <span class=\"setting\">googlesrc</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>-->
+
 
     <p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither
     <span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
@@ -439,130 +471,164 @@ range = 6400</pre>
     If your locations file is on Google Drive then you can set <span class="setting">googlesrc</span> to the <a href="googledrive.html#GoogleId">file's unique code</a>
     instead of using <span class="setting">src</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
 
-    <h3><a id="settings_range"></a><span class="setting">range</span></h3>
 
-    <p>This sets the radius the map will cover, it defaults to 3200 which makes the map 6400 Minecraft blocks wide and 6400 Minecraft blocks high by default.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_range" title="<span class=\"setting\">range</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_range"></a><span class="setting">range</span></h3>-->
 
-    <p>Tip: Try to make the range a multiple of 32, as this results in the scale at the bottom-left of the map showing nice round numbers. (This is because there are 64
-    blocks in the map background texture, and the scale is aligned to the texture to help make it easier to estimate distances)</p>
+      <p>This sets the radius the map will cover, it defaults to 3200 which makes the map 6400 Minecraft blocks wide and 6400 Minecraft blocks high by default.</p>
 
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&range=1600">Example - map with range set to 1600</a></p>
+      <p>Tip: Try to make the range a multiple of 32, as this results in the scale at the bottom-left of the map showing nice round numbers. (This is because there are 64
+      blocks in the map background texture, and the scale is aligned to the texture to help make it easier to estimate distances)</p>
 
-    <h3><a id="settings_title"></a><span class="setting">title</span></h3>
+      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&range=1600">Example - map with range set to 1600</a></p>
 
-    <p>This defaults to "Map of the Overworld", but you probably want to give your map its own name, or have a "Map of the Nether", this option lets you set the title of the map.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_title" title="<span class=\"setting\">title</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_title"></a><span class="setting">title</span></h3>-->
 
-    <p>You can put HTML in the value for this. If you are specifying the title in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
-    if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+      <p>This defaults to "Map of the Overworld", but you probably want to give your map its own name, or have a "Map of the Nether", this option lets you set the title of the map.</p>
 
-    <h3><a id="settings_blurb"></a><span class="setting">blurb</span></h3>
+      <p>You can put HTML in the value for this. If you are specifying the title in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+      if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
 
-    <p>This defaults to "Use up/down or mousewheel to zoom, drag to scroll", but you might have something more interesting to say, or something you want to link to.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_blurb" title="<span class=\"setting\">blurb</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_blurb"></a><span class="setting">blurb</span></h3>-->
 
-    <p>You can put HTML in the value for this. If you are specifying the blurb in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
-    if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+      <p>This defaults to "Use up/down or mousewheel to zoom, drag to scroll", but you might have something more interesting to say, or something you want to link to.</p>
+
+      <p>You can put HTML in the value for this. If you are specifying the blurb in the URL remember to <a href="UrlEncoder.html">encode the value</a>. (You don't need to encode it
+      if you're setting the title from within the location-list file - which is the normal way of doing it)</p>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_coords" title="<span class=\"setting\">x</span> and <span class=\"setting\">z</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_coords"></a><span class="setting">x</span> and <span  class="setting">z</span></h3>-->
+
+      <p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
+
+      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&x=966&z=-1090">Example - map centered on the spawn point</a></p>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_icons" title="<span class=\"setting\">icons</span> or <span class=\"setting\">googleicons</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_icons"></a><span class="setting">icons</span> or <span class="setting">googleicons</span></h3>-->
+
+      <p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list
+      file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
+
+      <p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background).
+      You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
+
+      <p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to
+      help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
+
+      <p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
+      and specify the file's unique code instead of the URL.</p>
 
 
-    <h3><a id="settings_coords"></a><span class="setting">x</span> and <span  class="setting">z</span></h3>
-    <p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_showorigin" title="<span class=\"setting\">showorigin</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_showorigin"></a><span  class="setting">showorigin</span></h3>-->
 
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&x=966&z=-1090">Example - map centered on the spawn point</a></p>
+      <p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
 
-    <h3><a id="settings_icons"></a><span class="setting">icons</span> or <span class="setting">googleicons</span></h3>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_showscale" title="<span class=\"setting\">showscale</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_showscale"></a><span  class="setting">showscale</span></h3>-->
 
-    <p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list
-    file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
+      <p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
 
-    <p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background).
-    You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
+      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>
 
-    <p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to
-    help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_showcoords" title="<span class=\"setting\">showcoordinates</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_showcoords"></a><span  class="setting">showcoordinates</span></h3>-->
 
-    <p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
-    and specify the file's unique code instead of the URL.</p>
+      <p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the
+      mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS ;)</p>
 
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_hidelabels" title="<span class=\"setting\">hidelabelsabove</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_hidelabels"></a><a id="Settings_labels"></a><span class="setting">hidelabelsabove</span></h3>-->
 
+      <p>This specifies the "zoom-level" that must be reached before labels are displayed. It defaults to 0, which means labels are always shown.</p>
 
-    <h3><a id="settings_showorigin"></a><span  class="setting">showorigin</span></h3>
+      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>
 
-    <p>This can either be set to true or false. If set to false then the crosshairs at the 0,0 position on the map will not be drawn. The default value is true.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_showlabels" title="<span class=\"setting\">showlabelsbelow</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_showlabels"></a><span class="setting">showlabelsbelow</span></h3>-->
 
-    <h3><a id="settings_showscale"></a><span  class="setting">showscale</span></h3>
+      <p>This specifies the "zoom-level" at which all labels will be displayed, even if they overlap other labels or icons (labels are normally only displayed when then don't
+      overlap other items in the map). It defaults to 3, which means that at the last zoom-level (3), all labels are shown.</p>
 
-    <p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
+      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>
 
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>
-
-    <h3><a id="settings_showcoords"></a><span  class="setting">showcoordinates</span></h3>
-
-    <p>This can either be set to true or false. If set to true then the Minecraft coordinates of a location will be displayed when you hover the
-    mouse over it. The default value is false, because Notch gave Steve a compass, not a GPS ;)</p>
-
-    <h3><a id="settings_hidelabels"></a><a id="Settings_labels"></a><span class="setting">hidelabelsabove</span></h3>
-
-    <p>This specifies the "zoom-level" that must be reached before labels are displayed. It defaults to 0, which means labels are always shown.</p>
-
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>
-
-    <h3><a id="settings_showlabels"></a><span class="setting">showlabelsbelow</span></h3>
-
-    <p>This specifies the "zoom-level" at which all labels will be displayed, even if they overlap other labels or icons (labels are normally only displayed when then don't
-    overlap other items in the map). It defaults to 3, which means that at the last zoom-level (3), all labels are shown.</p>
-
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
 
     <h1><a id="Tips"></a>Tips</h1>
 
-    <h2><a id="Tips_distance"></a>Estimating distance</h2>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_distance" title="Estimating distance" collapsed="false"></@OpenCollapsableSection>
+    <#--<h2><a id="Tips_distance"></a>Estimating distance</h2>-->
 
-    <div style="float:right;"><img src="images/maplines.gif" width="250" height="175" alt="map scale example"/></div>
-    <p>You can use the paper texture to estimate distance, as the distance scale is aligned with it and tells you how far 1 block of the paper texture represents.</p>
+      <div style="float:right;"><img src="images/maplines.gif" width="250" height="175" alt="map scale example"/></div>
+      <p>You can use the paper texture to estimate distance, as the distance scale is aligned with it and tells you how far 1 block of the paper texture represents.</p>
 
-    <p>So those two villages are about 3 squares, or 600 meters (Minecraft blocks) apart.</p>
+      <p>So those two villages are about 3 squares, or 600 meters (Minecraft blocks) apart.</p>
 
-    <h2 style="clear:both;"><a id="Tips_overlays"></a>Overlays</h2>
+      <br style="clear:both;"/>
 
-    <p>Yet to come...</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_overlays" title="Overlays"></@OpenCollapsableSection>
+    <#--<h2 style="clear:both;"><a id="Tips_overlays"></a>Overlays</h2>-->
 
-    <p>Until I write this section, you can have a look near the bottom of the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/legend.txt">legend.txt</a>
-    file - it <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">implements</a> overlays</p>
+      <p>Yet to come...</p>
 
-    <h2><a id="Tips_labels"></a>Adjusting labels so they don't overlap</h2>
+      <p>Until I write this section, you can have a look near the bottom of the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/legend.txt">legend.txt</a>
+      file - it <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">implements</a> overlays</p>
 
-    <p>Yet to come...</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_labels" title="Adjusting labels so they don't overlap"></@OpenCollapsableSection>
+    <#--<h2><a id="Tips_labels"></a>Adjusting labels so they don't overlap</h2>-->
 
-    <p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things
-    too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in
-    the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">example.txt</a> file - it uses all the tricks</p>
+      <p>Yet to come...</p>
 
-    <!--
-    Controlling captions
-      - add newlines to caption large images
-      - supressed captions
-      - aligning captions with linebreaks and spaces
-      - labellevels and smartlabels.
+      <p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things
+      too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in
+      the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">example.txt</a> file - it uses all the tricks</p>
 
-     -->
+      <!--
+      Controlling captions
+        - add newlines to caption large images
+        - supressed captions
+        - aligning captions with linebreaks and spaces
+        - labellevels and smartlabels.
 
-    <h2><a id="Tips_shorturls"></a>Short URLs</h2>
+       -->
 
-    <p>You can use <a href="http://tinyurl.com">TinyUrl</a> or <a href="http://bit.ly">bit.ly</a> to hide the settings you include in the URL, and to
-    make the URL shorter.</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_shorturls" title="Short URLs"></@OpenCollapsableSection>
+    <#--<h2><a id="Tips_shorturls"></a>Short URLs</h2>-->
 
-    <h2><a id="Tips_rei"></a>Rei's Minimap</h2>
+      <p>You can use <a href="http://tinyurl.com">TinyUrl</a> or <a href="http://bit.ly">bit.ly</a> to hide the settings you include in the URL, and to
+      make the URL shorter.</p>
 
-    <p>If you use Rei's Minimap and already have locations saved as waypoints, you can extract
-    the location information from the <code>.point</code> files to add to your map. The <code>.point</code>
-    files can be found at:</p>
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_rei" title="Rei's Minimap"></@OpenCollapsableSection>
+    <#--<h2><a id="Tips_rei"></a>Rei's Minimap</h2>-->
 
-    <pre>%appdata%\.minecraft\mods\rei_minimap\</pre>
+      <p>If you use Rei's Minimap and already have locations saved as waypoints, you can extract
+      the location information from the <code>.point</code> files to add to your map. The <code>.point</code>
+      files can be found at:</p>
 
-    <p>They can be opened with Notepad or a text editor, and each location is
-    stored as line of text in the following format:</p>
+      <pre>%appdata%\.minecraft\mods\rei_minimap\</pre>
 
-    <pre>name:x:y:z:visible:color</pre>
+      <p>They can be opened with Notepad or a text editor, and each location is
+      stored as line of text in the following format:</p>
 
+      <pre>name:x:y:z:visible:color</pre>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
 
 
     <h1><a id="Philosophy"></a>Philosophy</h1>
@@ -604,26 +670,26 @@ range = 6400</pre>
 
         <a href="#Settings">Settings</a>
           <ul>
-          <li><a href="#settings_src">src or googlesrc</a></li>
-          <li><a href="#settings_range">range</a></li>
-          <li><a href="#settings_title">title</a></li>
-          <li><a href="#settings_blurb">blurb</a></li>
-          <li><a href="#settings_coords">x and z</a></li>
-          <li><a href="#settings_icons">icons or googleicons</a></li>
-          <li><a href="#settings_showorigin">showorigin</a></li>
-          <li><a href="#settings_showscale">showscale</a></li>
-          <li><a href="#settings_showcoords">showcoordinates</a></li>
-          <li><a href="#settings_hidelabels">hidelabelsabove</a></li>
-          <li><a href="#settings_showlabels">showlabelsbelow</a></li>
+          <li><a href="#settings_src_heading">src or googlesrc</a></li>
+          <li><a href="#settings_range_heading">range</a></li>
+          <li><a href="#settings_title_heading">title</a></li>
+          <li><a href="#settings_blurb_heading">blurb</a></li>
+          <li><a href="#settings_coords_heading">x and z</a></li>
+          <li><a href="#settings_icons_heading">icons or googleicons</a></li>
+          <li><a href="#settings_showorigin_heading">showorigin</a></li>
+          <li><a href="#settings_showscale_heading">showscale</a></li>
+          <li><a href="#settings_showcoords_heading">showcoordinates</a></li>
+          <li><a href="#settings_hidelabels_heading">hidelabelsabove</a></li>
+          <li><a href="#settings_showlabels_heading">showlabelsbelow</a></li>
           </ul>
 
         Tips
           <ul>
-          <li><a href="#Tips_distance">Estimating distance</a></li>
-          <li><a href="#Tips_overlays">Overlays</a></li>
-          <li><a href="#Tips_labels">Preventing label overlap</a></li>
-          <li><a href="#Tips_shorturls">Short URLs</a></li>
-          <li><a href="#Tips_rei">Rei's Minimap</a></li>
+          <li><a href="#Tips_distance_heading">Estimating distance</a></li>
+          <li><a href="#Tips_overlays_heading">Overlays</a></li>
+          <li><a href="#Tips_labels_heading">Preventing label overlap</a></li>
+          <li><a href="#Tips_shorturls_heading">Short URLs</a></li>
+          <li><a href="#Tips_rei_heading">Rei's Minimap</a></li>
           </ul>
 
         <p><a href="#Philosophy">Philosophy</a></p>
