@@ -133,16 +133,16 @@ aside#sidebar p.repo-owner a {
 }
 
 .contents ul {
-	margin-left: 0.5em;
-	padding-left: 0.5em;
-	list-style-type: none;
+  margin-left: 0.5em;
+  padding-left: 0.5em;
+  list-style-type: none;
 }
 
 .contents h1 {
-	font-weight: bold;
-	font-size: 140%;
-	font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
-	padding-bottom: 10px;
+  font-weight: bold;
+  font-size: 140%;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  padding-bottom: 10px;
 }
 
 .footer {
@@ -192,7 +192,7 @@ a.downloadappbutton  {
   font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 .menuoptions {
-	color: black;
+  color: black;
 }
 
 code, pre {
@@ -269,7 +269,7 @@ form {
   color: #474747;
 }
 
-#main-content h1:before {
+#main-content > h1:before {
   content: "/";
   color: #9ddcff;
   padding-right: 0.3em;
@@ -283,7 +283,7 @@ form {
   margin-bottom: 8px;
   color: #474747;
 }
-#main-content h2:before {
+#main-content > h2:before {
   content: "//";
   color: #9ddcff;
   padding-right: 0.3em;
@@ -299,7 +299,7 @@ form {
   color: #474747;
 }
 
-#main-content h3:before {
+#main-content > h3:before {
   content: "///";
   color: #9ddcff;
   padding-right: 0.3em;
@@ -357,11 +357,11 @@ p a {
 }
 
 b {
-	font-weight: bold
+  font-weight: bold
 }
 
 .columnname {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .locationtype,  .setting {
@@ -535,3 +535,100 @@ footer a:hover {
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) {}
+
+
+
+/* Collapsable div rendering classes
+================================================== */
+
+.headerhref {
+  /* Get rid of the dotted lines Firefox puts around links when the tab regains focus */
+  outline: none;
+  -moz-outline-style: none;
+}
+
+
+.header-collapsed, .header-expanded {
+  position: relative;
+  width=100%;
+  left: -1em;
+  margin-top: 30px;
+  margin-bottom: 11px;
+  /*border: 1px solid blue;*/
+}
+
+.header-collapsed {
+  margin-left: -3px;
+}
+.header-expanded {
+  top: 3px;
+}
+
+/*
+h1.header-collapsed, h1.header-expanded {
+  margin-left: -1.1em;
+}
+
+h2.header-collapsed, h2.header-expanded {
+  margin-left: -0.8em;
+}*/
+
+
+.header-collapsed .expander, .header-collapsed .expander-content {
+  -moz-box-shadow:    5px 5px 4px 1px rgba(65,65,65,0.6);
+  -webkit-box-shadow: 5px 5px 4px 1px rgba(65,65,65,0.6);
+  box-shadow:         5px 5px 4px 1px rgba(65,65,65,0.6);
+}
+
+.header-collapsed .expander-content {
+  background: white;
+}
+
+.expander-content {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding-left: 1em;
+  z-index: 4;
+  /*border: 1px solid red;*/
+}
+
+.expander {
+  position: absolute;
+  top: 0;
+  left: -1.5em;
+  width: 1.5em;
+  height: 1.5em;
+  background: #2e73c1;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.expander-arrow {;
+  margin-left: 1em;
+  width: 0;
+  height: 0;
+  border-top: 0.75em solid transparent;
+  border-left: 0.75em solid #2e73c1;
+  border-bottom: 0.75em solid transparent;
+}
+
+.expander-bar1 {
+  position: absolute;
+  top: 0.7em;
+  left: 0.3em;
+  width: 0.9em;
+  height: 0.1em;
+  background: white;
+}
+
+.header-collapsed .expander-bar2 {
+  position: absolute;
+  top: 0.3em;
+  left: 0.7em;
+    width: 0.1em;
+    height: 0.9em;
+    background: white;
+}
+

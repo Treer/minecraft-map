@@ -20,64 +20,6 @@
     <link rel="icon" sizes="196x196" href="images/apple-touch-icon.png"><!-- Chrome v31+ for Android -->
     <link rel="icon" sizes="16x16" type="image/png" href="images/favicon.png" />
 
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-  <script type="text/javascript" src="js/animatedcollapse.js">
-    /***********************************************
-    * Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
-    * This notice MUST stay intact for legal use
-    * Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
-    ***********************************************/
-  </script>
-  <script type="text/javascript">
-    animatedcollapse.addDiv('locationTypes', 'fade=1');
-    animatedcollapse.addDiv('locationCoords', 'fade=0.3');
-    animatedcollapse.addDiv('locationCaption', 'fade=1');
-    animatedcollapse.addDiv('locationHref', 'fade=0.7');
-    animatedcollapse.addDiv('locationIconIndex', 'fade=0.5');
-
-
-    $(document).ready(function(){
-        $('a[href^="#"]').click(
-            function(eventObject) {
-                // A link to an anchor was clicked on, make sure it's expanded.
-                // If javascript is enabled then override the HTML link to the fully
-                // expanded page, and perform a dynamic animated div expand instead
-
-                var anchor = eventObject.target.hash;
-                anchor = anchor.substr(1, anchor.length - 1);
-
-                var suffix = "_heading";
-                var suffixPos = anchor.indexOf(suffix, anchor.length - suffix.length);
-                if (suffixPos !== -1) {
-                    // strip the suffix
-                    anchor = anchor.substring(0, anchor.length - suffix.length);
-                }
-
-                animatedcollapse.show(anchor);
-                return true;
-            }
-        );
-    });
-
-
-    animatedcollapse.onbeforetoggle=function($, divobj, currentstate, newState){ //fires each time a DIV is expanded/contracted
-        //$: Access to jQuery
-        //divobj: DOM reference to DIV about to be expanded/ collapsed. Use "divobj.id" to get its ID
-        //currentstate and newState: "block" or "none", depending on state
-        if (newState=="block") {
-            // Div about to be expanded
-            var headerElement = $(divobj).prev().children('.header-collapsed');
-            headerElement.removeClass('header-collapsed');
-            headerElement.addClass('header-expanded');
-        } else {
-            // Div about to be collapsed
-            var headerElement = $(divobj).prev().children('.header-expanded');
-            headerElement.removeClass('header-expanded');
-            headerElement.addClass('header-collapsed');
-        }
-    }
-    animatedcollapse.init()
-  </script>
 
 
 
@@ -134,13 +76,8 @@
     </ol>
 
 
-    <!--        <a id="FromDropbox_heading" href="index_expanded.html#FromDropbox_heading" class="headerhref" rel="toggle[FromDropbox]">
-            <div class="header-expanded">
-              <div class="expander-content"><h2>Or run it from your Dropbox, or a wiki page.</h2></div>
-              <div class="expander" style="font-size: 20px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="FromDropbox" style="display:block">
+    <!--        <a id="FromDropbox_heading"></a>
+        <h2>Or run it from your Dropbox, or a wiki page.</h2>
 -->
 
       <h2><a id="FromDropbox"></a>Run it from your Dropbox, or a wiki page.</h2>
@@ -158,17 +95,11 @@
       The locations list can be in either html format or txt format (but not Google-Doc format). By default, Google Drive will view .txt files but not edit them, you can
       change this by adding a notepad app - in Google Drive go to <span class="menuoptions">Options &rarr; Manage apps</span>.</p>
 
-    <!--        </div>
--->
+    <!---->
 
 
-    <!--        <a id="Trust_heading" href="index_expanded.html#Trust_heading" class="headerhref" rel="toggle[Trust]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h2>Can I trust this to not disappear after I've started using it?</h2></div>
-              <div class="expander" style="font-size: 20px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="Trust" style="display:none">
+    <!--        <a id="Trust_heading"></a>
+        <h2>Can I trust this to not disappear after I've started using it?</h2>
 -->
 
       <h2><a id="Trust"></a>Can I trust this to not disappear after I've started using it?</h2>
@@ -193,8 +124,7 @@
 
       <p>I haven't mentioned other cloud file/hosting services as I've not tried them, they probably work fine though.</p>
 
-    <!--        </div>
--->
+    <!---->
 
 
 
@@ -249,13 +179,8 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 
     but only the first 3 items are required (type, x, z).
 
-        <a id="locationTypes_heading" href="index_expanded.html#locationTypes_heading" class="headerhref" rel="toggle[locationTypes]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h3>type</h3></div>
-              <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="locationTypes" style="display:none">
+        <a id="locationTypes_heading"></a>
+        <h3>type</h3>
       <p>The first column specifies the type of location, and must be one of the following: </p>
 
       <ul>
@@ -295,27 +220,15 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       <p>Given that any location-type can be set to display any icon or href, their purpose is only to make the list easier to read, and to
       save having to repeatedly type out the details.</p>
 
-        </div>
-        <a id="locationCoords_heading" href="index_expanded.html#locationCoords_heading" class="headerhref" rel="toggle[locationCoords]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="columnname">x</span> and <span class="columnname">z</span></h3></div>
-              <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="locationCoords" style="display:none">
+        <a id="locationCoords_heading"></a>
+        <h3><span class="columnname">x</span> and <span class="columnname">z</span></h3>
 
       <p>The x and z columns should contain the area's coordinates from Minecraft (press F3 in the game to see your coordinates).</p>
 
       <p>Don't worry about decimal places, just round the coordinates to whole numbers.</p>
 
-        </div>
-        <a id="locationCaption_heading" href="index_expanded.html#locationCaption_heading" class="headerhref" rel="toggle[locationCaption]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="columnname">description</span> and <span class="columnname">owner</span></h3></div>
-              <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="locationCaption" style="display:none">
+        <a id="locationCaption_heading"></a>
+        <h3><span class="columnname">description</span> and <span class="columnname">owner</span></h3>
 
       <p>Description and owner are optional and determine how the map location will be labelled. They don't need to be inside double-quotation marks (") but putting them in quotemarks allows the following:</p>
       <ul>
@@ -345,14 +258,8 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       <p>The visibility of labels can also be controlled using the <a href="#Settings_labels"><span class="setting">hidelabelsabove</span> and
       <span class="setting">showlabelsbelow</span> settings</a>.</p>
 
-        </div>
-        <a id="locationHref_heading" href="index_expanded.html#locationHref_heading" class="headerhref" rel="toggle[locationHref]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="columnname">href</span></h3></div>
-              <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="locationHref" style="display:none">
+        <a id="locationHref_heading"></a>
+        <h3><span class="columnname">href</span></h3>
 
       <p>By placing a URL in this column you can make the map location clickable (and the chain-link icon appears when hovering the
       mouse over the location). Some suggested uses:</p>
@@ -367,14 +274,8 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       then place a hyphen in the href column to disable the link.</p>
 
 
-        </div>
-        <a id="locationIconIndex_heading" href="index_expanded.html#locationIconIndex_heading" class="headerhref" rel="toggle[locationIconIndex]">
-            <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="columnname">icon-index</span></h3></div>
-              <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
-            </div>
-        </a>
-        <div id="locationIconIndex" style="display:none">
+        <a id="locationIconIndex_heading"></a>
+        <h3><span class="columnname">icon-index</span></h3>
 
       <p>There are more icons available than can be specified with the location-type. The icon-index field lets you
       manually choose the icon to be displayed at the location. The stock icons and their icon-index can be viewed in this
@@ -385,7 +286,6 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       the idea was to give the impression of Minecraft structures on a fantasy map.</p>
 
       <br/>
-        </div>
 
 
     <h1><a id="Settings"></a>Settings</h1>

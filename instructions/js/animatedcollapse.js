@@ -1,15 +1,11 @@
-//** Animated Collapsible DIV v2.0- (c) Dynamic Drive DHTML code library: http://www.dynamicdrive.com.
-//** May 24th, 08'- Script rewritten and updated to 2.0.
-//** June 4th, 08'- Version 2.01: Bug fix to work with jquery 1.2.6 (which changed the way attr() behaves).
-//** March 5th, 09'- Version 2.2, which adds the following:
-			//1) ontoggle($, divobj, state) event that fires each time a DIV is expanded/collapsed, including when the page 1st loads
-			//2) Ability to expand a DIV via a URL parameter string, ie: index.htm?expanddiv=jason or index.htm?expanddiv=jason,kelly
-
-//** March 9th, 09'- Version 2.2.1: Optimized ontoggle event handler slightly.
-//** July 3rd, 09'- Version 2.4, which adds the following:
-			//1) You can now insert rel="expand[divid] | collapse[divid] | toggle[divid]" inside arbitrary links to act as DIV togglers
-			//2) For image toggler links, you can insert the attributes "data-openimage" and "data-closedimage" to update its image based on the DIV state
-
+/** @Preserve
+* July 3rd 2009
+* Animated Collapsible DIV v2.4- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
+*
+* Plus some modifications 
+*/
 var animatedcollapse={
 divholders: {}, //structure: {div.id, div.attrs, div.$divref, div.$togglerimage}
 divgroups: {}, //structure: {groupname.count, groupname.lastactivedivid}

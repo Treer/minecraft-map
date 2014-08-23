@@ -1,0 +1,8 @@
+sourceRoot: templates
+outputRoot: ..\instructions
+data: {
+	versions: [
+		{output_filename: "index.html",          enable_dynamic: true },
+		{output_filename: "index_expanded.html", enable_dynamic: false }
+	]
+} 
