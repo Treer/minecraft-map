@@ -1,8 +1,13 @@
 sourceRoot: templates
 outputRoot: ..\instructions
 data: {
-	versions: [
-		{output_filename: "index.html",          enable_dynamic: true },
-		{output_filename: "index_expanded.html", enable_dynamic: false }
-	]
-} 
+  versions: [
+    {output_filename: "index.html",          enable_dynamic: true,  mapVersion: "1.6" },
+    {output_filename: "index_expanded.html", enable_dynamic: false, mapVersion: "1.6" }
+  ]
+  mapVersion: "1.6",
+  GoogleDriveUrl_mapGenerator_v1_6: "https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs",
+  GoogleDriveUrl_mapGenerator_v1_7: "",
+  GoogleDriveId_example_txt_v1_6:   "0B35KCzsTLKY1YkVMeWRBemtKdHM",
+  GoogleDriveId_example_txt_v1_7:   "",
+}

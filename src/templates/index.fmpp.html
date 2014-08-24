@@ -6,6 +6,14 @@
 <#list versions as version>
 <@pp.changeOutputFile name=version.output_filename />
 <#assign enable_dynamic = version.enable_dynamic><#-- need to copy any data we will need inside macros into a namespace-scope variable and used that - http://stackoverflow.com/questions/18635743/freemarker-loop-variables-not-surviving-nested-macro-call -->
+<#if version.mapVersion=="1.6">
+  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
+  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+</#if>
+<#if version.mapVersion=="1.7">
+  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
+  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+</#if>
 <!DOCTYPE html>
 <html>
   <head>
@@ -170,7 +178,7 @@
 
     <div style="float:right;">
 
-      <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM">
+      <a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}">
         <img src="images/screenshot-small.png" width="400" height="288" alt="screenshot"/>
         <br/>
         <p style="text-align:center;">Explore the example map, using real (SMP) locations</p>
@@ -184,8 +192,8 @@
 
     <h2 style="clear:both;">More examples</h2>
     <ul>
-    <li><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">Map showing all the available location types</a></li>
-    <li><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=example.txt&showcoordinates=true">The example map with ShowCoordinates turned on</a></li>
+    <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">Map showing all the available location types</a></li>
+    <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&showcoordinates=true">The example map with ShowCoordinates turned on</a></li>
     </ul>
 
 
@@ -195,7 +203,7 @@
     <ol>
     <li>Create a .txt file containing all your <a href="#LocationListFormat">map locations</a>, and upload it to Google Drive.</li>
     <li>Set the file's visibility to "<a href="googledrive.html#Visibility">Public on the web</a>" then add <a href="googledrive.html#GoogleId">its unique code</a> to the end of this URL:<br/>
-      <pre>https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=</pre>
+      <pre>${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=</pre>
     </li>
     <li>You're done!</li>
     </ol>
@@ -251,9 +259,9 @@
 
     <h1><a id="LocationListFormat"></a>Making a location list file</h1>
 
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">An example location-list file.</a></p>
+    <p><a href="${GoogleDriveUrl_mapGenerator}/example.txt">An example location-list file.</a></p>
 
-    <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/template.txt">A template location-list file.</a></p>
+    <p><a href="${GoogleDriveUrl_mapGenerator}/template.txt">A template location-list file.</a></p>
 
     <p>You can <a href="exportfromseed.html">automatically generate your location-list file</a> if you know the seed for the world.</p>
 
@@ -404,7 +412,7 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 
       <p>There are more icons available than can be specified with the location-type. The icon-index field lets you
       manually choose the icon to be displayed at the location. The stock icons and their icon-index can be viewed in this
-      <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">Legend Map</a>.
+      <a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">Legend Map</a>.
       You can also <a href="#settings_icons">add your own</a>.</p>
 
       <p>You'll notice two styles of icons, some are in Minecraft style and others are in the hand-drawn fantasy map style,
@@ -433,7 +441,7 @@ title = Map of Treasure Island
 range = 6400</pre>
 
     <p>Example of specifying settings on the end of a URL:</p>
-    <pre style="font-size: 80%">https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YkVMeWRBemtKdHM<span style="color:green;">&amp;title=Map%20of%20Treasure%20Island&amp;range=1600</span>  </pre>
+    <pre style="font-size: 80%">${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}<span style="color:green;">&amp;title=Map%20of%20Treasure%20Island&amp;range=1600</span>  </pre>
 
     <h2><a id="SettingNames"></a>The following settings are available:</h2>
 
@@ -481,7 +489,7 @@ range = 6400</pre>
       <p>Tip: Try to make the range a multiple of 32, as this results in the scale at the bottom-left of the map showing nice round numbers. (This is because there are 64
       blocks in the map background texture, and the scale is aligned to the texture to help make it easier to estimate distances)</p>
 
-      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&range=1600">Example - map with range set to 1600</a></p>
+      <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&range=1600">Example - map with range set to 1600</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_title" title="<span class=\"setting\">title</span>"></@OpenCollapsableSection>
@@ -507,7 +515,7 @@ range = 6400</pre>
 
       <p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
 
-      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&x=966&z=-1090">Example - map centered on the spawn point</a></p>
+      <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&x=966&z=-1090">Example - map centered on the spawn point</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_icons" title="<span class=\"setting\">icons</span> or <span class=\"setting\">googleicons</span>"></@OpenCollapsableSection>
@@ -538,7 +546,7 @@ range = 6400</pre>
 
       <p>This can either be set to true or false. If set to false then the distance scale at the bottom-left of the map will not be drawn. The default value is true.</p>
 
-      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showscale=false">Example - map with no distance scale</a></p>
+      <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&showscale=false">Example - map with no distance scale</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_showcoords" title="<span class=\"setting\">showcoordinates</span>"></@OpenCollapsableSection>
@@ -553,7 +561,7 @@ range = 6400</pre>
 
       <p>This specifies the "zoom-level" that must be reached before labels are displayed. It defaults to 0, which means labels are always shown.</p>
 
-      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>
+      <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&hidelabelsabove=1">Example - map with labels disabled on the outermost zoom-level.</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_showlabels" title="<span class=\"setting\">showlabelsbelow</span>"></@OpenCollapsableSection>
@@ -562,7 +570,7 @@ range = 6400</pre>
       <p>This specifies the "zoom-level" at which all labels will be displayed, even if they overlap other labels or icons (labels are normally only displayed when then don't
       overlap other items in the map). It defaults to 3, which means that at the last zoom-level (3), all labels are shown.</p>
 
-      <p><a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?googlesrc=0B35KCzsTLKY1YjJDV09RV0NDVHM&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>
+      <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
 
@@ -584,8 +592,8 @@ range = 6400</pre>
 
       <p>Yet to come...</p>
 
-      <p>Until I write this section, you can have a look near the bottom of the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/legend.txt">legend.txt</a>
-      file - it <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/index.html?src=legend.txt">implements</a> overlays</p>
+      <p>Until I write this section, you can have a look near the bottom of the <a href="${GoogleDriveUrl_mapGenerator}/legend.txt">legend.txt</a>
+      file - it <a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">implements</a> overlays</p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="2" id="Tips_labels" title="Adjusting labels so they don't overlap"></@OpenCollapsableSection>
@@ -595,7 +603,7 @@ range = 6400</pre>
 
       <p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things
       too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in
-      the <a href="https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs/example.txt">example.txt</a> file - it uses all the tricks</p>
+      the <a href="${GoogleDriveUrl_mapGenerator}/example.txt">example.txt</a> file - it uses all the tricks</p>
 
       <!--
       Controlling captions
