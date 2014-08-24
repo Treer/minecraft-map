@@ -148,12 +148,35 @@ aside#sidebar p.repo-owner a {
 .footer {
   float: none;
   width: 100% ! important;
-  background-image: none;
-  margin-top: 20px;
-  border-top: solid 1px #ddd;
   padding: 20px 0;
+
+  background-image: none;
+  background-color: #ccc;
+  margin-top: 20px;
+  /*border-top: solid 1px #ddd;*/
   min-height: 0;
+
+  -moz-box-shadow:    inset 0px 5px 5px 0px rgba(0,0,0,0.65);
+  -webkit-box-shadow: inset 0px 5px 5px 0px rgba(0,0,0,0.65);
+  box-shadow:         inset 0px 5px 5px 0px rgba(0,0,0,0.65);
 }
+
+.footer table {
+  border-style: none;
+}
+.footer td {
+  font-size: 80%;
+  padding-bottom: 1em;
+  border-style: none;
+  text-align: left;
+}
+.footer a {
+ color: #444;
+}
+.footer a:hover {
+ color: #000;
+}
+
 
 a.button, a.downloadbutton, a.downloadappbutton {
   width: 134px;
@@ -575,6 +598,7 @@ h2.header-collapsed, h2.header-expanded {
 
 
 .header-collapsed .expander, .header-collapsed .expander-content {
+  min-height: 1.5em;
   -moz-box-shadow:    4px 4px 3px 1px rgba(80,80,80,0.6);
   -webkit-box-shadow: 4px 4px 3px 1px rgba(80,80,80,0.6);
   box-shadow:         4px 4px 3px 1px rgba(80,80,80,0.6);
