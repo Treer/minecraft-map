@@ -63,10 +63,19 @@
     animatedcollapse.addDiv('settings_showcoords', 'fade=1, speed=350');
     animatedcollapse.addDiv('settings_hidelabels', 'fade=1, speed=350');
     animatedcollapse.addDiv('settings_showlabels', 'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_oceansrc',   'fade=1, speed=350');
+    animatedcollapse.addDiv('settings_oceantheme', 'fade=1, speed=350');
+	
+    animatedcollapse.addDiv('AddingOceans_optimizing',        'fade=1, speed=350');
 
+    animatedcollapse.addDiv('ExtraFeatures_overlays',         'fade=1, speed=250');
+    animatedcollapse.addDiv('ExtraFeatures_backgroundThemes', 'fade=1, speed=250');	
+    animatedcollapse.addDiv('ExtraFeatures_defaultsrc',       'fade=1, speed=350');
+    animatedcollapse.addDiv('ExtraFeatures_defaultoceansrc',  'fade=1, speed=350');
+	
     animatedcollapse.addDiv('Tips_distance',  'fade=1, speed=450');
-    animatedcollapse.addDiv('Tips_overlays',  'fade=1, speed=250');
     animatedcollapse.addDiv('Tips_labels',    'fade=1, speed=350');
+    animatedcollapse.addDiv('Tips_zoom',      'fade=1, speed=350');
     animatedcollapse.addDiv('Tips_shorturls', 'fade=1, speed=200');
     animatedcollapse.addDiv('Tips_rei',       'fade=1, speed=500');
 
@@ -179,18 +188,33 @@
     <div style="float:right;">
 
       <a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}">
-        <img src="images/screenshot-small.png" width="400" height="288" alt="screenshot"/>
+        <img src="images/screenshot-small.png" width="400" height="288" alt="screenshot 1"/>
         <br/>
         <p style="text-align:center;">Explore the example map, using real (SMP) locations</p>
       </a>
-    </div>
+	</div>
 
     <p>The map lets any player show locations of interest in the world without spoiling the element of exploration.</p>
 
     <p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration,
-    <a href="http://overviewer.org">Overviewer</a> provides a nice full online map system)</p>
+    <a href="http://minecraft.gamepedia.com/Programs_and_editors/Mapping#Mappers">map systems</a> such as <a href="http://overviewer.org">Overviewer</a> can 
+	provide a nice full online map system)</p>	
 
-    <h2 style="clear:both;">More examples</h2>
+	<br style="clear:both;"/>
+	<br />
+	<br />
+
+    <div style="float:right;">
+	  <a href="${GoogleDriveUrl_mapGenerator}/theme2.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300">
+        <img src="images/screenshot-ocean-small.png" width="400" height="288" alt="screenshot 2"/>
+        <br/>
+		<p style="text-align:center;">Example map with oceans</p>	  
+	  </a>
+	</div>
+
+	<p>Oceans can be shown by the map if you know the seed for your world. See the section on <a href="#AddingOceans">adding oceans</a> for how to do this.</p>
+	
+    <p>Other map examples:</p>
     <ul>
     <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">Map showing all the available location types</a></li>
     <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&showcoordinates=true">The example map with ShowCoordinates turned on</a></li>
@@ -206,7 +230,9 @@
       <pre>${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=</pre>
     </li>
     <li>You're done!</li>
-    </ol>
+	</ol>
+	
+	<p>If you like, you can <a href="#AddingOceans">add oceans</a>.</p>
 
 
     <!--<@OpenCollapsableSection headingLevel="2" id="FromDropbox" title="Or run it from your Dropbox, or a wiki page." collapsed="false"></@OpenCollapsableSection>-->
@@ -467,7 +493,7 @@ range = 6400</pre>
     <#--<h3><a id="settings_src"></a>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3>-->
 
 
-    <p>The URL must always include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither
+    <p>The URL must always<sup>*</sup> include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither
     <span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
 
     <p>There are no other required settings.</p>
@@ -479,6 +505,7 @@ range = 6400</pre>
     If your locations file is on Google Drive then you can set <span class="setting">googlesrc</span> to the <a href="googledrive.html#GoogleId">file's unique code</a>
     instead of using <span class="setting">src</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
 
+	<p><sup>*</sup> This setting <a href="#ExtraFeatures_defaultsrc_heading">can be hard-coded into the html file</a> if you are hosting it yourself. This avoids requiring it on the URL.</p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_range" title="<span class=\"setting\">range</span>"></@OpenCollapsableSection>
@@ -516,23 +543,6 @@ range = 6400</pre>
       <p>Setting these values allows you to specify where the map will be centered. The map defaults to 0, 0.</p>
 
       <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&x=966&z=-1090">Example - map centered on the spawn point</a></p>
-
-    <@CloseCollapsableSection></@CloseCollapsableSection>
-    <@OpenCollapsableSection headingLevel="3" id="settings_icons" title="<span class=\"setting\">icons</span> or <span class=\"setting\">googleicons</span>"></@OpenCollapsableSection>
-    <#--<h3><a id="settings_icons"></a><span class="setting">icons</span> or <span class="setting">googleicons</span></h3>-->
-
-      <p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list
-      file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
-
-      <p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background).
-      You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
-
-      <p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to
-      help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
-
-      <p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
-      and specify the file's unique code instead of the URL.</p>
-
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_showorigin" title="<span class=\"setting\">showorigin</span>"></@OpenCollapsableSection>
@@ -573,7 +583,140 @@ range = 6400</pre>
       <p><a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&showlabelsbelow=0">Example - map with all labels shown at all zoom-levels.</a></p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_icons" title="<span class=\"setting\">icons</span> or <span class=\"setting\">googleicons</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_icons"></a><span class="setting">icons</span> or <span class="setting">googleicons</span></h3>-->
 
+      <p>If you want to make your own icons you can place them in a <code>.png</code> file, make the <code>.png</code> file available from the same location as the location list
+      file, and use the <span class="setting">icons</span> setting to add them to the list of icons available to the map (their icon-indexes will begin at 64).</p>
+
+      <p>Icons are square and all icons in a file are the same size, the <code>.png</code> file should be twice the height of the icons (to allow room for the icon and its background).
+      You specify the size of your icons via the height of the .png file, see the <code>iconguide.png</code> file.</p>
+
+      <p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to
+      help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
+
+      <p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
+      and specify the file's unique code instead of the URL.</p>
+
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_oceansrc" title="<span class=\"setting\">oceansrc</span> or <span class=\"setting\">oceangooglesrc</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_oceansrc"></a><span class="setting">oceansrc</span> or <span class="setting">oceangooglesrc</span></h3>-->
+
+      <p>To do</p>
+
+
+	  <p><span class="setting">oceangooglesrc</span> is a shorthand replacement for <span class="setting">oceansrc</span> to save you having to specify a full googledrive URL.
+    If your locations file is on Google Drive then you can set <span class="setting">oceangooglesrc</span> to the ocean map <a href="googledrive.html#GoogleId">file's unique code</a>
+    instead of using <span class="setting">oceansrc</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
+	  
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="3" id="settings_oceantheme" title="<span class=\"setting\">oceantheme</span>"></@OpenCollapsableSection>
+    <#--<h3><a id="settings_oceantheme"></a><span class="setting">oceantheme</span></h3>-->
+
+	  <p>Selects the style in which to draw oceans on the map. The following themes are available:</p>
+      <ul>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300">bluecoastline</a> (default)</li>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300&oceantheme=bluecoastlinehard">bluecoastlinehard</a></li>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300&oceantheme=coastalrelief">coastalrelief</a></li>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300&oceantheme=coastalreliefhard">coastalreliefhard</a></li>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300&oceantheme=darkseas">darkseas</a></li>
+	  <li><a href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png&range=3200&x=2500&z=-300&oceantheme=darkseashard">darkseashard</a></li>
+      </ul>
+	  
+	  <p>So currently there are three themes, and with each you can choose whether the pixelation should 
+	  be hard or more shaded. Hard doesn't look as nice, but is perhaps truer to Minecraft's artistic style. Coastal Relief 
+	  is quite a hard theme already, so coastalreliefhard looks very similiar.<p>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+
+	<br/>
+    <h1><a id="AddingOceans"></a>Showing the oceans</h1>
+	
+	<p>To do</p>
+	
+    <@OpenCollapsableSection headingLevel="2" id="AddingOceans_optimizing" title="Optimizing oceans for faster load times" collapsed="true"></@OpenCollapsableSection>
+    <#--<h2><a id="AddingOceans_optimizing"></a>Optimizing oceans for faster load times</h2>-->
+      
+	  <p>It's better to specify <a href="#settings_oceansrc"><span class="setting">oceansrc</span></a> in the URL rather than 
+	  in the locations list file, because when specified in the locations list it means the page can't begin loading the ocean map 
+	  file until after the locations list file has finished loading (and it can't start creating the map until the ocean map file
+	  has finished loading).</p>
+
+	  <p>When the ocean map file is provided on the URL, it can be loaded in parallel with the locations list file, so the page 
+	  can start start creating the map as soon as the locations list has loaded.</p>
+
+      <p>If you are hosting your own copy of the Ink &amp; Parchment Map, you can also make it faster by <a href="#ExtraFeatures_defaultoceansrc">specifying the ocean map file
+	  inside the html file</a>.</p>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+	
+	
+	
+	<br/>
+    <h1><a id="ExtraFeatures"></a>Extra features</h1>
+
+    <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_overlays" title="Overlay icons"></@OpenCollapsableSection>
+    <#--<h2 style="clear:both;"><a id="ExtraFeatures_overlays"></a>Overlay icons</h2>-->
+
+      <p>Overlays are where a map location overlays more than one icon to represent itself, for example the island icon can be combined 
+	  with the mushroom icon to show a mushroom island.</p>
+	
+      <p>Documentatin yet to come...</p>
+
+      <p>Until I write this section, you can have a look near the bottom of the <a href="${GoogleDriveUrl_mapGenerator}/legend.txt">legend.txt</a>
+      file - it <a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">implements</a> overlays - see the bottom right corner.</p>
+
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_backgroundThemes" title="Background themes"></@OpenCollapsableSection>
+    <#--<h2 style="clear:both;"><a id="ExtraFeatures_backgroundThemes"></a>Background themes</h2>-->
+
+      <p>If you replace <code>index.html</code> in your map URLs with <code>theme2.html</code>, then the ShadedBay 
+	  background theme will be used instead of the Superflat background theme.</p>
+	  
+	  <p>In the future I hope to add more themes, and other people are welcome to contribute. A theme consist of a background image than can compress reasonably small, and a background colour which is displayed under the background image (in case the image doesn't reach all the way to the bottom of the browser window).</p>
+
+	  <p><a href="${GoogleDriveUrl_mapGenerator}/theme2.html?googlesrc=${GoogleDriveId_example_txt}">Example map, using theme2</a></p>
+	  
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultsrc" title="Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
+    <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultsrc"></a>Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary</h2>-->
+
+      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class=\"setting\">src</span> 
+	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
+
+	  <p>Find the following line in index.html:</p>
+	  <pre>// SetDefaultSrc('default.txt');	  	 	  </pre>
+
+	  <p>Uncomment it (i.e. remove the // from the start of it), and set 'default.txt' to be whatever you want the location-list 
+	  file to be called (or just name your location-list file default.txt).</p>
+	  
+	  
+    <@CloseCollapsableSection></@CloseCollapsableSection>	
+    <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultoceansrc" title="Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
+    <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultoceansrc"></a>Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary</h2>-->
+
+      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class=\"setting\">oceansrc</span>
+	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
+
+	  <p>Find the following lines in index.html:</p>
+	  <pre>&lt;div class="resources" style="position: absolute; visibility: hidden;"&gt;
+	&lt;img id="map-background" src="img/map64.png"/&gt;
+	&lt;img id="map-tileset" src="img/glyphs.png"/&gt;
+&lt;/div&gt;</pre>
+
+	  <p>and add your ocean map image, using the id "oceanmask", for example:</p>
+	  <pre>&lt;div class="resources" style="position: absolute; visibility: hidden;"&gt;
+	&lt;img id="map-background" src="img/map64.png"/&gt;
+	&lt;img id="map-tileset" src="img/glyphs.png"/&gt;
+	&lt;img id="oceanmask" src="img/example-ocean.png"/&gt;	
+&lt;/div&gt;</pre>
+	  
+	  <p>Now <span class=\"setting\">oceansrc</span> will no longer be needed.</p>
+	  
+    <@CloseCollapsableSection></@CloseCollapsableSection>	
+	
+	<br/>
     <h1><a id="Tips"></a>Tips</h1>
 
     <@OpenCollapsableSection headingLevel="2" id="Tips_distance" title="Estimating distance" collapsed="false"></@OpenCollapsableSection>
@@ -585,15 +728,6 @@ range = 6400</pre>
       <p>So those two villages are about 3 squares, or 600 meters (Minecraft blocks) apart.</p>
 
       <br style="clear:both;"/>
-
-    <@CloseCollapsableSection></@CloseCollapsableSection>
-    <@OpenCollapsableSection headingLevel="2" id="Tips_overlays" title="Overlays"></@OpenCollapsableSection>
-    <#--<h2 style="clear:both;"><a id="Tips_overlays"></a>Overlays</h2>-->
-
-      <p>Yet to come...</p>
-
-      <p>Until I write this section, you can have a look near the bottom of the <a href="${GoogleDriveUrl_mapGenerator}/legend.txt">legend.txt</a>
-      file - it <a href="${GoogleDriveUrl_mapGenerator}/index.html?src=legend.txt">implements</a> overlays</p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="2" id="Tips_labels" title="Adjusting labels so they don't overlap"></@OpenCollapsableSection>
@@ -614,6 +748,14 @@ range = 6400</pre>
 
        -->
 
+    <@CloseCollapsableSection></@CloseCollapsableSection>
+    <@OpenCollapsableSection headingLevel="2" id="Tips_zoom" title="Making it zoom in further"></@OpenCollapsableSection>
+    <#--<h2><a id="Tips_zoom"></a>Making it zoom in further</h2>-->
+
+      <p>You can add more/deeper levels of zoom. However there are drawbacks to this so the released version doesn't do it.</p>
+
+      <p>Instructions on how to add more zoom levels are <a href="http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2111923-create-a-sharable-map-of-the-server-you-play-on-or?comment=11">given in these two forum posts</a>.</p>
+	  
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="2" id="Tips_shorturls" title="Short URLs"></@OpenCollapsableSection>
     <#--<h2><a id="Tips_shorturls"></a>Short URLs</h2>-->
@@ -679,19 +821,36 @@ range = 6400</pre>
           <li><a href="#settings_title_heading">title</a></li>
           <li><a href="#settings_blurb_heading">blurb</a></li>
           <li><a href="#settings_coords_heading">x and z</a></li>
-          <li><a href="#settings_icons_heading">icons or googleicons</a></li>
           <li><a href="#settings_showorigin_heading">showorigin</a></li>
           <li><a href="#settings_showscale_heading">showscale</a></li>
           <li><a href="#settings_showcoords_heading">showcoordinates</a></li>
           <li><a href="#settings_hidelabels_heading">hidelabelsabove</a></li>
           <li><a href="#settings_showlabels_heading">showlabelsbelow</a></li>
+          <li><a href="#settings_icons_heading">icons or googleicons</a></li>
+          <li><a href="#settings_oceansrc">oceansrc or oceangooglesrc</a></li>
+          <li><a href="#settings_oceantheme">oceantheme</a></li>
           </ul>
 
-        Tips
+        <a href="#AddingOceans">Showing oceans</a>
+          <ul>
+          <li><a href="#AddingOceans_optimizing">Optimizing load times</a></li>
+          </ul>
+		<br/>
+
+        <a href="#ExtraFeatures">Extra features</a>
+          <ul>
+          <li><a href="#ExtraFeatures_overlays_heading">Overlay icons</a></li>
+          <li><a href="#ExtraFeatures_backgroundThemes_heading">Background themes</a></li>
+          <li><a href="#ExtraFeatures_defaultsrc_heading">Setting a default src</a></li>
+          <li><a href="#ExtraFeatures_defaultsrc_heading">Setting default oceansrc</a></li>
+          </ul>
+		  
+		  
+        <a href="#Tips">Tips</a>
           <ul>
           <li><a href="#Tips_distance_heading">Estimating distance</a></li>
-          <li><a href="#Tips_overlays_heading">Overlays</a></li>
           <li><a href="#Tips_labels_heading">Preventing label overlap</a></li>
+          <li><a href="#Tips_zoom_heading">Making it zoom further</a></li>
           <li><a href="#Tips_shorturls_heading">Short URLs</a></li>
           <li><a href="#Tips_rei_heading">Rei's Minimap</a></li>
           </ul>
