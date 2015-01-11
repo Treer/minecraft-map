@@ -237,6 +237,7 @@ function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
 					alert('Could not load oceam-map image at "' + config.OceanMapUri + '"');
 				}
 			});		
+			gOceanMapImage.crossOrigin = "Anonymous";
 			gOceanMapImage.src = config.OceanMapUri;
 			
 		} else if (tryImgTag) {	
