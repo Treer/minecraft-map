@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <!-- 
-  index_local.html loads non-minified javascript files, and doesn't rely on the online (cached) versions of jquery etc.
-  (fonts will still fail though unless you're online)  
+  theme2.html is the same as index.html except it displays the ShadedBay background theme
+  instead of the superflat background theme.
 -->
 <head>
 <meta charset="utf-8">
@@ -24,15 +24,15 @@
 <script src="js/head.min.js"></script>
 <script type="text/javascript">
 head.js(
-   {jquery:            "js/jquery-1.11.0.min.js"},
-   {jquery_ui:         "js/jquery-ui-1.10.4.min.js"},
+   {jquery:            "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"},
+   {jquery_ui:         "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"},
    {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
    {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
    {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
-   {csv:               "js/csv.js"},
-   {jquery_mapz:       "js/jquery.mapz.js"},   
-   {stackblur:         "js/StackBlur.js"},
-   {minecraftmap:      "js/minecraftmap.js"}
+   {csv:               "js/csv.min.js"},
+   {jquery_mapz:       "js/jquery.mapz.min.js"},   
+   {stackblur:         "js/StackBlur.min.js"},
+   {minecraftmap:      "js/minecraftmap.min.js"}
 );
 </script>
 
@@ -41,7 +41,7 @@ head.js(
 <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
-<body style="background-image:url('img/superflat.png'); background-size: cover; background-repeat: no-repeat; font-family: sans-serif;')">
+<body style="background-image:url('img/shadedbay.jpg'); background-size: cover; background-repeat: no-repeat; font-family: sans-serif;')">
 
 <center>
 <h1 id="mainTitle">Map of the Overworld</h1>
@@ -105,7 +105,8 @@ head.ready(
 				// Everything has loaded, which means the background image is loaded. Update
 				// the background colour so that screens taller than the background texture
 				// are still the right colour at the bottom.
-				$('body').css({ 'background-color': 'rgb(77,100,47)' }); // superflat.png background colour
+				$('body').css({ 'background-color': 'rgb(255,254,186)' }); // shadedbay.jpg background colour
+
 						
 				// =================
 				// This line lets you set the URL where this page will try to load the locations file

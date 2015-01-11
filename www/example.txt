@@ -43,6 +43,7 @@ PlayerHouse     , 84   , -903  , "Small    \nLighthouse    " , lex86            
 PlayerCastle    , 86   ,  610  , "Outpost Exile"             , SoulessExile                    , "https://imgur.com/a/3wkKN" ,  
 PlayerHouse     , 1017 ,  324  , "Dr.Frankenstone's    \nhovel"     , Dr.Frankenstone
 PlayerHouse     ,-800  , -1800 , "Dr.Frankenstone's\nmountain lair" , Dr.Frankenstone          ,                             ,31
+IcePlainsSpikes ,-1643 ,  1810 , "Dr.Frankenstone's\nwinter resort" , Dr.Frankenstone 
 PlayerHouse     ,-1048 ,  687  ,                             , Crovexius                       , "https://imgur.com/a/2coEH" 
 PlayerStructure , 1480 , -1186 , "Seaspray City"             , WebSeer                         , "https://imgur.com/a/tfp5R"                                                                    ,  
 PlayerStructure ,-1667 ,  781  , "Ender Cathedral"           , Crovexius                       ,                                                                               
@@ -97,12 +98,21 @@ PlayerCastle    ,  176 , -960  , "    Fortified\n     village" , "~Lex86~"      
 PlayerStructure ,-2163 , -1537 , "Colliseum"                   , "Malthrax"                ,                             ,  
 PlayerStructure , 1901 ,  -208 , Ayutthaya                     , aeduna                    , "https://imgur.com/v86bbWZ"
 PlayerHouse     ,-2850 , -3700 , Tudor House                   , aeduna & ecchymotic       , "https://imgur.com/a/lN8AQ"
-PlayerStructure ,  100 , -4000 , Big Bunny                     , drakeM                   , , 22
+PlayerStructure ,  100 , -4000 , , , , 22
+IslandOverlay   ,  100 , -4000 , "Big Bunny"                   , drakeM 
 PlayerHouse     , 2300 , -1900 , Woodland Mansion              , Tark
 PlayerHouse     , 2073 ,  -685 ,                               , Muizartes
 Dragon          , -761 ,    62 , "", "", "", , (here be dragons, also math says there's also a stronghold around here somewhere)
-Ship            , 5500 ,   500
+Ship            , 5000 ,     0
 Label           ,    0 ,     0 , "\nOrigin", "", https://imgur.com/a/VcUGa
 Label           , 1944 , -1073 , Lava Pool
 NetherPortal    , 512  ,  1024 , ~Portal to the Nether (Click to travel)~ ,,?src=example_nether.txt&x=64&z=128
 NetherPortal    ,   0  , -3002 , ~Portal to the Nether (Click to travel)~ ,,?src=example_nether.txt&x=0&z=-375
+SeaMonster      ,  -400,  -350
+
+
+// The following are some fake locations because I don't know where all the monuments on this server are
+SeaMonster      ,  2700,  2600 
+SeaMonster      ,  2000,  2200
+SeaMonster      , -1000,  1100  
+Ship            ,  2500,  1800

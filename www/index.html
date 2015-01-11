@@ -27,6 +27,7 @@ head.js(
    {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
    {csv:               "js/csv.min.js"},
    {jquery_mapz:       "js/jquery.mapz.min.js"},   
+   {stackblur:         "js/StackBlur.min.js"},
    {minecraftmap:      "js/minecraftmap.min.js"}
 );
 </script>
@@ -81,7 +82,7 @@ head.js(
 <div class="credittext" style="position:absolute; bottom: 5px; right: 5px;">
 	<!-- Take advantage of this tiny text to include the fonts in the document 
 		 so that $(document).ready() isn't triggered before they are loaded. -->
-	<a href="http://buildwithblocks.info">create an Ink &amp; Parchment Map</a>	
+	<a href="http://buildwithblocks.info">create your own Ink &amp; Parchment Map</a>	
 </div>
 <div class="resources" style="position: absolute; visibility: hidden;">
 	<img id="map-background" src="img/map64.png"/>
@@ -100,7 +101,7 @@ head.ready(
 				// Everything has loaded, which means the background image is loaded. Update
 				// the background colour so that screens taller than the background texture
 				// are still the right colour at the bottom.
-				$('body').css({ 'background-color': 'rgb(77,100,47)' });
+				$('body').css({ 'background-color': 'rgb(77,100,47)' }); // superflat.png background colour
 						
 				// =================
 				// This line lets you set the URL where this page will try to load the locations file
