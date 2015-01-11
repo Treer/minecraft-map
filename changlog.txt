@@ -1,4 +1,4 @@
-v1.70 - Oceans release - 
+v1.70 - Oceans release - 2015-01-12
 ====================================
 * Oceans and coastlines can now be shown on the map, if you know the seed 
   for the world.
