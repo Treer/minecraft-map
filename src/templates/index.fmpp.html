@@ -9,10 +9,12 @@
 <#if version.mapVersion=="1.6">
   <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
   <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign GoogleDriveId_oceanmask_png = GoogleDriveId_oceanmask_png_v1_7><#-- Shouldn't be used for 1.6 . prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <#if version.mapVersion=="1.7">
   <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
   <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign GoogleDriveId_oceanmask_png = GoogleDriveId_oceanmask_png_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <!DOCTYPE html>
 <html>
@@ -603,13 +605,20 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="3" id="settings_oceansrc" title="<span class=\"setting\">oceansrc</span> or <span class=\"setting\">oceangooglesrc</span>"></@OpenCollapsableSection>
     <#--<h3><a id="settings_oceansrc"></a><span class="setting">oceansrc</span> or <span class="setting">oceangooglesrc</span></h3>-->
 
-      <p>To do</p>
-
-
+	  <p>Use this if you want your map to show oceans<sup>*</sup>. See the section on <a href="#AddingOceans">adding oceans</a> for usage examples.</p>
+	
+      <p><span class="setting">oceansrc</span> tells the map generator where to get the ocean map file (aka ocean mask). It can be a relative or absolute URL, and you
+    should <a href="UrlEncoder.html">encode its value</a> to help keep the map URL nicely formatted.</p>
+	
 	  <p><span class="setting">oceangooglesrc</span> is a shorthand replacement for <span class="setting">oceansrc</span> to save you having to specify a full googledrive URL.
     If your locations file is on Google Drive then you can set <span class="setting">oceangooglesrc</span> to the ocean map <a href="googledrive.html#GoogleId">file's unique code</a>
     instead of using <span class="setting">oceansrc</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
-	  
+
+	  <p>If you use <span class="setting">oceansrc</span> or <span class="setting">oceangooglesrc</span> then you 
+	  should also read the section <a href="#AddingOceans_optimizing">Optimizing oceans for faster load times</a>.
+	
+	<p><sup>*</sup> This setting <a href="#ExtraFeatures_defaultoceansrc">can be hard-coded into the html file</a> if you are hosting it yourself. This avoids requiring it on the URL.</p>	
+	
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="settings_oceantheme" title="<span class=\"setting\">oceantheme</span>"></@OpenCollapsableSection>
     <#--<h3><a id="settings_oceantheme"></a><span class="setting">oceantheme</span></h3>-->
@@ -631,9 +640,33 @@ range = 6400</pre>
     <@CloseCollapsableSection></@CloseCollapsableSection>
 
 	<br/>
-    <h1><a id="AddingOceans"></a>Showing the oceans</h1>
+    <h1><a id="AddingOceans"></a>Showing oceans on the map</h1>
 	
-	<p>To do</p>
+	
+	<ol>
+	<li>Obtain the seed for your world. 
+	<br/><br/>You can do this by typing the <code>/seed</code> command into the Minecraft console while you're playing in that world (press T). If you're
+	playing on a server then you'll probably need to ask the server administrator for the seed &mdash; and they may say no. The <code>/seed</code> command doesn't let you
+	copy/paste the seed, so if it's too long to remember then you can exit to the menus, select your world in Single Player, and click the "Re-Create" button, followed by the 
+	"More World Options..." button &mdash; this shows the seed in a textbox where you can use Ctrl+A Ctrl+C to select and copy it.<br/></li>
+	
+	<li><a href="exportfromseed.html">Use AmidstExporter</a> to export the ocean mask <code>.png</code> file. <span style="font-size: 75%">(<a href="${GoogleDriveUrl_mapGenerator}/example-ocean.png">an example of an ocean mask</a>)</span></li>
+	
+	<li>Copy your ocean mask file to the same place as you keep your locations list file, and add an <a href="#settings_oceansrc"><span class="setting">oceansrc</span></a>
+	setting (or <a href="#settings_oceansrc"><span class="setting">oceangooglesrc</span></a>) to the URL &mdash; just like how the <span class="setting">src</span> setting
+	points to your locations list file.</li>
+		
+	<li>You're done!</li>
+	</ol>
+	
+	<p>If you like, you can <a href="#settings_oceantheme">choose a style</a> for how the ocean will be shown.</p>
+	
+	<h2><a id="AddingOceans_examples"></a>Examples</h2>
+    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png">${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png</a>
+
+	<br/><br/>
+    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&oceangooglesrc=${GoogleDriveId_oceanmask_png}">${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&oceangooglesrc=${GoogleDriveId_oceanmask_png}</a>
+	
 	
     <@OpenCollapsableSection headingLevel="2" id="AddingOceans_optimizing" title="Optimizing oceans for faster load times" collapsed="true"></@OpenCollapsableSection>
     <#--<h2><a id="AddingOceans_optimizing"></a>Optimizing oceans for faster load times</h2>-->
@@ -643,8 +676,8 @@ range = 6400</pre>
 	  file until after the locations list file has finished loading (and it can't start creating the map until the ocean map file
 	  has finished loading).</p>
 
-	  <p>When the ocean map file is provided on the URL, it can be loaded in parallel with the locations list file, so the page 
-	  can start start creating the map as soon as the locations list has loaded.</p>
+	  <p>When the ocean map file is provided on the URL, it can be loaded in parallel with the locations list file, so the map
+	  can begin as soon as the locations list has loaded.</p>
 
       <p>If you are hosting your own copy of the Ink &amp; Parchment Map, you can also make it faster by <a href="#ExtraFeatures_defaultoceansrc">specifying the ocean map file
 	  inside the html file</a>.</p>
@@ -682,7 +715,7 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultsrc" title="Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
     <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultsrc"></a>Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary</h2>-->
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class=\"setting\">src</span> 
+      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">src</span> 
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following line in index.html:</p>
@@ -696,7 +729,7 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultoceansrc" title="Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
     <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultoceansrc"></a>Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary</h2>-->
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class=\"setting\">oceansrc</span>
+      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">oceansrc</span>
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following lines in index.html:</p>
@@ -712,7 +745,7 @@ range = 6400</pre>
 	&lt;img id="oceanmask" src="img/example-ocean.png"/&gt;	
 &lt;/div&gt;</pre>
 	  
-	  <p>Now <span class=\"setting\">oceansrc</span> will no longer be needed.</p>
+	  <p>Now <span class="setting">oceansrc</span> will no longer be needed.</p>
 	  
     <@CloseCollapsableSection></@CloseCollapsableSection>	
 	
@@ -835,7 +868,6 @@ range = 6400</pre>
           <ul>
           <li><a href="#AddingOceans_optimizing">Optimizing load times</a></li>
           </ul>
-		<br/>
 
         <a href="#ExtraFeatures">Extra features</a>
           <ul>

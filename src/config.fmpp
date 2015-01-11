@@ -2,12 +2,13 @@ sourceRoot: templates
 outputRoot: ..\instructions
 data: {
   versions: [
-    {output_filename: "index.html",          enable_dynamic: true,  mapVersion: "1.6" },
-    {output_filename: "index_expanded.html", enable_dynamic: false, mapVersion: "1.6" }
+    {output_filename: "index.html",          enable_dynamic: true,  mapVersion: "1.7" },
+    {output_filename: "index_expanded.html", enable_dynamic: false, mapVersion: "1.7" }
   ]
-  mapVersion: "1.6",
+  mapVersion: "1.7",
   GoogleDriveUrl_mapGenerator_v1_6: "https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs",
-  GoogleDriveUrl_mapGenerator_v1_7: "",
+  GoogleDriveUrl_mapGenerator_v1_7: "https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk",
   GoogleDriveId_example_txt_v1_6:   "0B35KCzsTLKY1YkVMeWRBemtKdHM",
-  GoogleDriveId_example_txt_v1_7:   "",
+  GoogleDriveId_example_txt_v1_7:   "0B35KCzsTLKY1UTgyU2Y4ZEhSU2c",
+  GoogleDriveId_oceanmask_png_v1_7: "0B35KCzsTLKY1UGhtZml5Yk5VZU0",
 }
