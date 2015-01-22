@@ -47,7 +47,7 @@ IcePlainsSpikes ,-1643 ,  1810 , "Dr.Frankenstone's\nwinter resort" , Dr.Franken
 PlayerHouse     ,-1048 ,  687  ,                             , Crovexius                       , "https://imgur.com/a/2coEH" 
 PlayerStructure , 1480 , -1186 , "Seaspray City"             , WebSeer                         , "https://imgur.com/a/tfp5R"                                                                    ,  
 PlayerStructure ,-1667 ,  781  , "Ender Cathedral"           , Crovexius                       ,                                                                               
-PlayerStructure ,-1470 ,  600  , "Eye of Ender"              , Crovexius                       , "https://imgur.com/a/4WXVy" , 21
+PlayerStructure ,-1168 ,  835  , "Eye of Ender"              , Crovexius                       , "https://imgur.com/a/4WXVy" , 21
 PlayerStructure , 3529 ,  4706 , "Portower"                  , aeduna                          ,                                                                               
 PlayerHouse     , 1200 , -4400 , "Ogdenville"                , aeduna                          , "https://imgur.com/zfYToru" 
 PlayerStructure , 1148 , -72   , "Map\nroom"                 , ~cobaltofdestiny~                  ,                                                                               
