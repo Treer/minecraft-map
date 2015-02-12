@@ -43,6 +43,7 @@
       <div class="inner clearfix">
         <section id="main-content">
 
+		
     <div style="float:right;">
 
       <a href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c">
@@ -105,7 +106,7 @@
       the settings you will add is a URL for a file or page which contains all the locations you want displayed on your map,
       this file could be in your Dropbox, it could a wiki-page, a webpage, or a file on Google Drive.</p>
 
-      <p>More details of <a href="#settings_src">how to specify the URL of the locations file</a></p>
+      <p>More details of <a href="#settings_src_heading">how to specify the URL of the locations file</a></p>
 
       <p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good
       places to keep the list of locations - that way everyone can edit the list and the map generator can read the locations directly from it.
@@ -272,8 +273,8 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       <p>When two labels overlap, locations that are higher in the list will have their label displayed in preference to the label of a
       location lower in the list. By default, all labels are shown in the most zoomed-in view.</p>
 
-      <p>The visibility of labels can also be controlled using the <a href="#Settings_labels"><span class="setting">hidelabelsabove</span> and
-      <span class="setting">showlabelsbelow</span> settings</a>.</p>
+      <p>The visibility of labels can also be controlled using the <a href="#settings_hidelabels_heading"><span class="setting">hidelabelsabove</span></a> and
+      <a href="#settings_showlabels_heading"><span class="setting">showlabelsbelow</span></a> settings.</p>
 
         <a id="locationHref_heading"></a>
         <h3><span class="columnname">href</span></h3>
@@ -501,10 +502,10 @@ range = 6400</pre>
 	<p>If you like, you can <a href="#settings_oceantheme">choose a style</a> for how the ocean will be shown.</p>
 	
 	<h2><a id="AddingOceans_examples"></a>Examples</h2>
-    <a style="font-size: 75%" href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?src=example.txt&oceansrc=example-ocean.png">https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?src=example.txt&oceansrc=example-ocean.png</a>
+    <a style="font-size: 75%" href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?src=example.txt&oceansrc=example-ocean.png">https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?src=example.txt&amp;oceansrc=example-ocean.png</a>
 
 	<br/><br/>
-    <a style="font-size: 75%" href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c&oceangooglesrc=0B35KCzsTLKY1UGhtZml5Yk5VZU0">https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c&oceangooglesrc=0B35KCzsTLKY1UGhtZml5Yk5VZU0</a>
+    <a style="font-size: 75%" href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c&oceangooglesrc=0B35KCzsTLKY1UGhtZml5Yk5VZU0">https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/index.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c&amp;oceangooglesrc=0B35KCzsTLKY1UGhtZml5Yk5VZU0</a>
 	
 	
         <a id="AddingOceans_optimizing_heading"></a>
@@ -544,14 +545,14 @@ range = 6400</pre>
       <p>If you replace <code>index.html</code> in your map URLs with <code>theme2.html</code>, then the ShadedBay 
 	  background theme will be used instead of the Superflat background theme.</p>
 	  
-	  <p>In the future I hope to add more themes, and other people are welcome to contribute. A theme consist of a background image than can compress reasonably small, and a background colour which is displayed under the background image (in case the image doesn't reach all the way to the bottom of the browser window).</p>
+	  <p>In the future I hope to add more themes, and other people are welcome to contribute. A theme consists of a background image than can compress reasonably small, and a background colour which is displayed under the background image (in case the image doesn't reach all the way to the bottom of the browser window).</p>
 
 	  <p><a href="https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk/theme2.html?googlesrc=0B35KCzsTLKY1UTgyU2Y4ZEhSU2c">Example map, using theme2</a></p>
 	  
         <a id="ExtraFeatures_defaultsrc_heading"></a>
         <h2>Setting a default <span class="setting">src</span>, so URL arguments aren't necessary</h2>
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">src</span> 
+      <p>If you're hosting an Ink &amp; Parchment Map page on your own website, and want the <span class="setting">src</span> 
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following line in index.html:</p>
@@ -564,7 +565,7 @@ range = 6400</pre>
         <a id="ExtraFeatures_defaultoceansrc_heading"></a>
         <h2>Setting a default <span class="setting">oceansrc</span>, so URL arguments aren't necessary</h2>
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">oceansrc</span>
+      <p>If you're hosting an Ink &amp; Parchment Map page on your own website, and want the <span class="setting">oceansrc</span>
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following lines in index.html:</p>
@@ -689,13 +690,13 @@ range = 6400</pre>
           <li><a href="#settings_hidelabels_heading">hidelabelsabove</a></li>
           <li><a href="#settings_showlabels_heading">showlabelsbelow</a></li>
           <li><a href="#settings_icons_heading">icons or googleicons</a></li>
-          <li><a href="#settings_oceansrc">oceansrc or oceangooglesrc</a></li>
-          <li><a href="#settings_oceantheme">oceantheme</a></li>
+          <li><a href="#settings_oceansrc_heading">oceansrc or oceangooglesrc</a></li>
+          <li><a href="#settings_oceantheme_heading">oceantheme</a></li>
           </ul>
 
         <a href="#AddingOceans">Showing oceans</a>
           <ul>
-          <li><a href="#AddingOceans_optimizing">Optimizing load times</a></li>
+          <li><a href="#AddingOceans_optimizing_heading">Optimizing load times</a></li>
           </ul>
 
         <a href="#ExtraFeatures">Extra features</a>
@@ -737,6 +738,7 @@ range = 6400</pre>
           </tr>
           <tr>
               <td><a href="index.html">Collapsable version (requires javascript)</a></td>
+			<td></td>
           </tr>
         </table>
       </div>

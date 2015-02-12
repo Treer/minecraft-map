@@ -91,7 +91,7 @@
                 // If javascript is enabled then override the HTML link to the fully
                 // expanded page, and perform a dynamic animated div expand instead
 
-                var anchor = eventObject.target.hash;
+                var anchor = this.hash;
                 anchor = anchor.substr(1, anchor.length - 1);
 
                 var suffix = "_heading";
@@ -187,6 +187,13 @@
       <div class="inner clearfix">
         <section id="main-content">
 
+	<#--
+	<span style="color:red; font-weight: bold">
+	<p>Google Drive has been experiencing issues today which have prevented the example maps from running :-( </p>
+	<p>Google are <a href="http://stackoverflow.com/a/28389254/3343347" style="color:red; font-weight: bold; text-decoration: underline">aware of the problem</a>, so hopefully it's fixed by the time you read this.</p>
+	</span>		
+	-->
+		
     <div style="float:right;">
 
       <a href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}">
@@ -247,7 +254,7 @@
       the settings you will add is a URL for a file or page which contains all the locations you want displayed on your map,
       this file could be in your Dropbox, it could a wiki-page, a webpage, or a file on Google Drive.</p>
 
-      <p>More details of <a href="#settings_src">how to specify the URL of the locations file</a></p>
+      <p>More details of <a href="#settings_src_heading">how to specify the URL of the locations file</a></p>
 
       <p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good
       places to keep the list of locations - that way everyone can edit the list and the map generator can read the locations directly from it.
@@ -414,8 +421,8 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       <p>When two labels overlap, locations that are higher in the list will have their label displayed in preference to the label of a
       location lower in the list. By default, all labels are shown in the most zoomed-in view.</p>
 
-      <p>The visibility of labels can also be controlled using the <a href="#Settings_labels"><span class="setting">hidelabelsabove</span> and
-      <span class="setting">showlabelsbelow</span> settings</a>.</p>
+      <p>The visibility of labels can also be controlled using the <a href="#settings_hidelabels_heading"><span class="setting">hidelabelsabove</span></a> and
+      <a href="#settings_showlabels_heading"><span class="setting">showlabelsbelow</span></a> settings.</p>
 
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="locationHref" title="<span class=\"columnname\">href</span>"></@OpenCollapsableSection>
@@ -662,10 +669,10 @@ range = 6400</pre>
 	<p>If you like, you can <a href="#settings_oceantheme">choose a style</a> for how the ocean will be shown.</p>
 	
 	<h2><a id="AddingOceans_examples"></a>Examples</h2>
-    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png">${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png</a>
+    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png">${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&amp;oceansrc=example-ocean.png</a>
 
 	<br/><br/>
-    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&oceangooglesrc=${GoogleDriveId_oceanmask_png}">${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&oceangooglesrc=${GoogleDriveId_oceanmask_png}</a>
+    <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&oceangooglesrc=${GoogleDriveId_oceanmask_png}">${GoogleDriveUrl_mapGenerator}/index.html?googlesrc=${GoogleDriveId_example_txt}&amp;oceangooglesrc=${GoogleDriveId_oceanmask_png}</a>
 	
 	
     <@OpenCollapsableSection headingLevel="2" id="AddingOceans_optimizing" title="Optimizing oceans for faster load times" collapsed="true"></@OpenCollapsableSection>
@@ -715,7 +722,7 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultsrc" title="Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
     <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultsrc"></a>Setting a default <span class=\"setting\">src</span>, so URL arguments aren't necessary</h2>-->
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">src</span> 
+      <p>If you're hosting an Ink &amp; Parchment Map page on your own website, and want the <span class="setting">src</span> 
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following line in index.html:</p>
@@ -729,7 +736,7 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="2" id="ExtraFeatures_defaultoceansrc" title="Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary"></@OpenCollapsableSection>
     <#--<h2 style="clear:both;"><a id="ExtraFeatures_defaultoceansrc"></a>Setting a default <span class=\"setting\">oceansrc</span>, so URL arguments aren't necessary</h2>-->
 
-      <p>If you're hosting an Ink & Parchment Map page on your own website, and want the <span class="setting">oceansrc</span>
+      <p>If you're hosting an Ink &amp; Parchment Map page on your own website, and want the <span class="setting">oceansrc</span>
 	  to be built-in rather than specified on the page's URL, you can edit the index.html file to do this.</p>
 
 	  <p>Find the following lines in index.html:</p>
@@ -860,13 +867,13 @@ range = 6400</pre>
           <li><a href="#settings_hidelabels_heading">hidelabelsabove</a></li>
           <li><a href="#settings_showlabels_heading">showlabelsbelow</a></li>
           <li><a href="#settings_icons_heading">icons or googleicons</a></li>
-          <li><a href="#settings_oceansrc">oceansrc or oceangooglesrc</a></li>
-          <li><a href="#settings_oceantheme">oceantheme</a></li>
+          <li><a href="#settings_oceansrc_heading">oceansrc or oceangooglesrc</a></li>
+          <li><a href="#settings_oceantheme_heading">oceantheme</a></li>
           </ul>
 
         <a href="#AddingOceans">Showing oceans</a>
           <ul>
-          <li><a href="#AddingOceans_optimizing">Optimizing load times</a></li>
+          <li><a href="#AddingOceans_optimizing_heading">Optimizing load times</a></li>
           </ul>
 
         <a href="#ExtraFeatures">Extra features</a>
@@ -912,6 +919,7 @@ range = 6400</pre>
             <#else>
               <td><a href="index.html">Collapsable version (requires javascript)</a></td>
             </#if>
+			<td></td>
           </tr>
         </table>
         <#--
