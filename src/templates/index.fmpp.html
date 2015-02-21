@@ -651,11 +651,12 @@ range = 6400</pre>
 	
 	
 	<ol>
-	<li>Obtain the seed for your world. 
-	<br/><br/>You can do this by typing the <code>/seed</code> command into the Minecraft console while you're playing in that world (press T). If you're
+	<li>Obtain the seed for your world.
+		<br/>
+		<p style="margin-left: 2em">You can do this by typing the <code>/seed</code> command into the Minecraft console while you're playing in that world (press T). If you're
 	playing on a server then you'll probably need to ask the server administrator for the seed &mdash; and they may say no. The <code>/seed</code> command doesn't let you
 	copy/paste the seed, so if it's too long to remember then you can exit to the menus, select your world in Single Player, and click the "Re-Create" button, followed by the 
-	"More World Options..." button &mdash; this shows the seed in a textbox where you can use Ctrl+A Ctrl+C to select and copy it.<br/></li>
+	"More World Options..." button &mdash; this shows the seed in a textbox where you can use Ctrl+A Ctrl+C to select and copy it.</p></li>
 	
 	<li><a href="exportfromseed.html">Use AmidstExporter</a> to export the ocean mask <code>.png</code> file. <span style="font-size: 75%">(<a href="${GoogleDriveUrl_mapGenerator}/example-ocean.png">an example of an ocean mask</a>)</span></li>
 	
@@ -773,11 +774,34 @@ range = 6400</pre>
     <@OpenCollapsableSection headingLevel="2" id="Tips_labels" title="Adjusting labels so they don't overlap"></@OpenCollapsableSection>
     <#--<h2><a id="Tips_labels"></a>Adjusting labels so they don't overlap</h2>-->
 
-      <p>Yet to come...</p>
-
       <p>When the map is fully zoomed in, all the labels will be shown - even if they overlap. Players always build things
-      too close together, so you'll end up wanting to adjusting labels so they don't all overlap. Until I write this section, you can have a look in
-      the <a href="${GoogleDriveUrl_mapGenerator}/example.txt">example.txt</a> file - it uses all the tricks</p>
+      too close together, so you'll end up wanting to adjusting labels so they don't all overlap, here are some ways to avoid overlaps</p>
+	  
+	  <ul>
+	  <li>Decreasing the scale of the map by decreasing the <a href="#settings_range_heading"><span class="setting">range</span></a> causes locations to be shown further apart.<br/></li>
+	  
+	  <li>Caption width can be reduced by splitting it into more than one line.
+	       <p style="margin-left: 1em">e.g. <code>"aeduna's\nreanimated\nvillage"</code></p>
+	  </li>
+	  <li>Lines can be nudged left or right by adding spaces to the beginning or end of the line.
+		  <p style="margin-left: 1em">
+		  <span class="note">(Note that html collapses multiple spaces into one, so if the locations list is a 
+		  wiki page then you'll have to type out the code &amp;nbsp; lots of times instead of just hitting the spacebar)</span>
+		  <br/>
+		  e.g. <code>"&nbsp;&nbsp;&nbsp;&nbsp;Fortified\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;village"</code>
+		  </p>	  
+	  </li>
+	  <li>Captions can be nudged down by adding a new-line to beginning of the caption.
+	       <p style="margin-left: 1em">e.g. <code>"\nGhost town"</code></p>
+	  </li>
+	  <li>Using tildes, the owner part of the caption can be hidden, or the description part, or both parts. Hidden captions can still be viewed with the hover-text.
+	       <p style="margin-left: 1em">e.g. <code>"&nbsp;&nbsp;&nbsp;&nbsp;Fortified\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;village" , "<span style="color: red">~</span>Lex86<span style="color: red">~</span>"</code></p>
+	  </li>
+	  
+	  </ul>
+	  
+	  <p>For more information see <a href="#locationCaption_heading">description format</a>, or
+      the <a href="${GoogleDriveUrl_mapGenerator}/example.txt">example map</a> where all the examples above were borrowed from.</p>
 
       <!--
       Controlling captions
