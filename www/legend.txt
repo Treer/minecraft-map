@@ -47,7 +47,7 @@ Dragon,            2400,  -800, "36) Dragon"
 SeaMonster,        2400,     0, "46) SeaMonster"
 Label,             2400,   800, "37) Ship 1", "", "", 37
 Label,             2400,  1600, "38) Ship 2", "", "", 38
-Label,             2400,  2400, "39) Compass points", "", "", 39
+Label,             2400,  2400, "39) Compass rose", "", "", 39
 Spawn,             2400,  3200, "40) Spawn"
 Label,             2400,  4000, "41) Marker 2", "", "", 41
 Label,             2400,  4800, "42) Marker 3", "", "", 42
