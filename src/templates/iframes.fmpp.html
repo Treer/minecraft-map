@@ -1,0 +1,115 @@
+<#-- pp.dropOutputFile instructs FMPP to drop the current output file, so we
+     will not have googledrive.fmpp.html in the output directory. -->
+<@pp.dropOutputFile />
+<@pp.changeOutputFile name=pp.sourceFileName?replace(".fmpp.", ".") />
+<#if mapVersion=="1.6">
+  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
+  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+</#if>
+<#if mapVersion=="1.7">
+  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
+  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+</#if>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon-precomposed.png"><!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72"   href="images/apple-touch-icon-72x72-precomposed.png"><!-- For the iPad mini and the first- and second-generation iPad on iOS ≤ 6: -->
+    <link rel="apple-touch-icon-precomposed" sizes="76x76"   href="images/apple-touch-icon-76x76-precomposed.png"><!-- For the iPad mini and the first- and second-generation iPad on iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="images/apple-touch-icon-120x120-precomposed.png"><!-- For iPhone with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="images/apple-touch-icon-152x152-precomposed.png"><!-- For iPad with high-resolution Retina display running iOS ≥ 7: -->
+    <link rel="icon" sizes="196x196" href="images/apple-touch-icon.png"><!-- Chrome v31+ for Android -->
+    <link rel="icon" sizes="16x16" type="image/png" href="images/favicon.png" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Putting the map in an iframe</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Using the map with iframes</h1>
+        <h2>How to insert a map into your own webpages</h2>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+        <p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
+
+        <h2>Example</h2>
+
+		<p>The map below has been inserted into this html page using an <a href="http://www.w3schools.com/html/html_iframe.asp">iframe</a>.</p>
+
+		<iframe width="390" height="410" src="${GoogleDriveUrl_mapGenerator}/iframeable.html?src=example.txt&range=4800&showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" ></iframe>
+				
+		<p>
+		<br/>
+		The HTML I used to display this map is:</p>
+			<pre>&lt;iframe width="390" height="410" src="${GoogleDriveUrl_mapGenerator}/<span style="color: red;">iframeable.html</span>?src=example.txt&amp;range=4800&amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+		
+		<p>
+			Or, if you were hosting it yourself:
+			<pre>&lt;iframe width="390" height="410" src="<span style="color: red;">iframeable.html</span>?src=example.txt&amp;range=4800&amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+		</p>
+		
+		
+		<p>Note the iframe is linking to <code>iframeable.html</code> rather than <code>index.html</code> 
+		(I've highlighted this in red). This is because iframeable.html provides the cut down version of the
+		map specialised for use in iframes.
+		</p>
+
+        <h2>Choosing iframe dimensions</h2>
+		
+		<p>There are currently 3 iframe sizes available:</p>
+		
+		<ul>
+		<li> 390 &#215; 410 &mdash; suitable for phones</li>
+		<li> 630 &#215; 650 &mdash; suitable for ipads and small laptops (720p displays etc.)</li>
+		<li> 800 &#215; 820 &mdash; looks best, but requires good resolution browsers such as on 1080p computers, and won't work on iPhones or iPads (see below).</li>
+		</ul>
+
+		<p>The example above is 390 pixels wide.</p>
+
+		<p>Normally the most suitable resolution would be picked automatically, but with iframes their size is set by the page containing the iframe &mdash; which <span style="font-style: italic;">you</span> are in control of. So you will either have to choose a size based on your intended audience, or create some sort of funky "responsive design" page.</p>
+
+		<p>Warning: Due to a <a href="http://www.stuffandnonsense.co.uk/blog/about/falling-foul-of-ioss-3-megapixel-resource-limit">5-megapixel hardware limitation</a> in iPhones and iPads, the 800 x 820 resolution will not work on iOS devices, as it exceeds 5 megapixels when fully zoomed in.  </p>
+				
+		<p>The heights are 20 pixels more than the width to allow some room for the hover-text.</p>
+		
+			 
+		<h2>Example HTML for each size</h2>
+			 
+		<p>Small:<pre>&lt;iframe width="390" height="410" src="iframeable.html?src=example.txt&range=4800" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+		</p>
+		
+		<p>Medium:<pre>&lt;iframe width="630" height="650" src="iframeable.html?src=example.txt" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+		</p>
+		
+		<p>Large:<pre>&lt;iframe width="800" height="820" src="iframeable.html?src=example.txt" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+		</p>
+
+        <p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
+
+        </section>
+
+      </div>
+    </div>
+
+  </body>
+</html>
+
+</html>
