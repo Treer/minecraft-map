@@ -1,3 +1,8 @@
+v1.71 - Inline release - 2015-03-09
+====================================
+* Adds support for showing the map inside an iframe (see iframeable.html
+  and iframe_demo.html, or http://buildingwithblocks.info/iframes.html).
+
 v1.70 - Oceans release - 2015-01-12
 ====================================
 * Oceans and coastlines can now be shown on the map, if you know the seed 
