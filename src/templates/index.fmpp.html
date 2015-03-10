@@ -434,14 +434,26 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
       <ul>
       <li>A link to pictures of the location, or information.</li>
       <li>A link to information about the player</li>
-      <li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this.</li>
+      <li>If the location is a portal, then link to a Nether map. The portal in the example map demonstrates this (however, to understand the example portal links you should also read about specifying an href target, below).</li>
       <li>If the location is a player town, then link to a town-scale map (the same way the portal in the example map works).</li>
       </ul>
 
+	  <h4>Clearing a link</h4>
       <p>If the location-type has a default link but you don't want the location to link to anything,
       then place a hyphen in the href column to disable the link.</p>
 
+	  <h4>Specifying an href target (Advanced stuff)</h4>
+      <p>Normally this is not necessary and you don't need to know it. However if you decide to use the map <a href="iframes.html">inside an iframe</a> then the default href <a href="http://www.htmlcodetutorial.com/linking/_A_TARGET.html">target</a> will become &ldquo;_parent&rdquo; &mdash; to ensure that clicking on a link will open it in the main window instead
+	  of just inside the iframe's area.</p>
+	  
+	  <p>But if you want the link to open only inside the iframe's area, for example if the URL was a link such as <code>?src=example_nether.txt</code> (to load the map 
+	  with Nether locations), then you will have to specify that &ldquo;_self&rdquo; is the target.</p>
+	  
+      <p>To specify both a target and a URL in this column, write the target followed by an underscore followed by the URL. For example if the target is &ldquo;_self&rdquo; then the value 
+	  written in the href column might be <code>_self_http://my-url.com</code>.</p>
 
+      <p>Valid <a href="http://www.htmlcodetutorial.com/linking/_A_TARGET.html">targets</a> are &ldquo;_blank&rdquo;, &ldquo;_self&rdquo;, &ldquo;_parent&rdquo;, or &ldquo;_top&rdquo;.</p>
+	  
     <@CloseCollapsableSection></@CloseCollapsableSection>
     <@OpenCollapsableSection headingLevel="3" id="locationIconIndex" title="<span class=\"columnname\">icon-index</span>"></@OpenCollapsableSection>
     <#--<h3><a id="locationIconIndex"></a><span class="columnname">icon-index</span></h3>-->
