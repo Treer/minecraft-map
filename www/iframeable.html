@@ -87,6 +87,10 @@ head.ready(
 				// =================				
 				// SetDefaultSrc('default.txt');
 							
+				// Because we're running in an iframe, we want links to open in the parent window, unless
+				// the link explicitly specifies otherwise.
+				SetDefaultHrefTarget("_parent");
+							
 				getSettingsAndMapLocations(
 					$(window).width(),
 					$(window).height(),

@@ -23,6 +23,7 @@ var cShowBoundingBoxes      = false; // This is for debug only
 
 // Global variables
 var gMapDataUriDefault      = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
+var gHrefTargetDefault      = '';    // Set this using SetDefaultHrefTarget(), it specifies the target to use for hrefs that don't specify a target. Normally it doesn't matter but when running in an iframe it should be set to '_parent'
 var gCustomIcons            = new Image();
 var gCustomIconsLoaded      = false;
 var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.

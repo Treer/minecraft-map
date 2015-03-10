@@ -19,7 +19,7 @@ range = 6400
 Forest         ,-934  , -4676 , LeaDassassin's forest, LeaDassassin, , 27                             
 Forest         ,-1700 , -700  , "Dark oak forest" ,                , http://minecraft.gamepedia.com/Roofed_forest , 27 
 Forest         , 1439 ,  3233 , "Dark oak forest" ,                , http://minecraft.gamepedia.com/Roofed_forest , 27 
-Forest         , 1268 , -2410 , "Fairy forest"    , "ecchymotic & aeduna"
+Forest         , 1268 , -2410 , "Fairy forest"    , "ecchymotic & aeduna", -
 FlowerForest   , 2146 ,  4144
 FlowerForest   , 4800 ,	-1500
 
@@ -106,8 +106,8 @@ Dragon          , -761 ,    62 , "", "", "", , (here be dragons, also math says 
 Ship            , 5000 ,     0
 Label           ,    0 ,     0 , "\nOrigin", "", https://imgur.com/a/VcUGa
 Label           , 1944 , -1073 , Lava Pool
-NetherPortal    , 512  ,  1024 , ~Portal to the Nether (Click to travel)~ ,,?src=example_nether.txt&x=64&z=128
-NetherPortal    ,   0  , -3002 , ~Portal to the Nether (Click to travel)~ ,,?src=example_nether.txt&x=0&z=-375
+NetherPortal    , 512  ,  1024 , ~Portal to the Nether (Click to travel)~ ,,_self_?src=example_nether.txt&x=64&z=128
+NetherPortal    ,   0  , -3002 , ~Portal to the Nether (Click to travel)~ ,,_self_?src=example_nether.txt&x=0&z=-375
 SeaMonster      ,  -400,  -350
 
 

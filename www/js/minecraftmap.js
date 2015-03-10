@@ -23,6 +23,7 @@ var cShowBoundingBoxes      = false; // This is for debug only
 
 // Global variables
 var gMapDataUriDefault      = '';    // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
+var gHrefTargetDefault      = '';    // Set this using SetDefaultHrefTarget(), it specifies the target to use for hrefs that don't specify a target. Normally it doesn't matter but when running in an iframe it should be set to '_parent'
 var gCustomIcons            = new Image();
 var gCustomIconsLoaded      = false;
 var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
@@ -639,12 +640,14 @@ function Location (x, z, type, description, owner, href, iconIndex) {
 
 // overrideOnly is an optional boolean, if true then only an hrefOverride value will
 // be returned, i.e. no default hrefs
-Location.prototype.getHref = function(overrideOnly) {
+Location.prototype.getHrefAndTarget = function(overrideOnly) {
 	if (this.hrefOverride == "-") {
 		// Don't defer to the default href
-		return "";
+		return new HrefAndTarget("");
 	} else {
-		return (isEmpty(this.hrefOverride) && overrideOnly != true) ? this.type.href : this.hrefOverride;
+		return new HrefAndTarget(
+			(isEmpty(this.hrefOverride) && overrideOnly != true) ? this.type.href : this.hrefOverride
+		);
 	}
 };
 
@@ -663,6 +666,36 @@ Location.prototype.getAlt = function() {
 
     return result;
 };
+
+// -----------------------------
+
+
+// Constructor
+function HrefAndTarget(urlString) {
+	// the target is optional, if the urlString begins with an underscore
+	// then assume the url has been prefixed with the target, delimited with 
+	// another underscore.
+	
+	this.target = gHrefTargetDefault;
+	
+	if (isEmpty(urlString)) {
+		this.href = "";
+	} else {
+		if(urlString[0] == '_') {
+			var splitPos = urlString.indexOf("_", 1);
+			if (splitPos > 0) {
+				// A target was specified in this string, split the string into target and href.
+				this.target = urlString.substring(0, splitPos);
+				this.href = urlString.substring(splitPos + 1);
+			} else {
+				this.href = urlString;
+			}
+		} else {
+			this.href = urlString;
+		}
+	}
+}
+
 
 // -----------------------------
 
@@ -728,6 +761,19 @@ function SetDefaultSrc(url) {
 		gMapDataUriDefault = url;
 	} else {
 		alert("SetDefaultSrc() was passed a non-string value");
+	}
+}
+
+// Set the target to use for urls that don't specify a target. 
+// Normally it doesn't matter but when running in an iframe you should set the 
+// default target to be '_parent'
+// Valid values would be '_blank', '_self', '_parent', or '_top'
+// (See HrefAndTarget() for details about how to explicitly include a target in a url)
+function SetDefaultHrefTarget(target) {
+	if (isString(target)) {
+		gHrefTargetDefault = target;
+	} else {
+		alert("SetDefaultHrefTarget() was passed a non-string value");
 	}
 }
  
@@ -950,13 +996,14 @@ function parseHtmlLocations(data, callback) {
  	for (index = 0; index < locations.length; ++index) {
  	
  		var location = locations[index];
- 		var href = location.getHref();
+ 		var hrefAndTarget = location.getHrefAndTarget();
  		var includeArea = false;
  
  		var newArea = document.createElement('area');
  
- 		if (!isEmpty(href)) {
- 			newArea.href = href;
+ 		if (!isEmpty(hrefAndTarget.href)) {
+ 			newArea.href = hrefAndTarget.href;
+ 			newArea.target = hrefAndTarget.target;
  			includeArea = true;
  		}
  		
@@ -1035,7 +1082,7 @@ function parseHtmlLocations(data, callback) {
  	if (isNotEmptyString(result) && includeCoordinates) {
  		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
  	}
- 	if (isNotEmptyString(result) && isNotEmptyString(location.getHref(true))) {
+ 	if (isNotEmptyString(result) && isNotEmptyString(location.getHrefAndTarget(true).href)) {
  		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
  	}
  	

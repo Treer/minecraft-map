@@ -69,13 +69,14 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 	for (index = 0; index < locations.length; ++index) {
 	
 		var location = locations[index];
-		var href = location.getHref();
+		var hrefAndTarget = location.getHrefAndTarget();
 		var includeArea = false;
 
 		var newArea = document.createElement('area');
 
-		if (!isEmpty(href)) {
-			newArea.href = href;
+		if (!isEmpty(hrefAndTarget.href)) {
+			newArea.href = hrefAndTarget.href;
+			newArea.target = hrefAndTarget.target;
 			includeArea = true;
 		}
 		
@@ -154,7 +155,7 @@ function generateHtmlLabel(location, includeCoordinates)
 	if (isNotEmptyString(result) && includeCoordinates) {
 		result += '<span class="locationHoverCoordinates"><br/>' + location.x + ', ' + location.z + '</span>';
 	}
-	if (isNotEmptyString(result) && isNotEmptyString(location.getHref(true))) {
+	if (isNotEmptyString(result) && isNotEmptyString(location.getHrefAndTarget(true).href)) {
 		result += '<div style="height: 11px"><img src="img/link.png" height="7" style="vertical-align: middle"></div>';
 	}
 	
