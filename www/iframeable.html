@@ -34,20 +34,29 @@ head.js(
 </head>
 <body style="font-family: sans-serif; padding: 0; margin: 0;">
 
-<div style="position: absolute; left: 50%;">
-	<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center; z-index: 40">
+<div id="loading" style="position: absolute; left: 50%;">
+	<div style="position:relative; top: 50px; left: -50%; text-align: center; z-index: 40">
 		<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
 		<i><b>Mining locations...</b></i>
 	</div>
 </div>
+<div id="loading_credittext" style="position: absolute; bottom: 5px; left: 50%;">
+	<span class="credittext" style="position:relative; bottom: 0px; left: -50%; white-space: nowrap">
+		<!-- Take advantage of this tiny text to include the fonts in the document 
+			 so that $(document).ready() isn't triggered before they are loaded. -->
+		<a href="http://buildwithblocks.info" target="_parent" style="color: #404040;">Map system from buildwithblocks.info</a>	
+	</span>	
+</div>
+
+
 <div style="position: absolute; left: 50%;">
-	<div id="hoverFrame" class="hidden-hoverFrame" style="position:relative; top: -25px; left: -50%; text-align: center; z-index: 30; pointer-events:none;">
+	<div id="hoverFrame" class="hidden-hoverFrame" style="position:relative; top: -25px; left: -50%; text-align: center; z-index: 30; pointer-events: none;">
 		<div id="locationDesc"></div>
 	</div>
 </div>
 
 <main>
-	<div class="map-viewport large-viewport" style="margin-top: 20px" >
+	<div class="map-viewport large-viewport mouse-passthrough" style="margin-top: 20px" >
 	  <div id="map-1">
 		<div id="zoomlevel1" class="current-level level" ></div>
 		<div id="zoomlevel2" class="level" ></div>
@@ -57,7 +66,7 @@ head.js(
 	</div>
 </main>
 		
-<div class="resources" style="position: absolute; visibility: hidden; left: 0;">
+<div class="resources" style="position: absolute; visibility: hidden;">
 	<img id="map-background" src="img/map64.png"/>
 	<img id="map-tileset" src="img/glyphs.png"/>
 </div>
@@ -152,7 +161,9 @@ head.ready(
 							});
 									
 							// hide the loading screen
+							$('.map-viewport').removeClass('mouse-passthrough'); // passthrough was only to enable credittext to have a lower z-order and still be clickable.
 							$('#loading').hide();
+							$('#loading_credittext').hide();
 						}
 					}
 				);

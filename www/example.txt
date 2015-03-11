@@ -43,7 +43,7 @@ PlayerHouse     , 84   , -903  , "Small    \nLighthouse    " , lex86            
 PlayerCastle    , 86   ,  610  , "Outpost Exile"             , SoulessExile                    , "https://imgur.com/a/3wkKN" ,  
 PlayerHouse     , 1017 ,  324  , "Dr.Frankenstone's    \nhovel"     , Dr.Frankenstone
 PlayerHouse     ,-800  , -1800 , "Dr.Frankenstone's\nmountain lair" , Dr.Frankenstone          ,                             ,31
-IcePlainsSpikes ,-1643 ,  1810 , "Dr.Frankenstone's\nwinter resort" , Dr.Frankenstone 
+IcePlainsSpikes ,-1643 ,  1810 , "Dr.Frankenstone's\nwinter resort" , Dr.Frankenstone          , -
 PlayerHouse     ,-1048 ,  687  ,                             , Crovexius                       , "https://imgur.com/a/2coEH" 
 PlayerStructure , 1480 , -1186 , "Seaspray City"             , WebSeer                         , "https://imgur.com/a/tfp5R"                                                                    ,  
 PlayerStructure ,-1667 ,  781  , "Ender Cathedral"           , Crovexius                       ,                                                                               

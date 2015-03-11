@@ -4,6 +4,7 @@
 .large-viewport{ width:800px; height:800px; }
 .level{ position:absolute; left:0; top:0; z-index:10; visibility: hidden}
 .current-level{ z-index:20; visibility: visible }
+.mouse-passthrough { pointer-events: none }
 
 #map-1{ position:absolute; left:0; top:0; }
 img{ border:0; }

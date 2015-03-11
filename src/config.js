@@ -24,7 +24,7 @@ var LocationType = {
   Dragon:          {iconIndex: 36, name: "",                href: ""}, // No default href as dragon symbol could be used for many things, stronghold, "Here be dragons" etc
   SeaMonster:      {iconIndex: 46, name: "",                href: ""}, 
   Ship:            {iconIndex: 38, name: "",                href: ""}, // No default href as ship is probably used for map decoration
-  IcePlainsSpikes: {iconIndex: 47, name: "Ice plains spikes", href: "http://minecraft.gamepedia.com/Biome/Ice_Plains_Spikes"}, 
+  IcePlainsSpikes: {iconIndex: 47, name: "Ice plains spikes", href: "http://minecraft.gamepedia.com/Ice_Plains_Spikes"}, 
 
   Spawn:           {iconIndex: 40, name: "Spawn", href: ""},
   PlayerStructure: {iconIndex:  8, name: "",      href: ""},  
