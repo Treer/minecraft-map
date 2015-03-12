@@ -6,6 +6,7 @@ data: {
     {output_filename: "index_expanded.html", enable_dynamic: false, mapVersion: "1.7" }
   ]
   mapVersion: "1.7",
+  zipDownloadLink: "https://github.com/Treer/minecraft-map/archive/v1.71.zip",
   GoogleDriveUrl_mapGenerator_v1_6: "https://googledrive.com/host/0B35KCzsTLKY1QTB6MEdoYkp2VGs",
   GoogleDriveUrl_mapGenerator_v1_7: "https://googledrive.com/host/0B35KCzsTLKY1WnBhVmh4R1JtMUk",
   GoogleDriveId_example_txt_v1_6:   "0B35KCzsTLKY1YkVMeWRBemtKdHM",
