@@ -83,6 +83,12 @@ head.js(
 	<img src="img/sunrisesign_arrow.png" width="192" height="96" align="right"/>
 </div>
 		
+<div class="printicon" style="position:absolute; bottom: 2px; left: 3px;">
+	<!-- If you don't want this print icon to be shown on the map page, find the line:
+	       $('#poster-print-href').show();
+		 in the javascript code in this page, and comment it out -->
+	<a id="poster-print-href" style="display: none;" href="poster_print.html" alt="Generate printable poster image">&#9113;</a>
+</div>		
 <div class="credittext" style="position:absolute; bottom: 5px; right: 5px;">
 	<!-- Take advantage of this tiny text to include the fonts in the document 
 		 so that $(document).ready() isn't triggered before they are loaded. -->
@@ -97,6 +103,12 @@ head.js(
 head.ready(
 	function() {
 		// head.js has loaded all the javascript scrips
+		
+		// Update the poster-print URL to include all the arguments that were provided to this URL
+		$('#poster-print-href').attr('href','poster_print.html' + location.search);
+		
+		// If you don't want the print icon to be shown on the map page, comment out the following line:
+		$('#poster-print-href').show();
 	
 		$(window).load(
 			function() {
