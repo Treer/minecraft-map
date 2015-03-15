@@ -1,12 +1,19 @@
+v1.72 - Poster release - 2015-03-16
+===================================
+* Adds print icon at bottom left, which allows generation of poster-sized
+  images of the map.
+* Crudely adds clipping of icons near the edges of the map, for slightly 
+  fewer overhanging icons.
+
 v1.71 - Inline release - 2015-03-09
-====================================
+===================================
 * Adds support for showing the map inside an iframe (see iframeable.html
   and iframe_demo.html, or http://buildingwithblocks.info/iframes.html).
 * Hover-text "parchment" no longer flickers or interferes with ability to
   click on a location (when hovering over locations under the hover-text).
   
 v1.70 - Oceans release - 2015-01-12
-====================================
+===================================
 * Oceans and coastlines can now be shown on the map, if you know the seed 
   for the world.
 * Ice Plains Spikes and anvil map icons added.

@@ -1287,7 +1287,7 @@ function parseHtmlLocations(data, callback) {
  		var location_z = translateCoord_z(locationInstance.z);
  
  		// don't show icons within 1/128th of the border (each map pixel is 1/64, so we're not showing icons closer than half a map pixel from the border).
- 		var clipLimit = mapSize / 128;
+ 		var clipLimit = Math.min(mapSize / 128, 8 * gLocationScale);
  		if (location_x > clipLimit && location_z > clipLimit && location_x < (mapSize - clipLimit) && location_z < (mapSize - clipLimit)) {
  				
  			// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
