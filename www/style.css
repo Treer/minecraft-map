@@ -26,6 +26,9 @@ img{ border:0; }
 }
 .credittext a:hover, .credittext a:focus {text-decoration: underline; color: white;}
 
+.printicon, .printicon a {color: #BBBBBB; text-decoration: none; font-size: 18px}
+.printicon a:hover, .printicon a:focus {color: white; text-decoration: none;}
+
 /* h1 { font-family: 'Press Start 2P', sans-serif; } */
 .hidden-hoverFrame { visibility: hidden; } 
 .locationHoverPlacename { font-family: 'Merienda', sans-serif; font-weight: bold; color: #5e4820; }

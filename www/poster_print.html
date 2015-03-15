@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Printable Poster Map</title>
+<!--[if IE]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script src="js/head.min.js"></script>
+<script type="text/javascript">
+
+var gConfig;
+var gLocations;
+var gPosterDpi;
+var gPosterWidth;
+var gPosterIconScale;
+
+head.js(
+   {jquery:            "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"},
+   {jquery_ui:         "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"},
+   {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
+   {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
+   {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
+   {csv:               "js/csv.min.js"},
+   {jquery_mapz:       "js/jquery.mapz.min.js"},   
+   {stackblur:         "js/StackBlur.min.js"},
+   {minecraftmap:      "js/minecraftmap.min.js"}
+);
+
+function UpdateUI() {
+	$('#inputwidth').val(gPosterWidth);
+	$('#inputiconscale').val(gPosterIconScale);
+	$('#inputrange').val(gConfig.MapRange);
+	$('#inputdpi').val(gPosterDpi);
+	
+	UpdatePrediction();
+}
+	
+function UpdateValues() {
+
+	var errorMessage = "";
+
+	gPosterWidth = parseInt($('#inputwidth').val());
+	$('#inputwidth').css("color", isNaN(gPosterWidth) ? "Red" : "Black");
+	if (isNaN(gPosterWidth)) errorMessage += "pixel-dimensions";
+
+	gPosterIconScale = parseFloat($('#inputiconscale').val());
+	$('#inputiconscale').css("color", isNaN(gPosterIconScale) ? "Red" : "Black");
+	if (isNaN(gPosterIconScale)) errorMessage += " icon-scale";
+
+	gConfig.MapRange = parseInt($('#inputrange').val());
+	$('#inputrange').css("color", isNaN(gConfig.MapRange) ? "Red" : "Black");
+	if (isNaN(gConfig.MapRange)) errorMessage += " map-range";
+
+	gPosterDpi = parseFloat($('#inputdpi').val());
+	$('#inputdpi').css("color", isNaN(gPosterDpi) ? "Red" : "Black");
+	// if (isNaN(gPosterDpi)) errorMessage += " dpi";
+	
+	var isError = errorMessage.length > 0;
+	$('#inputsubmit').prop('disabled', isError);
+	$('#posterPrediction').css("color", isError ? "Red" : "Black");
+	
+	if (isError) {		
+		$('#posterPrediction').text(errorMessage + " is not numerical or not properly formatted.");	
+	} else 	UpdatePrediction();
+	
+}
+
+function UpdatePrediction() {
+
+	var width_inches = gPosterWidth / gPosterDpi;
+	var width_mm = width_inches * 25.4;
+	
+	var textHeight_px = 10 * gPosterIconScale;
+	var textHeight_inches = textHeight_px / gPosterDpi;
+	var textHeight_mm = textHeight_inches * 25.4;
+	
+	var size_MB = (gPosterWidth * gPosterWidth * 4) / (1024 * 1024);
+	
+	$('#posterPrediction').text("This image will require at least " + Math.round(size_MB) + " MB of memory to display. Poster will be " + width_mm.toFixed(1) + " mm wide (" + width_inches.toFixed(2) + "\") if printed at " + gPosterDpi.toFixed(0) + " dpi. Captions will be " + textHeight_mm.toFixed(1) + " mm high (" + textHeight_inches.toFixed(2) + "\").");
+}
+	
+function RenderPoster() {
+
+	$('#loading').show();
+	
+	// clear any previous map
+	$('#poster').html("");
+	$('#posterDescription').text(gPosterWidth + "px \u2715 " + gPosterWidth + "px map, " + gConfig.MapRange * 2 + " blocks across, with icons & captions scaled up by a factor of " + gPosterIconScale + ". URL arguments: " + location.search);
+	
+	
+	var showAllLabels = $('#inputalllabels').is(':checked');
+	gConfig.ShowLabelsBelow = showAllLabels ? 3 : 5;
+	
+	gLocationScale = gPosterIconScale;	
+	
+	
+	PreRender_PreserveMapBackground(
+		gConfig,
+		function() {
+			createMapImageInDiv(
+				4, 
+				"poster", 
+				gPosterWidth, 
+				gPosterWidth, // 6800 is 576mm at 300dpi, A1 is 594mm wide, which leaves a 9mm print margin
+				gConfig, 
+				gLocations,
+				FinishedRendering
+			);	
+		}
+	);
+}
+
+function FinishedRendering() {
+	// hide the loading screen
+	$('#loading').hide();
+}	
+
+// Copy of PreRender() that's been modified to allow it to be called multiple times
+function PreRender_PreserveMapBackground(config, callback) {
+	
+	if (gOceanMapImage != null) {
+		// An oceanmask has been provided, render a new map-background with
+		// it instead of using the default one.
+	
+		var mapBackgroundSourceImage = document.getElementById('map-background-original');
+		var mapBackgroundImage = document.getElementById('map-background');
+
+		var newMapBackgroundCanvas = renderOcean(
+			config,
+			mapBackgroundSourceImage,
+			gOceanMapImage
+		);		
+		mapBackgroundImage.onload = callback;
+		mapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
+	}	
+}
+</script>
+
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Calligraffitti">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merienda">
+<link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body style="font-family: sans-serif;">
+
+<main>
+	<h1>Printable Poster Image</h1>
+
+	<p>This page renders a high resolution map image which can be used to print a poster</p>
+
+	<div id="controlpanel" style="display: none;">
+		<table>
+			<tr>
+				<td><input id="inputwidth" name="inputwidth" type="text" onChange="UpdateValues();" /></td>
+				<td>Horizontal and vertical pixel dimensions of map, in pixels (recommend 6800 or lower) </td>
+			</tr>
+			<tr>
+				<td><input id="inputiconscale" name="inputiconscale" type="text" onChange="UpdateValues();"/></td>
+				<td>Scale factor for icons and their captions. Pixelated icons will look best if this is a round number. (Recommend from 2 to 8, depending on the pixel dimensions of the map) </td>
+			</tr>
+			<tr>
+				<td><input id="inputrange" name="inputrange" type="text" onChange="UpdateValues();"/></td>
+				<td>Map range. This sets the radius the map will cover, measured in Minecraft blocks. (Double it to get the block-dimensions of the map)</td>
+			</tr>
+			<tr>
+				<td><input id="inputdpi" name="inputdpi" type="text" onChange="UpdateValues();"/></td>
+				<td>DPI (dots-per-inch) of the print. This value is used to give you an idea of how large the poster and captions will be if it's printed using the settings above.</td>
+			</tr>
+			<tr>
+				<td><input id="inputalllabels" name="inputalllabels" type="checkbox" style="float: right;"/></td>
+				<td>Draw all labels, even if some overlap with icons or other labels.</td>
+			</tr>
+		</table>
+
+		<p id="posterPrediction"></p>
+		
+		<p>Warning: generating high resolution images may cause the browser window to temporarily lock, or report that the script is taking too long.</p>
+		<button id="inputsubmit" name="inputsubmit" type="button" onclick="RenderPoster();">Create image</button>
+	</div>
+	<hr>
+	
+	<p id="posterDescription"></p>
+	<div id="poster"></div>
+	
+	<div style="position: absolute; left: 50%;">
+		<div id="loading" style="position:relative; top: 50px; left: -50%; text-align: center; z-index: 40; display: none;">
+			<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
+			<i><b>Generating large image... this may strain your computer...</b></i>
+		</div>
+	</div>
+	
+</main>
+
+
+<div class="credittext" style="position:absolute; bottom: 5px; right: 5px;">
+	<!-- Take advantage of this tiny text to include the fonts in the document 
+		 so that $(document).ready() isn't triggered before they are loaded. -->
+	<a href="http://buildwithblocks.info">create your own Ink &amp; Parchment Map</a>	
+</div>
+<div class="resources" style="position: absolute; visibility: hidden;">
+	<img id="map-background" src="img/map64.png"/>
+	<img id="map-background-original" src="img/map64.png"/>
+	<img id="map-tileset" src="img/glyphs.png"/>
+</div>
+
+<script type="text/javascript">
+head.ready(
+	function() {
+		// head.js has loaded all the javascript scrips
+	
+		$(window).load(
+			function() {
+				// All DOM and images and CSS etc has been loaded
+	
+				
+				// =================
+				// This line lets you set the URL where this page will try to load the locations file
+				// from if no 'src=' parameter is specified.
+				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
+				// then uncomment the SetDefaultSrc() line below:
+				// =================				
+				// SetDefaultSrc('default.txt');
+							
+				getSettingsAndMapLocations(
+					head.screen.width,
+					head.screen.height,
+					function(config, locations) {
+					
+						gPosterDpi = 150;
+						gPosterWidth = 3400;
+						gPosterIconScale = 3;					
+					
+						gConfig = config;
+						gLocations = locations;
+						
+						UpdateUI();
+						$('#controlpanel').show();
+					}
+				);
+			}
+		);
+	}
+);
+</script>
+</body>
+</html>

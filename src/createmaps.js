@@ -92,7 +92,7 @@ function createMapImageInDiv(zoomLevelNumber, divElementName, aWidth, aHeight, c
 		
 		if (includeArea) {		
 			newArea.shape = 'circle';
-			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
+			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius * gLocationScale];
 			newArea.alt = location.getAlt();
 		
 			$(newArea).appendTo(newmap);
@@ -171,7 +171,7 @@ function strToHtml(str) {
 // if labellingStyle is set LabellingStyle.none then no captions will be rendered.
 function drawMapDetails(canvas, config, locations, labellingStyle)
 {
-	var cTextLineHeight = 10;
+	var cTextLineHeight = 10 * gLocationScale;
 
 	var ctx = canvas.getContext("2d");
 	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -221,7 +221,7 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 
 		if (!isEmpty(text)) {
 			
-			var textOffset = 1; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
+			var textOffset = 1 * gLocationScale; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
 			var lines = splitIntoLines(text);
 			var lineNo;
 			for(lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -273,14 +273,26 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		var result;
 		
 		if (isNaN(iconIndex) || iconIndex < 0) {
-			result = {width: 0, height: 0, yOffset:  0};			
+			result = {width: 0, height: 0, yOffset: 0, pixelArt: true};			
 		} else {	
-			result = IconBoundsInformation[iconIndex];
-			if (result === undefined) {
+			var iconBounds = IconBoundsInformation[iconIndex];
+			if (iconBounds === undefined) {
 				// The icon is not specified in IconBoundsInformation array, use default values
-				result = {width: 20, height: 20, yOffset:  0};			
+				result = {width: 20, height: 20, yOffset: 0, pixelArt: true};			
+			} else {
+				// Clone it if we are scaling it so we don't screw up the IconBoundsInformation 
+				// array when we scale the result
+				result = (gLocationScale == 1) ? iconBounds : {
+					width:    iconBounds.width,
+					height:   iconBounds.height,
+					yOffset:  iconBounds.yOffset,
+					pixelArt: iconBounds.pixelArt
+				};
 			}
 		}
+		result.width   *= gLocationScale;
+		result.height  *= gLocationScale;
+		result.yOffset *= gLocationScale;
 		return result;
 	}
 	
@@ -319,10 +331,10 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 			if (index >= cCustomIconIndexStart) {
 				// it's a custom icon				
 				if (gCustomIconsLoaded) {
-					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, x, z);			
+					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, true, drawMask, x, z);			
 				}				
 			} else {			
-				drawGlyph(ctx, tilesImage, index, drawMask, x, z);			
+				drawGlyph(ctx, tilesImage, index, IconBoundsInformation[index].pixelArt, drawMask, x, z);			
 			}
 		}
 	}
@@ -346,101 +358,105 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		var location_x = translateCoord_x(locationInstance.x);
 		var location_z = translateCoord_z(locationInstance.z);
 
-		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
-		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
-			if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
-		} else {
-			text += locationInstance.labelOverride.text;
-		}
-		
-		if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
-			// The owner was specified, and is not named in the description, add in brackets at the bottom
-			text += '\n(' + locationInstance.owner.text + ')';
-		}
-
-		if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
-		
-			var iconIndex = locationInstance.getIconIndex();
-			
-			var textOffset;
-			if (isNaN(iconIndex) || iconIndex < 0) {
-				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
-				textOffset = 3; 
-			} else {
-				var boundsInfo = getIconBoundsHint(iconIndex);
-				textOffset = cCaptionSpacer_vertical + boundsInfo.yOffset + (boundsInfo.height / 2);
-			}
-		
-			var drawLabel = true;
-			var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
-			
-			if (labellingStyle == LabellingStyle.smart) {			
-				// check the space needed by the label isn't already occupied
-				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
-
-				var boxIndex
-				for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
+		// don't show icons within 1/128th of the border (each map pixel is 1/64, so we're not showing icons closer than half a map pixel from the border).
+		var clipLimit = Math.min(mapSize / 128, 8 * gLocationScale);
+		if (location_x > clipLimit && location_z > clipLimit && location_x < (mapSize - clipLimit) && location_z < (mapSize - clipLimit)) {
 				
-					var box = boundingboxes[boxIndex];
-					var	i;
-					for(i = 0; i < occupiedSpace.length; i++) {
-						if (box.intersects(occupiedSpace[i])) {
-							// a label or icon already occupies this space
-							
-							// make sure it's not the bounding box of our own icon that we collided with
-							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
-							if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
-								drawLabel = false;
-								break;
+			// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
+			if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
+				if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
+			} else {
+				text += locationInstance.labelOverride.text;
+			}
+			
+			if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
+				// The owner was specified, and is not named in the description, add in brackets at the bottom
+				text += '\n(' + locationInstance.owner.text + ')';
+			}
+
+			if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
+			
+				var iconIndex = locationInstance.getIconIndex();
+				
+				var textOffset;
+				if (isNaN(iconIndex) || iconIndex < 0) {
+					// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+					textOffset = 3 * gLocationScale; 
+				} else {
+					var boundsInfo = getIconBoundsHint(iconIndex);
+					textOffset = (cCaptionSpacer_vertical * gLocationScale) + boundsInfo.yOffset + (boundsInfo.height / 2);
+				}
+			
+				var drawLabel = true;
+				var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
+				
+				if (labellingStyle == LabellingStyle.smart) {			
+					// check the space needed by the label isn't already occupied
+					var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
+
+					var boxIndex
+					for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
+					
+						var box = boundingboxes[boxIndex];
+						var	i;
+						for(i = 0; i < occupiedSpace.length; i++) {
+							if (box.intersects(occupiedSpace[i])) {
+								// a label or icon already occupies this space
+								
+								// make sure it's not the bounding box of our own icon that we collided with
+								var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
+								if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
+									drawLabel = false;
+									break;
+								}
 							}
 						}
+						if (!drawLabel) break;
 					}
-					if (!drawLabel) break;
+					if (drawLabel || drawLabelRegardless) {
+						// Add the space taken by this label to occupiedSpace
+						occupiedSpace = occupiedSpace.concat(boundingboxes);
+					}				
 				}
-				if (drawLabel || drawLabelRegardless) {
-					// Add the space taken by this label to occupiedSpace
-					occupiedSpace = occupiedSpace.concat(boundingboxes);
-				}				
-			}
+					
+				if (drawLabel || drawLabelRegardless) { 
+					multilineCenteredText_draw(location_x, location_z + textOffset, text);
+				}
 				
-			if (drawLabel || drawLabelRegardless) { 
-				multilineCenteredText_draw(location_x, location_z + textOffset, text);
+				if (cShowBoundingBoxes) {
+					// debug code for showing bounding boxes
+					ctx.lineWidth = 1;
+					ctx.strokeStyle="#0000FF";
+					var boxes = locationLabel_bounds(locationInstance, text);
+					var i;
+					for(i = 0; i < boxes.length; i++) {
+						boxes[i].stroke(ctx);
+					}
+				}
 			}
 			
-			if (cShowBoundingBoxes) {
-				// debug code for showing bounding boxes
-				ctx.lineWidth = 1;
-				ctx.strokeStyle="#0000FF";
-				var boxes = locationLabel_bounds(locationInstance, text);
-				var i;
-				for(i = 0; i < boxes.length; i++) {
-					boxes[i].stroke(ctx);
-				}
+			if (renderLayer == RenderLayer.Masks) {		
+				icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
 			}
-		}
-		
-		if (renderLayer == RenderLayer.Masks) {		
-			icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
-		}
 
-		if (isEmpty(text)) {
-			if (renderLayer == RenderLayer.UncaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+			if (isEmpty(text)) {
+				if (renderLayer == RenderLayer.UncaptionedIcons) {		
+					icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+				}
+			} else {
+				if (renderLayer == RenderLayer.CaptionedIcons) {		
+					icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+				}		
 			}
-		} else {
-			if (renderLayer == RenderLayer.CaptionedIcons) {		
-				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
-			}		
 		}
-		
 	}
 	
 	function drawOrigin() {
-		var crosshairSize = 8;
+		var crosshairSize = 8 * gLocationScale;
 		var originX = Math.round(translateCoord_x(0));
 		var originZ = Math.round(translateCoord_z(0));
 			
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 2 * gLocationScale;
 		ctx.strokeStyle="#6e5830";
 		ctx.moveTo(originX, originZ - crosshairSize);
 		ctx.lineTo(originX, originZ + crosshairSize);
@@ -459,7 +475,7 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
 		var notchHeight = Math.round(blockSize * 0.4);
 
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 2 * gLocationScale;
 		ctx.strokeStyle="#6e5830";
 		ctx.moveTo(scaleStartX, scaleStartY);
 		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
@@ -500,8 +516,9 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 	}	
 
 		
-	ctx.font = "10px Arial";	
-	ctx.font = "10px 'Merienda', Arial, sans-serif";	
+	ctx.font = 10 * gLocationScale + "px Arial";	
+	ctx.font = 10 * gLocationScale + "px 'Merienda', Arial, sans-serif";	
+	if (gLocationScale > 1) ctx.fillStyle = '#553A24'; // At a scale of 1, text is so thin it's better to leave the color as black. Otherwise dark brown.
 	
 	var renderLayer;
 	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
@@ -530,12 +547,15 @@ function drawMapDetails(canvas, config, locations, labellingStyle)
 	}
 }
 
-function setCanvasScalingToPixelated(ctx) {
+function setCanvasScalingToPixelated(ctx, makePixelated) {
+
+	if (makePixelated === undefined) makePixelated = true;
+
 	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.webkitImageSmoothingEnabled = false;
-	ctx.msImageSmoothingEnabled = false;
-	ctx.imageSmoothingEnabled = false;
+	ctx.mozImageSmoothingEnabled = !makePixelated;
+	ctx.webkitImageSmoothingEnabled = !makePixelated;
+	ctx.msImageSmoothingEnabled = !makePixelated;
+	ctx.imageSmoothingEnabled = !makePixelated;
 }
 
 // Put any rendering tasks in here that should be performed only once (instead
@@ -564,20 +584,26 @@ function PreRender(config) {
 //
 // tilesImage: an img element
 // drawMask: if True, the icon mask will be drawn (i.e. the bottom row)
-function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
+function drawGlyph(canvasContext, tilesImage, tileIndex, isPixelArt, drawMask, x, y) {
 
 	var width = tilesImage.height / 2;
-	var halfWidth = width / 2;
+	var halfDestWidth = (width / 2) * gLocationScale;
 
+	
+	if (gLocationScale != 1) {
+		// Icon is being scaled, determine which way to scale it
+		setCanvasScalingToPixelated(canvasContext, isPixelArt && !drawMask);
+	}
+	
 	canvasContext.drawImage(
 		tilesImage,
 		tileIndex * width,
 		drawMask ? width : 0,
 		width,
 		width,
-		x - halfWidth,
-		y - halfWidth,
-		width,
-		width
+		x - halfDestWidth,
+		y - halfDestWidth,
+		width * gLocationScale,
+		width * gLocationScale
 	);
 }

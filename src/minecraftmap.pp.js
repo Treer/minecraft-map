@@ -27,6 +27,7 @@ var gHrefTargetDefault      = '';    // Set this using SetDefaultHrefTarget(), i
 var gCustomIcons            = new Image();
 var gCustomIconsLoaded      = false;
 var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
+var gLocationScale          = 1;     // Allows Locations to be scaled up for better font resolution in posters
 
 
 // #include "helpers.js"

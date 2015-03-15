@@ -59,54 +59,54 @@ var LabellingStyleOverride = {
 // Overlays have their width set to 0, but text offset information can be stored in the height.
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
-	 0: {width: 14, height: 14, yOffset: -1}, // village plain
-	 1: {width: 14, height: 16, yOffset: -1}, // village desert
-	 2: {width: 12, height: 20, yOffset:  0}, // skull
-	 3: {width: 14, height: 20, yOffset: -4}, // witch
-	 4: {width: 16, height: 17, yOffset: -2}, // jungle temple
-	 5: {width: 10, height: 17, yOffset:  0}, // desert temple
-	 6: {width: 10, height: 14, yOffset: -2}, // Nether fortress
-	 7: {width: 10, height: 13, yOffset: -1}, // Portal
-	 8: {width: 10, height: 10, yOffset:  0}, // PlayerStructure
-	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
-	10: {width: 12, height: 11, yOffset:  0}, // PlayerHouse
-	11: {width: 15, height:  8, yOffset:  0}, // Rail
-	12: {width: 10, height: 18, yOffset: -4}, // PlayerMachine
-	13: {width:  0, height:  8, yOffset:  5}, // fence overlay
-	14: {width: 16, height: 16, yOffset: -1}, // wheat
-	15: {width: 12, height: 13, yOffset:  0}, // chicken
-	16: {width: 10, height: 10, yOffset:  0}, // pig
-	17: {width: 10, height: 10, yOffset:  0}, // cow
-	18: {width: 10, height: 10, yOffset:  0}, // sheep
-	19: {width: 12, height: 12, yOffset:  0}, // Pumpkin
-	20: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
-	21: {width:  4, height: 18, yOffset:  0}, // Obelisk
-	22: {width: 14, height: 24, yOffset: -4}, // Maoi
-	23: {width: 15, height: 16, yOffset: -1}, // tree
-	24: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
-	25: {width: 15, height: 16, yOffset: -1}, // tree (palms)	
-	26: {width: 20, height: 22, yOffset:  0}, // flower forest
-	27: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
-	28: {width: 24, height: 22, yOffset: -4}, // Forest 
-	29: {width: 17, height: 16, yOffset: -1}, // Mushroom
-	30: {width:  0, height: 16, yOffset:  8}, // island overlay
-	31: {width: 30, height: 18, yOffset:  0}, // Mountains
-	32: {width: 30, height: 20, yOffset: -1}, // Mountain
-	33: {width: 18, height: 16, yOffset: -1}, // Cave	
-	34: {width: 18, height: 17, yOffset:  0}, // Horse
-	35: {width: 17, height: 13, yOffset:  0}, // Wolf
-	36: {width: 30, height: 26, yOffset:  1}, // Dragon
-	37: {width: 27, height: 27, yOffset:  1}, // Ship 1
-	38: {width: 29, height: 30, yOffset:  0}, // Ship 2
-	39: {width: 20, height: 27, yOffset: -2}, // Compass points	
-	40: {width: 14, height: 12, yOffset:  0}, // Spawn
-	41: {width: 18, height: 16, yOffset:  0}, // Marker
-	42: {width: 14, height: 22, yOffset: -4}, // Marker2
-	43: {width: 14, height: 16, yOffset: -1}, // Chest
-	44: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
-	45: {width: 11, height: 13, yOffset:  0}, // Anvil
-	46: {width: 28, height: 18, yOffset:  1}, // Sea monster
-	47: {width: 28, height: 30, yOffset:  1}  // Ice spikes
+	 0: {width: 14, height: 14, yOffset: -1, pixelArt: true},  // village plain
+	 1: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // village desert
+	 2: {width: 12, height: 20, yOffset:  0, pixelArt: true},  // skull
+	 3: {width: 14, height: 20, yOffset: -4, pixelArt: true},  // witch
+	 4: {width: 16, height: 17, yOffset: -2, pixelArt: true},  // jungle temple
+	 5: {width: 10, height: 17, yOffset:  0, pixelArt: true},  // desert temple
+	 6: {width: 10, height: 14, yOffset: -2, pixelArt: true},  // Nether fortress
+	 7: {width: 10, height: 13, yOffset: -1, pixelArt: true},  // Portal
+	 8: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // PlayerStructure
+	 9: {width: 10, height: 14, yOffset: -2, pixelArt: true},  // PlayerCastle
+	10: {width: 12, height: 11, yOffset:  0, pixelArt: true},  // PlayerHouse
+	11: {width: 15, height:  8, yOffset:  0, pixelArt: true},  // Rail
+	12: {width: 10, height: 18, yOffset: -4, pixelArt: true},  // PlayerMachine
+	13: {width:  0, height:  8, yOffset:  5, pixelArt: true},  // fence overlay
+	14: {width: 16, height: 16, yOffset: -1, pixelArt: true},  // wheat
+	15: {width: 12, height: 13, yOffset:  0, pixelArt: true},  // chicken
+	16: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // pig
+	17: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // cow
+	18: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // sheep
+	19: {width: 12, height: 12, yOffset:  0, pixelArt: true},  // Pumpkin
+	20: {width: 16, height: 16, yOffset:  0, pixelArt: false}, // Sarsen stones
+	21: {width:  4, height: 18, yOffset:  0, pixelArt: false}, // Obelisk
+	22: {width: 14, height: 24, yOffset: -4, pixelArt: false}, // Maoi
+	23: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree
+	24: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree (sapling)
+	25: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree (palms)	
+	26: {width: 20, height: 22, yOffset:  0, pixelArt: false}, // flower forest
+	27: {width: 20, height: 18, yOffset: -3, pixelArt: false}, // Forest (dark)
+	28: {width: 24, height: 22, yOffset: -4, pixelArt: false}, // Forest 
+	29: {width: 17, height: 16, yOffset: -1, pixelArt: false}, // Mushroom
+	30: {width:  0, height: 16, yOffset:  8, pixelArt: false}, // island overlay
+	31: {width: 30, height: 18, yOffset:  0, pixelArt: false}, // Mountains
+	32: {width: 30, height: 20, yOffset: -1, pixelArt: false}, // Mountain
+	33: {width: 18, height: 16, yOffset: -1, pixelArt: false}, // Cave	
+	34: {width: 18, height: 17, yOffset:  0, pixelArt: false}, // Horse
+	35: {width: 17, height: 13, yOffset:  0, pixelArt: false}, // Wolf
+	36: {width: 30, height: 26, yOffset:  1, pixelArt: false}, // Dragon
+	37: {width: 27, height: 27, yOffset:  1, pixelArt: false}, // Ship 1
+	38: {width: 29, height: 30, yOffset:  0, pixelArt: false}, // Ship 2
+	39: {width: 20, height: 27, yOffset: -2, pixelArt: false}, // Compass points	
+	40: {width: 14, height: 12, yOffset:  0, pixelArt: false}, // Spawn
+	41: {width: 18, height: 16, yOffset:  0, pixelArt: false}, // Marker
+	42: {width: 14, height: 22, yOffset: -4, pixelArt: false}, // Marker2
+	43: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // Chest
+	44: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // EnchantingRoom
+	45: {width: 11, height: 13, yOffset:  0, pixelArt: true},  // Anvil
+	46: {width: 28, height: 18, yOffset:  1, pixelArt: false}, // Sea monster
+	47: {width: 28, height: 30, yOffset:  1, pixelArt: false}  // Ice spikes
 }
 
 

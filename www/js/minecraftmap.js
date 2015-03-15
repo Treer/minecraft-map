@@ -27,6 +27,7 @@ var gHrefTargetDefault      = '';    // Set this using SetDefaultHrefTarget(), i
 var gCustomIcons            = new Image();
 var gCustomIconsLoaded      = false;
 var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
+var gLocationScale          = 1;     // Allows Locations to be scaled up for better font resolution in posters
 
 
 /********************************************
@@ -240,54 +241,54 @@ var LabellingStyleOverride = {
 // Overlays have their width set to 0, but text offset information can be stored in the height.
 // (to check it, switch cShowBoundingBoxes to true and view legend.csv)
 var IconBoundsInformation = {
-	 0: {width: 14, height: 14, yOffset: -1}, // village plain
-	 1: {width: 14, height: 16, yOffset: -1}, // village desert
-	 2: {width: 12, height: 20, yOffset:  0}, // skull
-	 3: {width: 14, height: 20, yOffset: -4}, // witch
-	 4: {width: 16, height: 17, yOffset: -2}, // jungle temple
-	 5: {width: 10, height: 17, yOffset:  0}, // desert temple
-	 6: {width: 10, height: 14, yOffset: -2}, // Nether fortress
-	 7: {width: 10, height: 13, yOffset: -1}, // Portal
-	 8: {width: 10, height: 10, yOffset:  0}, // PlayerStructure
-	 9: {width: 10, height: 14, yOffset: -2}, // PlayerCastle
-	10: {width: 12, height: 11, yOffset:  0}, // PlayerHouse
-	11: {width: 15, height:  8, yOffset:  0}, // Rail
-	12: {width: 10, height: 18, yOffset: -4}, // PlayerMachine
-	13: {width:  0, height:  8, yOffset:  5}, // fence overlay
-	14: {width: 16, height: 16, yOffset: -1}, // wheat
-	15: {width: 12, height: 13, yOffset:  0}, // chicken
-	16: {width: 10, height: 10, yOffset:  0}, // pig
-	17: {width: 10, height: 10, yOffset:  0}, // cow
-	18: {width: 10, height: 10, yOffset:  0}, // sheep
-	19: {width: 12, height: 12, yOffset:  0}, // Pumpkin
-	20: {width: 16, height: 16, yOffset:  0}, // Sarsen stones
-	21: {width:  4, height: 18, yOffset:  0}, // Obelisk
-	22: {width: 14, height: 24, yOffset: -4}, // Maoi
-	23: {width: 15, height: 16, yOffset: -1}, // tree
-	24: {width: 15, height: 16, yOffset: -1}, // tree (sapling)
-	25: {width: 15, height: 16, yOffset: -1}, // tree (palms)	
-	26: {width: 20, height: 22, yOffset:  0}, // flower forest
-	27: {width: 20, height: 18, yOffset: -3}, // Forest (dark)
-	28: {width: 24, height: 22, yOffset: -4}, // Forest 
-	29: {width: 17, height: 16, yOffset: -1}, // Mushroom
-	30: {width:  0, height: 16, yOffset:  8}, // island overlay
-	31: {width: 30, height: 18, yOffset:  0}, // Mountains
-	32: {width: 30, height: 20, yOffset: -1}, // Mountain
-	33: {width: 18, height: 16, yOffset: -1}, // Cave	
-	34: {width: 18, height: 17, yOffset:  0}, // Horse
-	35: {width: 17, height: 13, yOffset:  0}, // Wolf
-	36: {width: 30, height: 26, yOffset:  1}, // Dragon
-	37: {width: 27, height: 27, yOffset:  1}, // Ship 1
-	38: {width: 29, height: 30, yOffset:  0}, // Ship 2
-	39: {width: 20, height: 27, yOffset: -2}, // Compass points	
-	40: {width: 14, height: 12, yOffset:  0}, // Spawn
-	41: {width: 18, height: 16, yOffset:  0}, // Marker
-	42: {width: 14, height: 22, yOffset: -4}, // Marker2
-	43: {width: 14, height: 16, yOffset: -1}, // Chest
-	44: {width: 14, height: 16, yOffset: -1}, // EnchantingRoom
-	45: {width: 11, height: 13, yOffset:  0}, // Anvil
-	46: {width: 28, height: 18, yOffset:  1}, // Sea monster
-	47: {width: 28, height: 30, yOffset:  1}  // Ice spikes
+	 0: {width: 14, height: 14, yOffset: -1, pixelArt: true},  // village plain
+	 1: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // village desert
+	 2: {width: 12, height: 20, yOffset:  0, pixelArt: true},  // skull
+	 3: {width: 14, height: 20, yOffset: -4, pixelArt: true},  // witch
+	 4: {width: 16, height: 17, yOffset: -2, pixelArt: true},  // jungle temple
+	 5: {width: 10, height: 17, yOffset:  0, pixelArt: true},  // desert temple
+	 6: {width: 10, height: 14, yOffset: -2, pixelArt: true},  // Nether fortress
+	 7: {width: 10, height: 13, yOffset: -1, pixelArt: true},  // Portal
+	 8: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // PlayerStructure
+	 9: {width: 10, height: 14, yOffset: -2, pixelArt: true},  // PlayerCastle
+	10: {width: 12, height: 11, yOffset:  0, pixelArt: true},  // PlayerHouse
+	11: {width: 15, height:  8, yOffset:  0, pixelArt: true},  // Rail
+	12: {width: 10, height: 18, yOffset: -4, pixelArt: true},  // PlayerMachine
+	13: {width:  0, height:  8, yOffset:  5, pixelArt: true},  // fence overlay
+	14: {width: 16, height: 16, yOffset: -1, pixelArt: true},  // wheat
+	15: {width: 12, height: 13, yOffset:  0, pixelArt: true},  // chicken
+	16: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // pig
+	17: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // cow
+	18: {width: 10, height: 10, yOffset:  0, pixelArt: true},  // sheep
+	19: {width: 12, height: 12, yOffset:  0, pixelArt: true},  // Pumpkin
+	20: {width: 16, height: 16, yOffset:  0, pixelArt: false}, // Sarsen stones
+	21: {width:  4, height: 18, yOffset:  0, pixelArt: false}, // Obelisk
+	22: {width: 14, height: 24, yOffset: -4, pixelArt: false}, // Maoi
+	23: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree
+	24: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree (sapling)
+	25: {width: 15, height: 16, yOffset: -1, pixelArt: true},  // tree (palms)	
+	26: {width: 20, height: 22, yOffset:  0, pixelArt: false}, // flower forest
+	27: {width: 20, height: 18, yOffset: -3, pixelArt: false}, // Forest (dark)
+	28: {width: 24, height: 22, yOffset: -4, pixelArt: false}, // Forest 
+	29: {width: 17, height: 16, yOffset: -1, pixelArt: false}, // Mushroom
+	30: {width:  0, height: 16, yOffset:  8, pixelArt: false}, // island overlay
+	31: {width: 30, height: 18, yOffset:  0, pixelArt: false}, // Mountains
+	32: {width: 30, height: 20, yOffset: -1, pixelArt: false}, // Mountain
+	33: {width: 18, height: 16, yOffset: -1, pixelArt: false}, // Cave	
+	34: {width: 18, height: 17, yOffset:  0, pixelArt: false}, // Horse
+	35: {width: 17, height: 13, yOffset:  0, pixelArt: false}, // Wolf
+	36: {width: 30, height: 26, yOffset:  1, pixelArt: false}, // Dragon
+	37: {width: 27, height: 27, yOffset:  1, pixelArt: false}, // Ship 1
+	38: {width: 29, height: 30, yOffset:  0, pixelArt: false}, // Ship 2
+	39: {width: 20, height: 27, yOffset: -2, pixelArt: false}, // Compass points	
+	40: {width: 14, height: 12, yOffset:  0, pixelArt: false}, // Spawn
+	41: {width: 18, height: 16, yOffset:  0, pixelArt: false}, // Marker
+	42: {width: 14, height: 22, yOffset: -4, pixelArt: false}, // Marker2
+	43: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // Chest
+	44: {width: 14, height: 16, yOffset: -1, pixelArt: true},  // EnchantingRoom
+	45: {width: 11, height: 13, yOffset:  0, pixelArt: true},  // Anvil
+	46: {width: 28, height: 18, yOffset:  1, pixelArt: false}, // Sea monster
+	47: {width: 28, height: 30, yOffset:  1, pixelArt: false}  // Ice spikes
 }
 
 
@@ -1019,7 +1020,7 @@ function parseHtmlLocations(data, callback) {
  		
  		if (includeArea) {		
  			newArea.shape = 'circle';
- 			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius];
+ 			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius * gLocationScale];
  			newArea.alt = location.getAlt();
  		
  			$(newArea).appendTo(newmap);
@@ -1098,7 +1099,7 @@ function parseHtmlLocations(data, callback) {
  // if labellingStyle is set LabellingStyle.none then no captions will be rendered.
  function drawMapDetails(canvas, config, locations, labellingStyle)
  {
- 	var cTextLineHeight = 10;
+ 	var cTextLineHeight = 10 * gLocationScale;
  
  	var ctx = canvas.getContext("2d");
  	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -1148,7 +1149,7 @@ function parseHtmlLocations(data, callback) {
  
  		if (!isEmpty(text)) {
  			
- 			var textOffset = 1; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
+ 			var textOffset = 1 * gLocationScale; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
  			var lines = splitIntoLines(text);
  			var lineNo;
  			for(lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -1200,14 +1201,26 @@ function parseHtmlLocations(data, callback) {
  		var result;
  		
  		if (isNaN(iconIndex) || iconIndex < 0) {
- 			result = {width: 0, height: 0, yOffset:  0};			
+ 			result = {width: 0, height: 0, yOffset: 0, pixelArt: true};			
  		} else {	
- 			result = IconBoundsInformation[iconIndex];
- 			if (result === undefined) {
+ 			var iconBounds = IconBoundsInformation[iconIndex];
+ 			if (iconBounds === undefined) {
  				// The icon is not specified in IconBoundsInformation array, use default values
- 				result = {width: 20, height: 20, yOffset:  0};			
+ 				result = {width: 20, height: 20, yOffset: 0, pixelArt: true};			
+ 			} else {
+ 				// Clone it if we are scaling it so we don't screw up the IconBoundsInformation 
+ 				// array when we scale the result
+ 				result = (gLocationScale == 1) ? iconBounds : {
+ 					width:    iconBounds.width,
+ 					height:   iconBounds.height,
+ 					yOffset:  iconBounds.yOffset,
+ 					pixelArt: iconBounds.pixelArt
+ 				};
  			}
  		}
+ 		result.width   *= gLocationScale;
+ 		result.height  *= gLocationScale;
+ 		result.yOffset *= gLocationScale;
  		return result;
  	}
  	
@@ -1246,10 +1259,10 @@ function parseHtmlLocations(data, callback) {
  			if (index >= cCustomIconIndexStart) {
  				// it's a custom icon				
  				if (gCustomIconsLoaded) {
- 					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, drawMask, x, z);			
+ 					drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, true, drawMask, x, z);			
  				}				
  			} else {			
- 				drawGlyph(ctx, tilesImage, index, drawMask, x, z);			
+ 				drawGlyph(ctx, tilesImage, index, IconBoundsInformation[index].pixelArt, drawMask, x, z);			
  			}
  		}
  	}
@@ -1273,101 +1286,105 @@ function parseHtmlLocations(data, callback) {
  		var location_x = translateCoord_x(locationInstance.x);
  		var location_z = translateCoord_z(locationInstance.z);
  
- 		// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
- 		if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
- 			if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
- 		} else {
- 			text += locationInstance.labelOverride.text;
- 		}
- 		
- 		if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
- 			// The owner was specified, and is not named in the description, add in brackets at the bottom
- 			text += '\n(' + locationInstance.owner.text + ')';
- 		}
- 
- 		if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
- 		
- 			var iconIndex = locationInstance.getIconIndex();
- 			
- 			var textOffset;
- 			if (isNaN(iconIndex) || iconIndex < 0) {
- 				// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
- 				textOffset = 3; 
- 			} else {
- 				var boundsInfo = getIconBoundsHint(iconIndex);
- 				textOffset = cCaptionSpacer_vertical + boundsInfo.yOffset + (boundsInfo.height / 2);
- 			}
- 		
- 			var drawLabel = true;
- 			var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
- 			
- 			if (labellingStyle == LabellingStyle.smart) {			
- 				// check the space needed by the label isn't already occupied
- 				var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
- 
- 				var boxIndex
- 				for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
+ 		// don't show icons within 1/128th of the border (each map pixel is 1/64, so we're not showing icons closer than half a map pixel from the border).
+ 		var clipLimit = mapSize / 128;
+ 		if (location_x > clipLimit && location_z > clipLimit && location_x < (mapSize - clipLimit) && location_z < (mapSize - clipLimit)) {
  				
- 					var box = boundingboxes[boxIndex];
- 					var	i;
- 					for(i = 0; i < occupiedSpace.length; i++) {
- 						if (box.intersects(occupiedSpace[i])) {
- 							// a label or icon already occupies this space
- 							
- 							// make sure it's not the bounding box of our own icon that we collided with
- 							var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
- 							if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
- 								drawLabel = false;
- 								break;
+ 			// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
+ 			if (isEmpty(locationInstance.labelOverride.text) || locationInstance.labelOverride.suppress) {
+ 				if (!isEmpty(locationInstance.owner.text) && !locationInstance.owner.suppress) text += locationInstance.owner.text;
+ 			} else {
+ 				text += locationInstance.labelOverride.text;
+ 			}
+ 			
+ 			if (!isEmpty(locationInstance.owner.text) && (text.indexOf(locationInstance.owner.text) == -1) && !locationInstance.owner.suppress) {
+ 				// The owner was specified, and is not named in the description, add in brackets at the bottom
+ 				text += '\n(' + locationInstance.owner.text + ')';
+ 			}
+ 
+ 			if (!isEmpty(text) && renderLayer == RenderLayer.Captions && labellingStyle != LabellingStyle.none) {
+ 			
+ 				var iconIndex = locationInstance.getIconIndex();
+ 				
+ 				var textOffset;
+ 				if (isNaN(iconIndex) || iconIndex < 0) {
+ 					// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
+ 					textOffset = 3 * gLocationScale; 
+ 				} else {
+ 					var boundsInfo = getIconBoundsHint(iconIndex);
+ 					textOffset = (cCaptionSpacer_vertical * gLocationScale) + boundsInfo.yOffset + (boundsInfo.height / 2);
+ 				}
+ 			
+ 				var drawLabel = true;
+ 				var drawLabelRegardless = locationInstance.labelOverride.always || locationInstance.owner.always;
+ 				
+ 				if (labellingStyle == LabellingStyle.smart) {			
+ 					// check the space needed by the label isn't already occupied
+ 					var boundingboxes = locationLabel_bounds(locationInstance, text, textOffset);
+ 
+ 					var boxIndex
+ 					for(boxIndex = 0; boxIndex < boundingboxes.length; boxIndex++) {
+ 					
+ 						var box = boundingboxes[boxIndex];
+ 						var	i;
+ 						for(i = 0; i < occupiedSpace.length; i++) {
+ 							if (box.intersects(occupiedSpace[i])) {
+ 								// a label or icon already occupies this space
+ 								
+ 								// make sure it's not the bounding box of our own icon that we collided with
+ 								var ourIconBounds = icon_bounds(locationInstance.getIconIndex(), location_x, location_z, 0);
+ 								if (ourIconBounds.length == 0 || !ourIconBounds[0].equals(occupiedSpace[i])) {							
+ 									drawLabel = false;
+ 									break;
+ 								}
  							}
  						}
+ 						if (!drawLabel) break;
  					}
- 					if (!drawLabel) break;
+ 					if (drawLabel || drawLabelRegardless) {
+ 						// Add the space taken by this label to occupiedSpace
+ 						occupiedSpace = occupiedSpace.concat(boundingboxes);
+ 					}				
  				}
- 				if (drawLabel || drawLabelRegardless) {
- 					// Add the space taken by this label to occupiedSpace
- 					occupiedSpace = occupiedSpace.concat(boundingboxes);
- 				}				
- 			}
+ 					
+ 				if (drawLabel || drawLabelRegardless) { 
+ 					multilineCenteredText_draw(location_x, location_z + textOffset, text);
+ 				}
  				
- 			if (drawLabel || drawLabelRegardless) { 
- 				multilineCenteredText_draw(location_x, location_z + textOffset, text);
+ 				if (cShowBoundingBoxes) {
+ 					// debug code for showing bounding boxes
+ 					ctx.lineWidth = 1;
+ 					ctx.strokeStyle="#0000FF";
+ 					var boxes = locationLabel_bounds(locationInstance, text);
+ 					var i;
+ 					for(i = 0; i < boxes.length; i++) {
+ 						boxes[i].stroke(ctx);
+ 					}
+ 				}
  			}
  			
- 			if (cShowBoundingBoxes) {
- 				// debug code for showing bounding boxes
- 				ctx.lineWidth = 1;
- 				ctx.strokeStyle="#0000FF";
- 				var boxes = locationLabel_bounds(locationInstance, text);
- 				var i;
- 				for(i = 0; i < boxes.length; i++) {
- 					boxes[i].stroke(ctx);
- 				}
+ 			if (renderLayer == RenderLayer.Masks) {		
+ 				icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
  			}
- 		}
- 		
- 		if (renderLayer == RenderLayer.Masks) {		
- 			icon_draw(locationInstance.getIconIndex(), true, location_x, location_z);
- 		}
  
- 		if (isEmpty(text)) {
- 			if (renderLayer == RenderLayer.UncaptionedIcons) {		
- 				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+ 			if (isEmpty(text)) {
+ 				if (renderLayer == RenderLayer.UncaptionedIcons) {		
+ 					icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+ 				}
+ 			} else {
+ 				if (renderLayer == RenderLayer.CaptionedIcons) {		
+ 					icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
+ 				}		
  			}
- 		} else {
- 			if (renderLayer == RenderLayer.CaptionedIcons) {		
- 				icon_draw(locationInstance.getIconIndex(), false, location_x, location_z);
- 			}		
  		}
- 		
  	}
  	
  	function drawOrigin() {
- 		var crosshairSize = 8;
+ 		var crosshairSize = 8 * gLocationScale;
  		var originX = Math.round(translateCoord_x(0));
  		var originZ = Math.round(translateCoord_z(0));
  			
- 		ctx.lineWidth = 2;
+ 		ctx.lineWidth = 2 * gLocationScale;
  		ctx.strokeStyle="#6e5830";
  		ctx.moveTo(originX, originZ - crosshairSize);
  		ctx.lineTo(originX, originZ + crosshairSize);
@@ -1386,7 +1403,7 @@ function parseHtmlLocations(data, callback) {
  		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
  		var notchHeight = Math.round(blockSize * 0.4);
  
- 		ctx.lineWidth = 2;
+ 		ctx.lineWidth = 2 * gLocationScale;
  		ctx.strokeStyle="#6e5830";
  		ctx.moveTo(scaleStartX, scaleStartY);
  		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
@@ -1427,8 +1444,9 @@ function parseHtmlLocations(data, callback) {
  	}	
  
  		
- 	ctx.font = "10px Arial";	
- 	ctx.font = "10px 'Merienda', Arial, sans-serif";	
+ 	ctx.font = 10 * gLocationScale + "px Arial";	
+ 	ctx.font = 10 * gLocationScale + "px 'Merienda', Arial, sans-serif";	
+ 	if (gLocationScale > 1) ctx.fillStyle = '#553A24'; // At a scale of 1, text is so thin it's better to leave the color as black. Otherwise dark brown.
  	
  	var renderLayer;
  	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
@@ -1457,12 +1475,15 @@ function parseHtmlLocations(data, callback) {
  	}
  }
  
- function setCanvasScalingToPixelated(ctx) {
+ function setCanvasScalingToPixelated(ctx, makePixelated) {
+ 
+ 	if (makePixelated === undefined) makePixelated = true;
+ 
  	// Make the paper-background scaling pixelated on as many browsers as possible (to match Minecraft's artistic direction)
- 	ctx.mozImageSmoothingEnabled = false;
- 	ctx.webkitImageSmoothingEnabled = false;
- 	ctx.msImageSmoothingEnabled = false;
- 	ctx.imageSmoothingEnabled = false;
+ 	ctx.mozImageSmoothingEnabled = !makePixelated;
+ 	ctx.webkitImageSmoothingEnabled = !makePixelated;
+ 	ctx.msImageSmoothingEnabled = !makePixelated;
+ 	ctx.imageSmoothingEnabled = !makePixelated;
  }
  
  // Put any rendering tasks in here that should be performed only once (instead
@@ -1491,21 +1512,27 @@ function parseHtmlLocations(data, callback) {
  //
  // tilesImage: an img element
  // drawMask: if True, the icon mask will be drawn (i.e. the bottom row)
- function drawGlyph(canvasContext, tilesImage, tileIndex, drawMask, x, y) {
+ function drawGlyph(canvasContext, tilesImage, tileIndex, isPixelArt, drawMask, x, y) {
  
  	var width = tilesImage.height / 2;
- 	var halfWidth = width / 2;
+ 	var halfDestWidth = (width / 2) * gLocationScale;
  
+ 	
+ 	if (gLocationScale != 1) {
+ 		// Icon is being scaled, determine which way to scale it
+ 		setCanvasScalingToPixelated(canvasContext, isPixelArt && !drawMask);
+ 	}
+ 	
  	canvasContext.drawImage(
  		tilesImage,
  		tileIndex * width,
  		drawMask ? width : 0,
  		width,
  		width,
- 		x - halfWidth,
- 		y - halfWidth,
- 		width,
- 		width
+ 		x - halfDestWidth,
+ 		y - halfDestWidth,
+ 		width * gLocationScale,
+ 		width * gLocationScale
  	);
  }
  /********************************************
