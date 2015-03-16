@@ -27,7 +27,8 @@ var gHrefTargetDefault      = '';    // Set this using SetDefaultHrefTarget(), i
 var gCustomIcons            = new Image();
 var gCustomIconsLoaded      = false;
 var gOceanMapImage          = null;  // will be set to an Image if an ocean mask is provided.
-var gLocationScale          = 1;     // Allows Locations to be scaled up for better font resolution in posters
+var gLocationIconScale      = 1;     // Allows Locations to be scaled up for better font resolution in posters
+var gLocationFontScale      = 1;     // Allows Locations to be scaled up for better font resolution in posters
 
 
 /********************************************
@@ -1020,7 +1021,7 @@ function parseHtmlLocations(data, callback) {
  		
  		if (includeArea) {		
  			newArea.shape = 'circle';
- 			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius * gLocationScale];
+ 			newArea.coords = [translateCoord_x(location.x), translateCoord_z(location.z), cClickRadius * gLocationIconScale];
  			newArea.alt = location.getAlt();
  		
  			$(newArea).appendTo(newmap);
@@ -1099,7 +1100,7 @@ function parseHtmlLocations(data, callback) {
  // if labellingStyle is set LabellingStyle.none then no captions will be rendered.
  function drawMapDetails(canvas, config, locations, labellingStyle)
  {
- 	var cTextLineHeight = 10 * gLocationScale;
+ 	var cTextLineHeight = 10 * gLocationFontScale;
  
  	var ctx = canvas.getContext("2d");
  	var mapSize = canvas.width > canvas.height ? canvas.width : canvas.height;
@@ -1149,7 +1150,7 @@ function parseHtmlLocations(data, callback) {
  
  		if (!isEmpty(text)) {
  			
- 			var textOffset = 1 * gLocationScale; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
+ 			var textOffset = 1 * gLocationFontScale; // a starting offset of 1 is better by eye than 0, dunno if it's due to font, browser, or canvas
  			var lines = splitIntoLines(text);
  			var lineNo;
  			for(lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -1210,7 +1211,7 @@ function parseHtmlLocations(data, callback) {
  			} else {
  				// Clone it if we are scaling it so we don't screw up the IconBoundsInformation 
  				// array when we scale the result
- 				result = (gLocationScale == 1) ? iconBounds : {
+ 				result = (gLocationIconScale == 1) ? iconBounds : {
  					width:    iconBounds.width,
  					height:   iconBounds.height,
  					yOffset:  iconBounds.yOffset,
@@ -1218,9 +1219,9 @@ function parseHtmlLocations(data, callback) {
  				};
  			}
  		}
- 		result.width   *= gLocationScale;
- 		result.height  *= gLocationScale;
- 		result.yOffset *= gLocationScale;
+ 		result.width   *= gLocationIconScale;
+ 		result.height  *= gLocationIconScale;
+ 		result.yOffset *= gLocationIconScale;
  		return result;
  	}
  	
@@ -1287,7 +1288,7 @@ function parseHtmlLocations(data, callback) {
  		var location_z = translateCoord_z(locationInstance.z);
  
  		// don't show icons within 1/128th of the border (each map pixel is 1/64, so we're not showing icons closer than half a map pixel from the border).
- 		var clipLimit = Math.min(mapSize / 128, 8 * gLocationScale);
+ 		var clipLimit = Math.max(mapSize / 128, 8 * gLocationIconScale);
  		if (location_x > clipLimit && location_z > clipLimit && location_x < (mapSize - clipLimit) && location_z < (mapSize - clipLimit)) {
  				
  			// Use labelOverride instead of getLabel so that default labels will be dropped (the icon will be enough)
@@ -1309,10 +1310,10 @@ function parseHtmlLocations(data, callback) {
  				var textOffset;
  				if (isNaN(iconIndex) || iconIndex < 0) {
  					// Put the text where the icon would be. Text is 6px to 8px high, so add half of that
- 					textOffset = 3 * gLocationScale; 
+ 					textOffset = 3 * gLocationFontScale; 
  				} else {
  					var boundsInfo = getIconBoundsHint(iconIndex);
- 					textOffset = (cCaptionSpacer_vertical * gLocationScale) + boundsInfo.yOffset + (boundsInfo.height / 2);
+ 					textOffset = (cCaptionSpacer_vertical * gLocationFontScale) + boundsInfo.yOffset + (boundsInfo.height / 2);
  				}
  			
  				var drawLabel = true;
@@ -1380,11 +1381,11 @@ function parseHtmlLocations(data, callback) {
  	}
  	
  	function drawOrigin() {
- 		var crosshairSize = 8 * gLocationScale;
+ 		var crosshairSize = 8 * gLocationIconScale;
  		var originX = Math.round(translateCoord_x(0));
  		var originZ = Math.round(translateCoord_z(0));
  			
- 		ctx.lineWidth = 2 * gLocationScale;
+ 		ctx.lineWidth = 2 * gLocationIconScale;
  		ctx.strokeStyle="#6e5830";
  		ctx.moveTo(originX, originZ - crosshairSize);
  		ctx.lineTo(originX, originZ + crosshairSize);
@@ -1403,7 +1404,7 @@ function parseHtmlLocations(data, callback) {
  		var scaleStartY = Math.round(($('#map-background').height() - 6) * blockSize);
  		var notchHeight = Math.round(blockSize * 0.4);
  
- 		ctx.lineWidth = 2 * gLocationScale;
+ 		ctx.lineWidth = 2 * gLocationFontScale;
  		ctx.strokeStyle="#6e5830";
  		ctx.moveTo(scaleStartX, scaleStartY);
  		ctx.lineTo(scaleStartX + Math.round(blockSize * scaleLength_bl), scaleStartY);
@@ -1444,9 +1445,9 @@ function parseHtmlLocations(data, callback) {
  	}	
  
  		
- 	ctx.font = 10 * gLocationScale + "px Arial";	
- 	ctx.font = 10 * gLocationScale + "px 'Merienda', Arial, sans-serif";	
- 	if (gLocationScale > 1) ctx.fillStyle = '#553A24'; // At a scale of 1, text is so thin it's better to leave the color as black. Otherwise dark brown.
+ 	ctx.font = cTextLineHeight + "px Arial";
+ 	ctx.font = cTextLineHeight + "px 'Merienda', Arial, sans-serif";	
+ 	if (gLocationFontScale > 1) ctx.fillStyle = '#553A24'; // At a scale of 1, text is so thin it's better to leave the color as black. Otherwise dark brown.
  	
  	var renderLayer;
  	for (renderLayer = RenderLayer.First; renderLayer <= RenderLayer.Last; renderLayer++) {
@@ -1515,10 +1516,10 @@ function parseHtmlLocations(data, callback) {
  function drawGlyph(canvasContext, tilesImage, tileIndex, isPixelArt, drawMask, x, y) {
  
  	var width = tilesImage.height / 2;
- 	var halfDestWidth = (width / 2) * gLocationScale;
+ 	var halfDestWidth = (width / 2) * gLocationIconScale;
  
  	
- 	if (gLocationScale != 1) {
+ 	if (gLocationIconScale != 1) {
  		// Icon is being scaled, determine which way to scale it
  		setCanvasScalingToPixelated(canvasContext, isPixelArt && !drawMask);
  	}
@@ -1531,8 +1532,8 @@ function parseHtmlLocations(data, callback) {
  		width,
  		x - halfDestWidth,
  		y - halfDestWidth,
- 		width * gLocationScale,
- 		width * gLocationScale
+ 		width * gLocationIconScale,
+ 		width * gLocationIconScale
  	);
  }
  /********************************************

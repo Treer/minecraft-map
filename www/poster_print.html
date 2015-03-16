@@ -24,6 +24,7 @@ var gLocations;
 var gPosterDpi;
 var gPosterWidth;
 var gPosterIconScale;
+var gPosterFontScale;
 
 head.js(
    {jquery:            "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"},
@@ -40,6 +41,7 @@ head.js(
 function UpdateUI() {
 	$('#inputwidth').val(gPosterWidth);
 	$('#inputiconscale').val(gPosterIconScale);
+	$('#inputfontscale').val(gPosterFontScale);
 	$('#inputrange').val(gConfig.MapRange);
 	$('#inputdpi').val(gPosterDpi);
 	
@@ -58,6 +60,10 @@ function UpdateValues() {
 	$('#inputiconscale').css("color", isNaN(gPosterIconScale) ? "Red" : "Black");
 	if (isNaN(gPosterIconScale)) errorMessage += " icon-scale";
 
+	gPosterFontScale = parseFloat($('#inputfontscale').val());
+	$('#inputfontscale').css("color", isNaN(gPosterFontScale) ? "Red" : "Black");
+	if (isNaN(gPosterFontScale)) errorMessage += " font-scale";
+	
 	gConfig.MapRange = parseInt($('#inputrange').val());
 	$('#inputrange').css("color", isNaN(gConfig.MapRange) ? "Red" : "Black");
 	if (isNaN(gConfig.MapRange)) errorMessage += " map-range";
@@ -81,13 +87,15 @@ function UpdatePrediction() {
 	var width_inches = gPosterWidth / gPosterDpi;
 	var width_mm = width_inches * 25.4;
 	
-	var textHeight_px = 10 * gPosterIconScale;
+	var textHeight_px = 10 * gPosterFontScale;
 	var textHeight_inches = textHeight_px / gPosterDpi;
 	var textHeight_mm = textHeight_inches * 25.4;
 	
 	var size_MB = (gPosterWidth * gPosterWidth * 4) / (1024 * 1024);
 	
+	$('#posterPrediction').css("color", "#006600");
 	$('#posterPrediction').text("This image will require at least " + Math.round(size_MB) + " MB of memory to display. Poster will be " + width_mm.toFixed(1) + " mm wide (" + width_inches.toFixed(2) + "\") if printed at " + gPosterDpi.toFixed(0) + " dpi. Captions will be " + textHeight_mm.toFixed(1) + " mm high (" + textHeight_inches.toFixed(2) + "\").");
+	
 }
 	
 function RenderPoster() {
@@ -96,20 +104,21 @@ function RenderPoster() {
 	
 	// clear any previous map
 	$('#poster').html("");
-	$('#posterDescription').text(gPosterWidth + "px \u2715 " + gPosterWidth + "px map, " + gConfig.MapRange * 2 + " blocks across, with icons & captions scaled up by a factor of " + gPosterIconScale + ". URL arguments: " + location.search);
+	$('#posterDescription').text(gPosterWidth + "px \u2715 " + gPosterWidth + "px map, " + gConfig.MapRange * 2 + " blocks across, with icons scaled up by a factor of " + gPosterIconScale + ", and captions scaled up by " + gPosterFontScale + ". URL arguments: " + location.search);
 	
 	
 	var showAllLabels = $('#inputalllabels').is(':checked');
 	gConfig.ShowLabelsBelow = showAllLabels ? 3 : 5;
 	
-	gLocationScale = gPosterIconScale;	
+	gLocationIconScale = gPosterIconScale;	
+	gLocationFontScale = gPosterFontScale;	
 	
 	
 	PreRender_PreserveMapBackground(
 		gConfig,
 		function() {
 			createMapImageInDiv(
-				4, 
+				4, // this value is between the two values we might set for ShowLabelsBelow
 				"poster", 
 				gPosterWidth, 
 				gPosterWidth, // 6800 is 576mm at 300dpi, A1 is 594mm wide, which leaves a 9mm print margin
@@ -141,9 +150,14 @@ function PreRender_PreserveMapBackground(config, callback) {
 			mapBackgroundSourceImage,
 			gOceanMapImage
 		);		
-		mapBackgroundImage.onload = callback;
-		mapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
-	}	
+		
+		var newMapBackgroundImage = new Image();
+		newMapBackgroundImage.onload = callback;
+		newMapBackgroundImage.src = newMapBackgroundCanvas.toDataURL("image/png");
+		mapBackgroundImage.src = newMapBackgroundImage.src;
+	} else {
+		callback();
+	}
 }
 </script>
 
@@ -159,19 +173,26 @@ function PreRender_PreserveMapBackground(config, callback) {
 
 	<p>This page renders a high resolution map image which can be used to print a poster</p>
 
+	<p style="  font-size: 80%; font-style: italic;">Note that Javascript cannot save the print-size in this image file, so after saving your map image, you'll have to load it into a paint program to specify how big you want it to print.</p>
+	
+	
 	<div id="controlpanel" style="display: none;">
 		<table>
 			<tr>
 				<td><input id="inputwidth" name="inputwidth" type="text" onChange="UpdateValues();" /></td>
-				<td>Horizontal and vertical pixel dimensions of map, in pixels (recommend 6800 or lower) </td>
+				<td>Horizontal and vertical pixel dimensions of map, in pixels. (Recommend 6800 or lower) </td>
 			</tr>
 			<tr>
 				<td><input id="inputiconscale" name="inputiconscale" type="text" onChange="UpdateValues();"/></td>
-				<td>Scale factor for icons and their captions. Pixelated icons will look best if this is a round number. (Recommend from 2 to 8, depending on the pixel dimensions of the map) </td>
+				<td>Scale-factor for icons. Pixelated icons will look best if this is a round number. (Recommend from 2 to 6, depending on the pixel dimensions of the map) </td>
+			</tr>
+			<tr>
+				<td><input id="inputfontscale" name="inputfontscale" type="text" onChange="UpdateValues();"/></td>
+				<td>Scale-factor for captions. (Recommend using similar value to your scale-factor for icons, but this scale number needn't to be round) </td>
 			</tr>
 			<tr>
 				<td><input id="inputrange" name="inputrange" type="text" onChange="UpdateValues();"/></td>
-				<td>Map range. This sets the radius the map will cover, measured in Minecraft blocks. (Double it to get the block-dimensions of the map)</td>
+				<td>Map range. This sets the radius the map will cover, measured in Minecraft blocks. (Double this to get the block-dimensions of the map)</td>
 			</tr>
 			<tr>
 				<td><input id="inputdpi" name="inputdpi" type="text" onChange="UpdateValues();"/></td>
@@ -237,9 +258,11 @@ head.ready(
 					head.screen.height,
 					function(config, locations) {
 					
+						// These are good defaults for an A1 colour print.
 						gPosterDpi = 150;
 						gPosterWidth = 3400;
-						gPosterIconScale = 3;					
+						gPosterIconScale = 2;					
+						gPosterFontScale = 2;					
 					
 						gConfig = config;
 						gLocations = locations;
