@@ -205,6 +205,7 @@
 	</div>
 
     <p>The map lets any player show locations of interest in the world without spoiling the element of exploration.</p>
+	<p>No access to the Minecraft server files is required to create a map, and having your own web hosting is not necessary either.</p>
 
     <p class="note">(Alternately, for anyone with admin access to the server, their own hosting, and who doesn't mind removing the element of exploration,
     <a href="http://minecraft.gamepedia.com/Programs_and_editors/Mapping#Mappers">map systems</a> such as <a href="http://overviewer.org">Overviewer</a> can 
@@ -301,7 +302,7 @@
 
     <p>You can <a href="exportfromseed.html">automatically generate your location-list file</a> if you know the seed for the world.</p>
 
-    <p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can use F3 in Minecraft to get coordinates (<a href="#Tips_rei">or from Rei's Minimap</a>).</p>
+    <p>The Location list file is a list of locations, one per line. Each line gives a location type and its Minecraft x and z coordinates. You can <a href="http://minecraft.gamepedia.com/Coordinates#Displaying_Coordinates">use F3</a> in Minecraft to get coordinates (<a href="#Tips_rei">or from Rei's Minimap</a>).</p>
 
     <p>If your location list file is a text file, then the filename must end in either <code>.txt</code> or <code>.csv</code> (I recommend .txt because an office application
     might open a .csv file and mess it up). Locations are specified in comma separated format. For example:</p>
@@ -333,7 +334,7 @@ PlayerHouse,   -800, -1800, "Dr.Frankenstone's mountain lair", "Dr.Frankenstone"
 
     <p>(Or with a combination of bullet lists and tables)</p>
 
-    <p><a href="#Settings">Settings</a> for the map, such as <span class="setting">showcoordinates</span> can also be specified in your location list file.</p>
+    <p><a href="#Settings">Settings</a> for the map, such as <a href="#settings_showcoords_heading"><span class="setting">showcoordinates</span></a> can also be specified in your location list file.</p>
 
     <p>Any line in the file that does not start with one of the <a href="#locationTypes">location-types</a> or a <a href="#SettingNames">setting-name</a> is ignored. So the line containing column headings is ignored, because "type" is not a location name nor the name of a setting.</p>
 
@@ -667,20 +668,22 @@ range = 6400</pre>
 	<li>Obtain the seed for your world.
 		<br/>
 		<p style="margin-left: 2em">You can do this by typing the <code>/seed</code> command into the Minecraft console while you're playing in that world (press T). If you're
-	playing on a server then you'll probably need to ask the server administrator for the seed &mdash; and they may say no. The <code>/seed</code> command doesn't let you
-	copy/paste the seed, so if it's too long to remember then you can exit to the menus, select your world in Single Player, and click the "Re-Create" button, followed by the 
-	"More World Options..." button &mdash; this shows the seed in a textbox where you can use Ctrl+A Ctrl+C to select and copy it.</p></li>
+		playing on a server then you'll probably need to ask the server administrator for the seed &mdash; and they may say no, since the seed can be used to create a very detailed
+		map. If they say no, you could ask the server administrator to generate the ocean mask file themselves and send you that instead of the actual seed (worked with my server admin!).<p>
+		<p style="margin-left: 2em">The <code>/seed</code> command doesn't let you
+		copy/paste the seed, so if it's too long to remember then you can exit to the menus, select your world in Single Player, and click the "Re-Create" button, followed by the 
+		"More World Options..." button &mdash; this shows the seed in a textbox where you can use Ctrl+A Ctrl+C to select and copy it.</p></li>
 	
 	<li><a href="exportfromseed.html">Use AmidstExporter</a> to export the ocean mask <code>.png</code> file. <span style="font-size: 75%">(<a href="${GoogleDriveUrl_mapGenerator}/example-ocean.png">an example of an ocean mask</a>)</span></li>
 	
-	<li>Copy your ocean mask file to the same place as you keep your locations list file, and add an <a href="#settings_oceansrc"><span class="setting">oceansrc</span></a>
-	setting (or <a href="#settings_oceansrc"><span class="setting">oceangooglesrc</span></a>) to the URL &mdash; just like how the <span class="setting">src</span> setting
+	<li>Copy your ocean mask file to the same place as you keep your locations list file, and add an <a href="#settings_oceansrc_heading"><span class="setting">oceansrc</span></a>
+	setting (or <a href="#settings_oceansrc_heading"><span class="setting">oceangooglesrc</span></a>) to the URL &mdash; just like how the <span class="setting">src</span> setting
 	points to your locations list file.</li>
 		
 	<li>You're done!</li>
 	</ol>
 	
-	<p>If you like, you can <a href="#settings_oceantheme">choose a style</a> for how the ocean will be shown.</p>
+	<p>If you like, you can <a href="#settings_oceantheme_heading">choose a style</a> for how the ocean will be shown.</p>
 	
 	<h2><a id="AddingOceans_examples"></a>Examples</h2>
     <a style="font-size: 75%" href="${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&oceansrc=example-ocean.png">${GoogleDriveUrl_mapGenerator}/index.html?src=example.txt&amp;oceansrc=example-ocean.png</a>
