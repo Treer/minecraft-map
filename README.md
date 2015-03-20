@@ -10,5 +10,5 @@ repository.
 File structure:
 
 * /www - the files you need to run your own map
-* /src - files that were used to create the files in the www directory
+* /src - files that were used to create the files in the www directory. You won't need these files unless you want to mod or fork the map system.
 * /template - some examples that might be helpful as guides
