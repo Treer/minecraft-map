@@ -330,7 +330,7 @@ module MinecraftMap {
 
 				if (index >= cCustomIconIndexStart) {
 					// it's a custom icon
-					if (gCustomIconsLoaded) {
+					if (gCustomIcons !== null) {
 						drawGlyph(ctx, gCustomIcons, index - cCustomIconIndexStart, true, drawMask, x, z);
 					}
 				} else {
