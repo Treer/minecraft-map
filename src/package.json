@@ -1,0 +1,27 @@
+{
+  "name":        "ink-and-parchment-map",
+  "description": "Online map for SMP Minecraft servers that don't want to spoil the need to explore.",
+  "homepage":    "http://buildingwithblocks.info/",
+  "repository": { 
+    "type": "git",
+    "url": "https://github.com/Treer/minecraft-map" 
+  },
+  "bugs": { "url": "https://github.com/Treer/minecraft-map/issues" },
+  "readme": "..\readme.md",
+  
+  "devDependencies": {
+    "typescript": "latest",
+    "uglify-js":  "latest",
+	"copyfiles":  "latest"
+  },
+  
+  "scripts": {
+	"quickbuild": "tsc --project scripts",
+    "build":      "npm run quickbuild",
+	"postbuild":  "npm run minifyBuild && npm run outputRawLibs && npm run outputMinifiedLibs",
+	
+	"minifyBuild":        "cd ..\\www\\js\\ && uglifyjs --in-source-map minecraftmap.js.map  --comments --compress --mangle --lint --output minecraftmap.min.js --source-map minecraftmap.min.js.map",
+	"outputMinifiedLibs": "uglifyjs scripts\\libs\\csv.js  --comments --compress --mangle --lint --output ..\\www\\js\\csv.min.js && uglifyjs scripts\\libs\\StackBlur.js  --comments --compress --mangle --lint --output ..\\www\\js\\StackBlur.min.js",
+	"outputRawLibs":      "copyfiles scripts\\libs\\*.js ..\\www\\js\\"
+  }
+}

@@ -126,9 +126,9 @@ head.ready(
 				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
 				// then uncomment the SetDefaultSrc() line below:
 				// =================				
-				// SetDefaultSrc('default.txt');
+				// MinecraftMap.SetDefaultSrc('default.txt');
 							
-				getSettingsAndMapLocations(
+				MinecraftMap.getSettingsAndMapLocations(
 					head.screen.width,
 					head.screen.height,
 					function(config, locations) {
@@ -138,7 +138,7 @@ head.ready(
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[
@@ -153,7 +153,7 @@ head.ready(
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[
@@ -166,7 +166,7 @@ head.ready(
 							);
 							
 						} else {
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[

@@ -117,7 +117,7 @@ function RenderPoster() {
 	PreRender_PreserveMapBackground(
 		gConfig,
 		function() {
-			createMapImageInDiv(
+			MinecraftMap.createMapImageInDiv(
 				4, // this value is between the two values we might set for ShowLabelsBelow
 				"poster", 
 				gPosterWidth, 
@@ -138,17 +138,17 @@ function FinishedRendering() {
 // Copy of PreRender() that's been modified to allow it to be called multiple times
 function PreRender_PreserveMapBackground(config, callback) {
 	
-	if (gOceanMapImage != null) {
+	if (MinecraftMap.gOceanMapImage != null) {
 		// An oceanmask has been provided, render a new map-background with
 		// it instead of using the default one.
 	
 		var mapBackgroundSourceImage = document.getElementById('map-background-original');
 		var mapBackgroundImage = document.getElementById('map-background');
 
-		var newMapBackgroundCanvas = renderOcean(
+		var newMapBackgroundCanvas = MinecraftMap.renderOcean(
 			config,
 			mapBackgroundSourceImage,
-			gOceanMapImage
+			MinecraftMap.gOceanMapImage
 		);		
 		
 		var newMapBackgroundImage = new Image();
@@ -253,7 +253,7 @@ head.ready(
 				// =================				
 				// SetDefaultSrc('default.txt');
 							
-				getSettingsAndMapLocations(
+				MinecraftMap.getSettingsAndMapLocations(
 					head.screen.width,
 					head.screen.height,
 					function(config, locations) {

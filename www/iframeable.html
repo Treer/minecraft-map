@@ -94,13 +94,13 @@ head.ready(
 				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
 				// then uncomment the SetDefaultSrc() line below:
 				// =================				
-				// SetDefaultSrc('default.txt');
+				// MinecraftMap.SetDefaultSrc('default.txt');
 							
 				// Because we're running in an iframe, we want links to open in the parent window, unless
 				// the link explicitly specifies otherwise.
-				SetDefaultHrefTarget("_parent");
+				MinecraftMap.SetDefaultHrefTarget("_parent");
 							
-				getSettingsAndMapLocations(
+				MinecraftMap.getSettingsAndMapLocations(
 					$(window).width(),
 					$(window).height(),
 					function(config, locations) {
@@ -110,7 +110,7 @@ head.ready(
 						if ($(window).height() < 630 || $(window).width() < 630) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[
@@ -125,7 +125,7 @@ head.ready(
 						} else if ($(window).height() < 800 || $(window).width() < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[
@@ -138,7 +138,7 @@ head.ready(
 							);
 							
 						} else {
-							createMapsInDivs_Async(
+							MinecraftMap.createMapsInDivs_Async(
 								config, 
 								locations,
 								[
