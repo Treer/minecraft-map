@@ -1,13 +1,21 @@
 {
 	"name":        "ink-and-parchment-map",
+	"version":     "2.0.0",
 	"description": "Online map for SMP Minecraft servers that don't want to spoil the need to explore.",
+	"license":     "SEE LICENSE IN License.md",
+	"keywords":    [ "minecraft", "map" ],
 	"homepage":    "http://buildingwithblocks.info/",
+	"author":      { "name": "Glenn Fisher", "email": "treer.git@gmail.com" },
 	"repository": {
 		"type": "git",
 		"url":  "https://github.com/Treer/minecraft-map"
 	},
 	"bugs": { "url": "https://github.com/Treer/minecraft-map/issues" },
 	"readme": "../readme.md",
+	"contributors":
+	[
+		{ "name": "Mike Lippert", "email": "mlippert255@gmail.com" }
+	],
 
 	"devDependencies": {
 		"typescript": "latest",
