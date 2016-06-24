@@ -4,7 +4,7 @@
  Copyright 2015 Glenn Fisher (except for attributed code snippets)
 
 ****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 
