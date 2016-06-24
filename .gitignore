@@ -1,0 +1,64 @@
+# Files we don't want in *this* repository #
+############################################
+# Windows shortcut files
+*.lnk
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Installed node packages #
+###########################
+node_modules/
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Backup files #
+################
+*.bak
+*~
+*.swp
+
+# Logs and databases #
+######################
+*.log
+*.log.xml
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+.directory
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# IDE #
+##########
+.idea
+
+# Cached #
+##########
+.sonar
+
