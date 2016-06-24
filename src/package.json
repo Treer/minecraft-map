@@ -18,9 +18,9 @@
 	],
 
 	"devDependencies": {
-		"typescript": "latest",
-		"uglify-js":  "latest",
-		"copyfiles":  "latest"
+		"typescript": "^1.8.10",
+		"uglify-js":  "^2.6.4",
+		"copyfiles":  "^1.0.0"
 	},
 
 	"scripts": {
