@@ -4,7 +4,7 @@
 		"noEmitOnError": true,
 		"removeComments": false,
 		"sourceMap": true,
-		"out": "../www/js/minecraftmap.js",
+		"outFile": "../www/js/minecraftmap.js",
 		"target": "es5"
 	}
 }
