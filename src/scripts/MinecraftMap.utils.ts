@@ -15,11 +15,11 @@ namespace MinecraftMap {
 	}
 
 	export function isString(str) {
-		return (typeof str == 'string' || str instanceof String);
+		return (typeof str === 'string' || str instanceof String);
 	}
 
 	export function isNotEmptyString(str) {
-		return (typeof str == 'string' || str instanceof String) && str.length > 0;
+		return (typeof str === 'string' || str instanceof String) && str.length > 0;
 	}
 
 	export function isFunction(item) {
