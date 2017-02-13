@@ -387,7 +387,7 @@ namespace MinecraftMap {
 			}
 
 			if ('oceansrc' in locationInfo.params && isString(locationInfo.params.oceansrc)) {
-				this.OceanMapUri = locationInfo.params.oceansrc;
+				this.OceanMapUri = decodeURIComponent(locationInfo.params.oceansrc);
 			}
 			if ('oceangooglesrc' in locationInfo.params && isString(locationInfo.params.oceangooglesrc)) {
 
