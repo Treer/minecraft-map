@@ -325,7 +325,7 @@ var MinecraftMap;
                 this.ShowOrigin = false;
             if ('hidescale' in locationInfo.params)
                 this.ShowScale = false;
-            // or showoroigin and showscale could be specified explicitly
+            // or showorigin and showscale could be specified explicitly
             if ('showorigin' in locationInfo.params && MinecraftMap.isString(locationInfo.params.showorigin)) {
                 this.ShowOrigin = MinecraftMap.stringToBool(locationInfo.params.showorigin);
             }
@@ -368,11 +368,11 @@ var MinecraftMap;
                 }
             }
             if ('oceansrc' in locationInfo.params && MinecraftMap.isString(locationInfo.params.oceansrc)) {
-                this.OceanMapUri = locationInfo.params.oceansrc;
+                this.OceanMapUri = decodeURIComponent(locationInfo.params.oceansrc);
             }
             if ('oceangooglesrc' in locationInfo.params && MinecraftMap.isString(locationInfo.params.oceangooglesrc)) {
                 if (locationInfo.params.oceangooglesrc.toLowerCase().indexOf('http') == 0) {
-                    // User has used googlesrc when they should have used src. Rather than
+                    // User has used oceangooglesrc when they should have used oceansrc. Rather than
                     // explain the error just correct it.
                     this.OceanMapUri = locationInfo.params.oceangooglesrc;
                 }
@@ -408,25 +408,21 @@ var MinecraftMap;
             };
         };
         return MapConfiguration;
-    })();
+    }());
     MinecraftMap.MapConfiguration = MapConfiguration;
     // -----------------------------
     var SuppressableLabel = (function () {
         // Constructor
         // text: the text of the label.
-        // labellingStyleOverride: an enumeration of type LabellingStyleOverride indicating whether the text should
+        // displayOverride: an enumeration of type LabellingStyleOverride indicating whether the text should
         // be suppressed from the map rendering (only shown on hover etc.), always drawn regardless of the labellingStyle
         // of the zoom level, or drawn when suitable (default)
-        function SuppressableLabel(text, labellingStyleOverride) {
+        function SuppressableLabel(text, displayOverride) {
+            if (displayOverride === void 0) { displayOverride = LabellingStyleOverride.normal; }
             this.text = text;
-            if (labellingStyleOverride === undefined) {
-                this.displayOverride = LabellingStyleOverride.normal;
-            }
-            else {
-                this.displayOverride = labellingStyleOverride;
-            }
-            this.suppress = this.displayOverride == LabellingStyleOverride.suppress;
-            this.always = this.displayOverride == LabellingStyleOverride.always;
+            this.displayOverride = displayOverride;
+            this.suppress = this.displayOverride === LabellingStyleOverride.suppress;
+            this.always = this.displayOverride === LabellingStyleOverride.always;
         }
         SuppressableLabel.prototype.toString = function () {
             return this.text;
@@ -438,21 +434,19 @@ var MinecraftMap;
         //    they are removed and .always is set to true.
         SuppressableLabel.parse = function (markedupLabel) {
             var result = new SuppressableLabel(markedupLabel);
-            if (MinecraftMap.isString(markedupLabel)) {
-                var trimLabelStr = MinecraftMap.trim(markedupLabel);
-                if (trimLabelStr.length >= 2) {
-                    if (trimLabelStr[0] == MinecraftMap.cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_DontDrawChar) {
-                        result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
-                    }
-                    else if (trimLabelStr[0] == MinecraftMap.cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_AlwaysDrawChar) {
-                        result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
-                    }
+            var trimLabelStr = MinecraftMap.trim(markedupLabel);
+            if (trimLabelStr.length >= 2) {
+                if (trimLabelStr[0] == MinecraftMap.cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_DontDrawChar) {
+                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
+                }
+                else if (trimLabelStr[0] == MinecraftMap.cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_AlwaysDrawChar) {
+                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
                 }
             }
             return result;
         };
         return SuppressableLabel;
-    })();
+    }());
     MinecraftMap.SuppressableLabel = SuppressableLabel;
     // -----------------------------
     var Location = (function () {
@@ -496,7 +490,7 @@ var MinecraftMap;
         };
         ;
         return Location;
-    })();
+    }());
     MinecraftMap.Location = Location;
     // -----------------------------
     var HrefAndTarget = (function () {
@@ -527,7 +521,7 @@ var MinecraftMap;
             }
         }
         return HrefAndTarget;
-    })();
+    }());
     // -----------------------------
     var Rectangle = (function () {
         // Constructor
@@ -570,7 +564,7 @@ var MinecraftMap;
                 this.y1 < rectangle.y2);
         };
         return Rectangle;
-    })();
+    }());
     MinecraftMap.Rectangle = Rectangle;
     // -----------------------------
     // Set url to an empty string if you want to make the ?src= URL parameter required,
@@ -975,7 +969,7 @@ var MinecraftMap;
             if (!isNaN(index) && index >= 0) {
                 if (index >= MinecraftMap.cCustomIconIndexStart) {
                     // it's a custom icon
-                    if (MinecraftMap.gCustomIconsLoaded) {
+                    if (MinecraftMap.gCustomIcons !== null) {
                         drawGlyph(ctx, MinecraftMap.gCustomIcons, index - MinecraftMap.cCustomIconIndexStart, true, drawMask, x, z);
                     }
                 }
@@ -1239,7 +1233,7 @@ var MinecraftMap;
             return (color_rgb instanceof RGB) && color_rgb.R == this.R && color_rgb.G == this.G && color_rgb.B == this.B;
         };
         return RGB;
-    })();
+    }());
     MinecraftMap.RGB = RGB;
     function cloneCanvas(oldCanvasOrImage) {
         var newCanvas = document.createElement('canvas');
@@ -1267,11 +1261,11 @@ var MinecraftMap;
     }
     MinecraftMap.isEmpty = isEmpty;
     function isString(str) {
-        return (typeof str == 'string' || str instanceof String);
+        return (typeof str === 'string' || str instanceof String);
     }
     MinecraftMap.isString = isString;
     function isNotEmptyString(str) {
-        return (typeof str == 'string' || str instanceof String) && str.length > 0;
+        return (typeof str === 'string' || str instanceof String) && str.length > 0;
     }
     MinecraftMap.isNotEmptyString = isNotEmptyString;
     function isFunction(item) {
@@ -1871,8 +1865,7 @@ var MinecraftMap;
     // Global variables
     MinecraftMap.gMapDataUriDefault = ''; // Set this using SetDefaultSrc(), it specifies the URL to try and load locations from if no src parameter is specified in the main URL.
     MinecraftMap.gHrefTargetDefault = ''; // Set this using SetDefaultHrefTarget(), it specifies the target to use for hrefs that don't specify a target. Normally it doesn't matter but when running in an iframe it should be set to '_parent'
-    MinecraftMap.gCustomIcons = new Image();
-    MinecraftMap.gCustomIconsLoaded = false;
+    MinecraftMap.gCustomIcons = null;
     MinecraftMap.gOceanMapImage = null; // will be set to an Image if an ocean mask is provided.
     MinecraftMap.gLocationIconScale = 1; // Allows Locations to be scaled up for better font resolution in posters
     MinecraftMap.gLocationFontScale = 1; // Allows Locations to be scaled up for better font resolution in posters
@@ -1913,9 +1906,10 @@ var MinecraftMap;
     function getSettingsAndMapLocations(screenWidth, screenHeight, callback) {
         var configFromUrl = new MinecraftMap.MapConfiguration();
         configFromUrl.AssignFromUrl(location.toString());
-        // Load the ocean mask asynchronously if possible while we load the locations file,
-        // to avoid adding delay to the pipeline.
+        // Load the ocean mask and custom icons asynchronously if possible while we load the
+        // locations file to avoid adding delay to the pipeline.
         var loadingOceanMap_deferredObj = loadOceanMap_Async(configFromUrl, false);
+        var loadingCustomIcons_deferredObj = loadCustomIcons_Async(configFromUrl, false);
         var srcUri = ('MapDataUri' in configFromUrl) ? configFromUrl.MapDataUri : MinecraftMap.gMapDataUriDefault;
         if (MinecraftMap.isNotEmptyString(srcUri)) {
             getMapDataAndLocationsFromUrl(srcUri, (configFromUrl.GoogleSrcLooksLikeDoc === true), function (configFromAjax, locationsFromAjax) {
@@ -1929,33 +1923,21 @@ var MinecraftMap;
                 // If that's the case then ocean maps and custom icons won't work on
                 // browsers with broken onload event.
                 var deferreds = [];
-                var loadCustomIcons_deferredObj = $.Deferred();
-                deferreds[0] = loadCustomIcons_deferredObj;
-                // Load the custom icons
-                if (!MinecraftMap.isEmpty(mapConfig.CustomIconsUri)) {
-                    $(MinecraftMap.gCustomIcons).bind({
-                        load: function () {
-                            MinecraftMap.gCustomIconsLoaded = true;
-                            loadCustomIcons_deferredObj.resolve();
-                        },
-                        error: function () {
-                            // Image didn't load, probably a 404
-                            loadCustomIcons_deferredObj.resolve();
-                            alert('Could not load custom icons image at "' + mapConfig.CustomIconsUri + '"');
-                        }
-                    });
-                    MinecraftMap.gCustomIcons.src = mapConfig.CustomIconsUri;
-                }
-                else {
-                    loadCustomIcons_deferredObj.resolve();
-                }
                 if (loadingOceanMap_deferredObj == null) {
                     // The ocean map hasn't been loaded yet, perhaps the configFromAjax
                     // has provided a URL to load it from, or the HTML has loaded it.
                     loadingOceanMap_deferredObj = loadOceanMap_Async(mapConfig, true);
                 }
                 if (loadingOceanMap_deferredObj != null) {
-                    deferreds[1] = loadingOceanMap_deferredObj;
+                    deferreds.push(loadingOceanMap_deferredObj);
+                }
+                if (loadingCustomIcons_deferredObj == null) {
+                    // The ocean map hasn't been loaded yet, perhaps the configFromAjax
+                    // has provided a URL to load it from, or the HTML has loaded it.
+                    loadingCustomIcons_deferredObj = loadCustomIcons_Async(mapConfig, true);
+                }
+                if (loadingCustomIcons_deferredObj != null) {
+                    deferreds.push(loadingCustomIcons_deferredObj);
                 }
                 $.when.apply($, deferreds).done(function () { callback(mapConfig, locationsFromAjax); });
             });
@@ -2018,59 +2000,98 @@ var MinecraftMap;
         // Returns null if there was nothing to load, or a jquery Deferred object
         // which will be resolved when the oceanmap is loaded
         function loadOceanMap_Async(config, tryImgTag) {
-            var result_deferredObj = $.Deferred();
+            var returned = loadImage_Async(config.OceanMapUri, tryImgTag ? 'oceanmask' : '', 'OceanMap');
+            MinecraftMap.gOceanMapImage = returned.image;
+            return returned.waitObj;
+        }
+        // Loads the custom icon image into the global variable gCustomIcons. If
+        // the config contains an CustomIconsUri then the load is attempted from
+        // the Uri, otherwise attempts to load from the "customtileset" img tag in the HTML.
+        //
+        // Returns null if there was nothing to load, or a jquery Deferred object
+        // which will be resolved when the gCustomIcons is loaded
+        function loadCustomIcons_Async(config, tryImgTag) {
+            var returned = loadImage_Async(config.CustomIconsUri, tryImgTag ? 'customtileset' : '', 'Custom-icons');
+            MinecraftMap.gCustomIcons = returned.image;
+            return returned.waitObj;
+        }
+        // Loads the oceanmap into the global variable gOceanMapImage. If
+        // the config contains an OceanMapUri then the load is attempted from
+        // the Uri, otherwise attempts to load from the "oceanmask" img tag in the HTML.
+        //
+        // Returns null if there was nothing to load, or a jquery Deferred object
+        // which will be resolved when the oceanmap is loaded
+        function loadImage_Async(uri, tryImgId, purposeDesc) {
+            var result = {
+                image: null,
+                waitObj: $.Deferred()
+            };
             // Load the ocean map
-            if (!MinecraftMap.isEmpty(config.OceanMapUri)) {
+            if (!MinecraftMap.isEmpty(uri)) {
                 // I'm getting the impression there is no reliable way to wait for
                 // an image to load, see caveats in http://api.jquery.com/load-event/
                 // If that's the case then ocean maps and custom icons won't work on
                 // browsers with broken onload event.
-                MinecraftMap.gOceanMapImage = new Image();
-                $(MinecraftMap.gOceanMapImage).bind({
-                    load: function () {
-                        // Excellent, ocean mask is loaded
-                        result_deferredObj.resolve();
-                    },
-                    error: function () {
-                        // Image didn't load, probably a 404
-                        MinecraftMap.gOceanMapImage = null;
-                        result_deferredObj.resolve();
-                        alert('Could not load oceam-map image at "' + config.OceanMapUri + '"');
-                    }
-                });
-                MinecraftMap.gOceanMapImage.crossOrigin = "Anonymous";
-                MinecraftMap.gOceanMapImage.src = config.OceanMapUri;
+                result.image = new Image();
+                var loadHandler = function () {
+                    // Excellent, ocean mask is loaded
+                    result.waitObj.resolve();
+                };
+                var errorHandler = function (err) {
+                    // Image didn't load, probably a 404
+                    result.image = null;
+                    result.waitObj.resolve();
+                    var message = 'Could not load ' + purposeDesc + ' image at "' + uri + '"';
+                    alert(message);
+                    console.log(message + ', useless error information follows: ' + JSON.stringify(err));
+                };
+                jQuery(result.image)
+                    .on('load', loadHandler)
+                    .on('error', errorHandler);
+                // Perform a cross-origin request, requires that our image hosting supports
+                // CORS and allows this.
+                // Otherwise the image will be tainted and its usage restricted, causing a
+                // "Tainted canvases may not be exported." error to be thrown by toDataURL().
+                result.image.crossOrigin = "anonymous";
+                try {
+                    result.image.src = uri;
+                    if (result.image.complete)
+                        loadHandler();
+                }
+                catch (e) {
+                    console.log('Failed to load img: ' + JSON.stringify(e));
+                }
             }
-            else if (tryImgTag) {
+            else if (MinecraftMap.isNotEmptyString(tryImgId)) {
                 // Oceanmap wasn't specified in settings, but might have been loaded in an img tag in index.html
-                MinecraftMap.gOceanMapImage = document.getElementById('oceanmask');
-                if (MinecraftMap.gOceanMapImage != null) {
+                result.image = document.getElementById(tryImgId);
+                if (result.image != null) {
                     // The "oceanmask" img appears to be present in the HTML
                     // (It feels wrong to assign an error handler in the html just to figure out if the image is good,
                     // so I'm going with isImageOk() instead, unless it turns out to be less cross-browser compatible)
-                    if (!MinecraftMap.isImageOk(MinecraftMap.gOceanMapImage)) {
+                    if (!MinecraftMap.isImageOk(result.image)) {
                         // It's a broken link.
-                        MinecraftMap.gOceanMapImage = null;
+                        result.image = null;
                         // return null to indicate the map is not loading
-                        result_deferredObj = null;
+                        result.waitObj = null;
                     }
                     else {
                         // image was already loaded with the html
-                        result_deferredObj.resolve();
+                        result.waitObj.resolve();
                     }
                 }
                 else {
                     // The oceanmask tag is commented out, or otherwise missing.
                     // return null to indicate the map is not loading
-                    result_deferredObj = null;
+                    result.waitObj = null;
                 }
             }
             else {
                 // Oceanmap wasn't specified in settings, and the value of tryImgTag says not to bother checking the img tag in index.html
                 // return null to indicate the map is not loading
-                result_deferredObj = null;
+                result.waitObj = null;
             }
-            return result_deferredObj;
+            return result;
         }
     }
     MinecraftMap.getSettingsAndMapLocations = getSettingsAndMapLocations;
