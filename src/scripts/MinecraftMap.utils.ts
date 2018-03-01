@@ -4,7 +4,7 @@
  Copyright 2015 Glenn Fisher (except for attributed code snippets)
 
 ****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 
@@ -15,11 +15,11 @@ module MinecraftMap {
 	}
 
 	export function isString(str) {
-		return (typeof str == 'string' || str instanceof String);
+		return (typeof str === 'string' || str instanceof String);
 	}
 
 	export function isNotEmptyString(str) {
-		return (typeof str == 'string' || str instanceof String) && str.length > 0;
+		return (typeof str === 'string' || str instanceof String) && str.length > 0;
 	}
 
 	export function isFunction(item) {

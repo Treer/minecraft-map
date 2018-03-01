@@ -17,7 +17,7 @@
 
  Note that other files in this project have their own licence, see \licence.md
 *****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 

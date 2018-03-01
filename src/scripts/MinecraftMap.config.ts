@@ -12,7 +12,7 @@
 
  Note that other files in this project have their own licence, see \licence.md
 *****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 	interface iLocationType {
@@ -341,7 +341,7 @@ module MinecraftMap {
 			// if "hideorigin" or "hidescale" is on the url then set ShowOrigin to false, likewise with ShowScale
 			if ('hideorigin' in locationInfo.params) this.ShowOrigin = false;
 			if ('hidescale' in locationInfo.params)  this.ShowScale  = false;
-			// or showoroigin and showscale could be specified explicitly
+			// or showorigin and showscale could be specified explicitly
 			if ('showorigin' in locationInfo.params && isString(locationInfo.params.showorigin)) {
 				this.ShowOrigin = stringToBool(locationInfo.params.showorigin);
 			}
@@ -387,12 +387,12 @@ module MinecraftMap {
 			}
 
 			if ('oceansrc' in locationInfo.params && isString(locationInfo.params.oceansrc)) {
-				this.OceanMapUri = locationInfo.params.oceansrc;
+				this.OceanMapUri = decodeURIComponent(locationInfo.params.oceansrc);
 			}
 			if ('oceangooglesrc' in locationInfo.params && isString(locationInfo.params.oceangooglesrc)) {
 
 				if (locationInfo.params.oceangooglesrc.toLowerCase().indexOf('http') == 0) {
-					// User has used googlesrc when they should have used src. Rather than
+					// User has used oceangooglesrc when they should have used oceansrc. Rather than
 					// explain the error just correct it.
 					this.OceanMapUri = locationInfo.params.oceangooglesrc;
 				} else {
@@ -439,26 +439,18 @@ module MinecraftMap {
 
 	export class SuppressableLabel {
 
-		text:            string;
-		displayOverride: LabellingStyleOverride;
 		suppress:        boolean;
 		always:          boolean;
 
 		// Constructor
 		// text: the text of the label.
-		// labellingStyleOverride: an enumeration of type LabellingStyleOverride indicating whether the text should
+		// displayOverride: an enumeration of type LabellingStyleOverride indicating whether the text should
 		// be suppressed from the map rendering (only shown on hover etc.), always drawn regardless of the labellingStyle
 		// of the zoom level, or drawn when suitable (default)
-		constructor(text: string, labellingStyleOverride?: LabellingStyleOverride) {
-			this.text = text;
-
-			if (labellingStyleOverride === undefined) {
-				this.displayOverride = LabellingStyleOverride.normal;
-			} else {
-				this.displayOverride = labellingStyleOverride
-			}
-			this.suppress = this.displayOverride == LabellingStyleOverride.suppress;
-			this.always   = this.displayOverride == LabellingStyleOverride.always;
+        constructor(public text: string,
+                    public displayOverride = LabellingStyleOverride.normal) {
+			this.suppress = this.displayOverride === LabellingStyleOverride.suppress;
+			this.always   = this.displayOverride === LabellingStyleOverride.always;
 		}
 
 		toString(): string {
@@ -474,16 +466,14 @@ module MinecraftMap {
 
 			var result = new SuppressableLabel(markedupLabel);
 
-			if (isString(markedupLabel)) {
-				var trimLabelStr = trim(markedupLabel);
-				if (trimLabelStr.length >= 2) {
-					if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {
-						result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
-					} else if (trimLabelStr[0] == cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_AlwaysDrawChar) {
-						result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
-					}
-				}
-			}
+            var trimLabelStr = trim(markedupLabel);
+            if (trimLabelStr.length >= 2) {
+                if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {
+                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
+                } else if (trimLabelStr[0] == cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_AlwaysDrawChar) {
+                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
+                }
+            }
 			return result;
 		}
 	}

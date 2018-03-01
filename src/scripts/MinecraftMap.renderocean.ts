@@ -6,7 +6,7 @@
  Copyright 2015 Glenn Fisher
 
 ****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 	var cOceanBlocksPerPixel     = 16; // scale of the oceanMaskImage

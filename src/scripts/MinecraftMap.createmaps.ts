@@ -4,7 +4,7 @@
  Copyright 2015 Glenn Fisher
 
 ****/
-module MinecraftMap {
+namespace MinecraftMap {
 	"use strict";
 
 
