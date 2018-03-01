@@ -131,7 +131,7 @@ module MinecraftMap {
 					}
 
 					if (loadingCustomIcons_deferredObj == null) {
-						// The ocean map hasn't been loaded yet, perhaps the configFromAjax
+						// The custom icons image hasn't been loaded yet, perhaps the configFromAjax
 						// has provided a URL to load it from, or the HTML has loaded it.
 						loadingCustomIcons_deferredObj = loadCustomIcons_Async(mapConfig, true);
 					}
@@ -234,12 +234,13 @@ module MinecraftMap {
 			waitObj: JQueryPromise<any>;
 		}
 
-		// Loads the oceanmap into the global variable gOceanMapImage. If
-		// the config contains an OceanMapUri then the load is attempted from
-		// the Uri, otherwise attempts to load from the "oceanmask" img tag in the HTML.
+		// Loads an image asynchronously. If a URI is provided then load is attempted 
+		// from the URI, otherwise it attempts to use the image from an image tag in 
+		// the HTML with the id specified by tryImgId.
 		//
-		// Returns null if there was nothing to load, or a jquery Deferred object
-		// which will be resolved when the oceanmap is loaded
+		// Returns an iLoadImageAsyncResult with a null waitObj if there was nothing 
+		// to load, or a jquery Deferred object which will be resolved when the image
+		// is loaded.
 		function loadImage_Async(uri: string, tryImgId: string, purposeDesc: string): iLoadImageAsyncResult {
 
 			var result = {
@@ -247,7 +248,6 @@ module MinecraftMap {
 				waitObj: $.Deferred()
 			};
 
-			// Load the ocean map
 			if (!isEmpty(uri)) {
 				// I'm getting the impression there is no reliable way to wait for
 				// an image to load, see caveats in http://api.jquery.com/load-event/
@@ -256,7 +256,7 @@ module MinecraftMap {
 				result.image = new Image();
 
 				var loadHandler = function() {
-					// Excellent, ocean mask is loaded
+					// Excellent, image is loaded
 					result.waitObj.resolve();
 				};
 
@@ -284,14 +284,14 @@ module MinecraftMap {
 					result.image.src = uri;
 					if(result.image.complete) loadHandler();
 				}catch(e){
-					console.log('Failed to load img: ' + JSON.stringify(e));
+					console.log('Failed to load ' + purposeDesc + ' image.src: ' + JSON.stringify(e));
 				}
 
 			} else if (isNotEmptyString(tryImgId)) {
-				// Oceanmap wasn't specified in settings, but might have been loaded in an img tag in index.html
+				// The image wasn't specified in settings, but might have been loaded in an img tag in index.html
 				result.image = document.getElementById(tryImgId);
 				if (result.image != null) {
-					// The "oceanmask" img appears to be present in the HTML
+					// The img appears to be present in the HTML (probably in the resources div)
 
 					// (It feels wrong to assign an error handler in the html just to figure out if the image is good,
 					// so I'm going with isImageOk() instead, unless it turns out to be less cross-browser compatible)
@@ -305,13 +305,13 @@ module MinecraftMap {
 						result.waitObj.resolve();
 					}
 				} else {
-					// The oceanmask tag is commented out, or otherwise missing.
+					// The image tag is commented out, or otherwise missing.
 
-					// return null to indicate the map is not loading
+					// return null to indicate the image is not loading
 					result.waitObj = null;
 				}
 			} else {
-				// Oceanmap wasn't specified in settings, and the value of tryImgTag says not to bother checking the img tag in index.html
+				// An image uri wasn't specified, and the value of tryImgId says not to bother checking for an img tag in index.html
 
 				// return null to indicate the map is not loading
 				result.waitObj = null;
