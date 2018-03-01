@@ -447,8 +447,8 @@ namespace MinecraftMap {
 		// displayOverride: an enumeration of type LabellingStyleOverride indicating whether the text should
 		// be suppressed from the map rendering (only shown on hover etc.), always drawn regardless of the labellingStyle
 		// of the zoom level, or drawn when suitable (default)
-        constructor(public text: string,
-                    public displayOverride = LabellingStyleOverride.normal) {
+		constructor(public text: string,
+		            public displayOverride = LabellingStyleOverride.normal) {
 			this.suppress = this.displayOverride === LabellingStyleOverride.suppress;
 			this.always   = this.displayOverride === LabellingStyleOverride.always;
 		}
@@ -466,14 +466,16 @@ namespace MinecraftMap {
 
 			var result = new SuppressableLabel(markedupLabel);
 
-            var trimLabelStr = trim(markedupLabel);
-            if (trimLabelStr.length >= 2) {
-                if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {
-                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
-                } else if (trimLabelStr[0] == cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_AlwaysDrawChar) {
-                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
-                }
-            }
+			if (isString(markedupLabel)) { // Handle case where markedupLabel is undefined (this is still possible because project was ported to typescript rather than written in it from scratch with strong typing)
+				var trimLabelStr = trim(markedupLabel);
+				if (trimLabelStr.length >= 2) {
+					if (trimLabelStr[0] == cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_DontDrawChar) {
+						result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
+					} else if (trimLabelStr[0] == cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == cLabel_AlwaysDrawChar) {
+						result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
+					}
+				}
+			}
 			return result;
 		}
 	}
