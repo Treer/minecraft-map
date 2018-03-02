@@ -12,16 +12,16 @@
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<script src="js/head.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js"></script>
 <script type="text/javascript">
-head.js(
+head.load(
    {jquery:            "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"},
    {jquery_ui:         "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"},
    {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
    {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
    {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
    {csv:               "js/csv.min.js"},
-   {jquery_mapz:       "js/jquery.mapz.min.js"},   
+   {jquery_mapz:       "js/jquery.mapz.min.js"},
    {stackblur:         "js/StackBlur.min.js"},
    {minecraftmap:      "js/minecraftmap.min.js"}
 );
@@ -65,7 +65,7 @@ head.js(
 	  </div>
 	</div>
 </main>
-		
+
 <div class="resources" style="position: absolute; visibility: hidden;">
 	<img id="map-background" src="img/map64.png"/>
 	<img id="map-tileset" src="img/glyphs.png"/>
@@ -74,8 +74,8 @@ head.js(
 <script type="text/javascript">
 head.ready(
 	function() {
-		// head.js has loaded all the javascript scrips
-	
+		// head.js has loaded all the javascript scripts
+
 		$(window).scroll(
 			// ugh, mouse drag can sometimes cause browsers to scroll this document away from the
 			// correct position inside the iframe, despite the iframe having scrolling="no" and "overflow: hidden". 
@@ -83,35 +83,35 @@ head.ready(
 			// by including space occupied by hidden divs, then letting the user scroll around that space.
 			function(){ window.scrollTo(0, 0); }
 		)
-	
+
 		$(window).load(
 			function() {
 				// All DOM and images and CSS etc has been loaded
-	
+
 				// =================
 				// This line lets you set the URL where this page will try to load the locations file
 				// from if no 'src=' parameter is specified.
-				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
+				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter
 				// then uncomment the SetDefaultSrc() line below:
-				// =================				
+				// =================
 				// MinecraftMap.SetDefaultSrc('default.txt');
-							
+
 				// Because we're running in an iframe, we want links to open in the parent window, unless
 				// the link explicitly specifies otherwise.
 				MinecraftMap.SetDefaultHrefTarget("_parent");
-							
+
 				MinecraftMap.getSettingsAndMapLocations(
 					$(window).width(),
 					$(window).height(),
 					function(config, locations) {
 
-						// Choose the size of the viewport and zoom resolutions based [very roughly] 
+						// Choose the size of the viewport and zoom resolutions based [very roughly]
 						// on the size of the iframe.
 						if ($(window).height() < 630 || $(window).width() < 630) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  390, height:  390},
@@ -121,12 +121,12 @@ head.ready(
 								],
 								finishedRendering
 							);
-					
+
 						} else if ($(window).height() < 800 || $(window).width() < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  630, height:  630},
@@ -136,10 +136,10 @@ head.ready(
 								],
 								finishedRendering
 							);
-							
+
 						} else {
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  800, height:  800},
@@ -152,14 +152,14 @@ head.ready(
 						}
 
 						function finishedRendering() {
-						
+
 							$("#map-1").mapz({
 								zoom       : true,
 								mousewheel : true,
 								pinchzoom  : true,
 								createmaps : false
 							});
-									
+
 							// hide the loading screen
 							$('.map-viewport').removeClass('mouse-passthrough'); // passthrough was only to enable credittext to have a lower z-order and still be clickable.
 							$('#loading').hide();

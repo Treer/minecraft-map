@@ -21,16 +21,16 @@
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
-<script src="js/head.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js"></script>
 <script type="text/javascript">
-head.js(
+head.load(
    {jquery:            "https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"},
    {jquery_ui:         "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"},
    {jquery_mousewheel: "js/jquery.mousewheel-3.1.9.min.js"},
    {jquery_hammer:     "js/jquery.hammer.min-unknown.js"},  // I must be missing something, the official jquery.hammer versions don't work, but this one from http://solinitiative.com/demo/jquery.hammer.min.js does???
    {jquery_touchpunch: "js/jquery.ui.touch-punch.min.js"},
    {csv:               "js/csv.min.js"},
-   {jquery_mapz:       "js/jquery.mapz.min.js"},   
+   {jquery_mapz:       "js/jquery.mapz.min.js"},
    {stackblur:         "js/StackBlur.min.js"},
    {minecraftmap:      "js/minecraftmap.min.js"}
 );
@@ -54,7 +54,7 @@ head.js(
 		<img src="img/clock_10ms.gif" width="64" height="64" style="image-rendering:-moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering:-webkit-optimize-contrast; -ms-interpolation-mode:nearest-neighbor;" /><br/>
 		<i><b>Mining locations...</b></i>
 	</div>
-	
+
 	<div id="sunsetsign" class="sunsign hidden-sunsign" style="top: 352px; width: 192px; right: 410px">
 		<img src="img/sunsetsign.png" width="192" height="96" />
 	</div>
@@ -82,17 +82,17 @@ head.js(
 	<img src="img/sunsetsign_arrow.png" width="192" height="96" align="left"/>
 	<img src="img/sunrisesign_arrow.png" width="192" height="96" align="right"/>
 </div>
-		
-<div class="printicon" style="position:absolute; bottom: 2px; left: 3px;">
+
+<div class="printicon" style="position:absolute; bottom: 2px; left: 3px;">
 	<!-- If you don't want this print icon to be shown on the map page, find the line:
 	       $('#poster-print-href').show();
 		 in the javascript code in this page, and comment it out -->
 	<a id="poster-print-href" style="display: none;" href="poster_print.html" alt="Generate printable poster image">&#9113;</a>
-</div>		
+</div>
 <div class="credittext" style="position:absolute; bottom: 5px; right: 5px;">
-	<!-- Take advantage of this tiny text to include the fonts in the document 
+	<!-- Take advantage of this tiny text to include the fonts in the document
 		 so that $(document).ready() isn't triggered before they are loaded. -->
-	<a href="http://buildwithblocks.info">create your own Ink &amp; Parchment Map</a>	
+	<a href="http://buildwithblocks.info">create your own Ink &amp; Parchment Map</a>
 </div>
 <div class="resources" style="position: absolute; visibility: hidden;">
 	<img id="map-background" src="img/map64.png"/>
@@ -102,44 +102,43 @@ head.js(
 <script type="text/javascript">
 head.ready(
 	function() {
-		// head.js has loaded all the javascript scrips
-		
+		// head.js has loaded all the javascript scripts
+
 		// Update the poster-print URL to include all the arguments that were provided to this URL
 		$('#poster-print-href').attr('href','poster_print.html' + location.search);
-		
+
 		// If you don't want the print icon to be shown on the map page, comment out the following line:
 		$('#poster-print-href').show();
-	
+
 		$(window).load(
 			function() {
 				// All DOM and images and CSS etc has been loaded
-	
+
 				// Everything has loaded, which means the background image is loaded. Update
 				// the background colour so that screens taller than the background texture
 				// are still the right colour at the bottom.
 				$('body').css({ 'background-color': 'rgb(255,254,186)' }); // shadedbay.jpg background colour
 
-						
 				// =================
 				// This line lets you set the URL where this page will try to load the locations file
 				// from if no 'src=' parameter is specified.
-				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter 
+				// i.e. if you wish to specify a src URL in this html file instead of as a ?src= parameter
 				// then uncomment the SetDefaultSrc() line below:
-				// =================				
+				// =================
 				// MinecraftMap.SetDefaultSrc('default.txt');
-							
+
 				MinecraftMap.getSettingsAndMapLocations(
 					head.screen.width,
 					head.screen.height,
 					function(config, locations) {
 
-						// Choose the size of the viewport and zoom resolutions based [very roughly] 
+						// Choose the size of the viewport and zoom resolutions based [very roughly]
 						// on the display size of the device.
 						if (head.screen.height < 640 || head.screen.width < 640) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('tiny-viewport');
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  390, height:  390},
@@ -149,12 +148,12 @@ head.ready(
 								],
 								finishedRendering
 							);
-					
+
 						} else if (head.screen.height < 800 || head.screen.width < 800) {
 							$('.map-viewport').removeClass('large-viewport');
 							$('.map-viewport').addClass('small-viewport');
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  630, height:  630},
@@ -164,10 +163,10 @@ head.ready(
 								],
 								finishedRendering
 							);
-							
+
 						} else {
 							MinecraftMap.createMapsInDivs_Async(
-								config, 
+								config,
 								locations,
 								[
 									{divName: "zoomlevel1", width:  800, height:  800},
@@ -180,14 +179,14 @@ head.ready(
 						}
 
 						function finishedRendering() {
-						
+
 							$("#map-1").mapz({
 								zoom       : true,
 								mousewheel : true,
 								pinchzoom  : true,
 								createmaps : false
 							});
-									
+
 							// hide the loading screen
 							$('#loading').hide();
 							if (head.screen.width >= 1000) {
