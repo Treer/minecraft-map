@@ -3,12 +3,12 @@
 <@pp.dropOutputFile />
 <@pp.changeOutputFile name=pp.sourceFileName?replace(".fmpp.", ".") />
 <#if mapVersion=="1.6">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign PublicUrl_mapGenerator = PublicUrl_mapGenerator_v1_6>
+  <#assign RelativeFileName_example_txt = RelativeFileName_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <#if mapVersion=="1.7">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign PublicUrl_mapGenerator = PublicUrl_mapGenerator_v1_7>
+  <#assign RelativeFileName_example_txt = RelativeFileName_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <!DOCTYPE html>
 <html>
@@ -55,12 +55,12 @@
 		<p>The map below has been inserted into this html page using an <a href="http://www.w3schools.com/html/html_iframe.asp">iframe</a>.</p>
 
 		<div style="font-size: 9pt; width: 390px; text-align: center">Use mousewheel or pinch to zoom, drag to scroll<br/>(Keyboard focus is unreliable in iframes)</div>
-		<iframe width="390" height="410" src="${GoogleDriveUrl_mapGenerator}/iframeable.html?src=example.txt&amp;range=4800&amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" ></iframe>
+		<iframe width="390" height="410" src="${PublicUrl_mapGenerator}/iframeable.html?src=example.txt&amp;range=4800&amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" ></iframe>
 				
 		<p>
 		<br/>
 		The HTML I used to display this map is:</p>
-			<pre>&lt;iframe width="390" height="410" src="${GoogleDriveUrl_mapGenerator}/<span style="color: red;">iframeable.html</span>?googlesrc=${GoogleDriveId_example_txt}&amp;amp;range=4800&amp;amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
+			<pre>&lt;iframe width="390" height="410" src="${PublicUrl_mapGenerator}/<span style="color: red;">iframeable.html</span>?googlesrc=${RelativeFileName_example_txt}&amp;amp;range=4800&amp;amp;showcoordinates=true" scrolling="no" style="border: none; overflow: hidden;" &gt;&lt;/iframe&gt;</pre>
 		
 		<p>
 			Or, if you were hosting it yourself:

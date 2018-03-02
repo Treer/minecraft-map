@@ -3,12 +3,12 @@
 <@pp.dropOutputFile />
 <@pp.changeOutputFile name=pp.sourceFileName?replace(".fmpp.", ".") />
 <#if mapVersion=="1.6">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign GoogleDriveUrl_mapGenerator = Obsolete_GoogleDriveUrl_mapGenerator>
+  <#assign GoogleDriveId_example_txt   = Obsolete_GoogleDriveId_example_txt><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <#if mapVersion=="1.7">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign GoogleDriveUrl_mapGenerator = Obsolete_GoogleDriveUrl_mapGenerator>
+  <#assign GoogleDriveId_example_txt   = Obsolete_GoogleDriveId_example_txt><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <!DOCTYPE html>
 <html>
@@ -48,6 +48,12 @@
       <div class="inner clearfix">
         <section id="main-content">
 
+		<span style="color:red; font-weight: bold">
+		<p>Google Drive <a href="https://techcrunch.com/2015/08/31/google-starts-deprecating-web-hosting-support-in-google-drive/" style="color:red; font-weight: bold; text-decoration: underline">have turned off support for web hosting</a> :-(</p>
+		<p>This means the hosting instructions on this page no longer work. The map software still works, 
+		it just cannot be hosted on Google Drive anymore, and neither can a locations file.</p>
+		</span>				
+		
         <p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
 
         <h2>How to set up your map on Google Drive</h2>

@@ -3,12 +3,12 @@
 <@pp.dropOutputFile />
 <@pp.changeOutputFile name=pp.sourceFileName?replace(".fmpp.", ".") />
 <#if mapVersion=="1.6">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_6>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign PublicUrl_mapGenerator = PublicUrl_mapGenerator_v1_6>
+  <#assign RelativeFileName_example_txt = RelativeFileName_example_txt_v1_6><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <#if mapVersion=="1.7">
-  <#assign GoogleDriveUrl_mapGenerator = GoogleDriveUrl_mapGenerator_v1_7>
-  <#assign GoogleDriveId_example_txt = GoogleDriveId_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
+  <#assign PublicUrl_mapGenerator = PublicUrl_mapGenerator_v1_7>
+  <#assign RelativeFileName_example_txt = RelativeFileName_example_txt_v1_7><#-- prepend https://googledrive.com/host/ to read this file-->
 </#if>
 <!DOCTYPE html>
 <html>
@@ -34,6 +34,25 @@
     <![endif]-->
 
     <title>Setting up your map on Dropbox</title>
+	
+	<script type="text/javascript">
+		function encode() {
+			var obj = document.getElementById('dropboxurl');
+			var mapUrl = document.getElementById('mapUrl');
+			
+			var unencoded = obj.value
+			if (typeof(unencoded) != "undefined") {
+				unencoded = unencoded.replace(/\?[^?]*?$/ig, '');
+				unencoded = unencoded.replace(/www\.dropbox\.com\//ig, 'dl.dropboxusercontent.com/');
+				unencoded = unencoded.replace(/dropbox\.com\//ig, 'dl.dropboxusercontent.com/');
+			}
+			var directLink = encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22");	
+			
+			mapUrl.innerHTML = "${PublicUrl_mapGenerator}/index.html?src=<span style=\"color:green;\">" + directLink + "</span>";
+			mapUrl.setAttribute('href', "${PublicUrl_mapGenerator}/index.html?src=" + directLink);
+		}
+	</script>
+	
   </head>
 
   <body>
@@ -54,20 +73,44 @@
 		
 		<ol>
 		<li>Create a .txt file containing all your <a href="index.html#LocationListFormat">map locations</a>, and copy it into your Dropbox.</li>
-		<li><a href="https://www.dropbox.com/help/167/en">Select "Share link"</a> from the dropbox menu, then add the link to the end of this URL:<br/>
-			<pre>${GoogleDriveUrl_mapGenerator}/index.html?src=</pre>
-		</li>
-		<li>You're done!</li>
-		</ol>
+		<li><a href="https://www.dropbox.com/help/167/en">Select "Share link"</a> from the dropbox menu, or click the file's "Share" button, and copy the link.</li>
+		<li>Paste the link into the box below and click "Covert"<br/>
+		
+			<textarea cols="80" rows="2" id="dropboxurl">${DropboxSharedLink_example_txt}</textarea>
+			<br/>
+			<input type="button" onclick="encode()" value="Convert">
 
+			<br/>
+			<p>... and here's the link for your new map: <a id="mapUrl" ></a></p>
+		</li>
+		</ol>
+		
+		All that the Convert button is doing is:
+		<ol>
+		<li><a href="https://zapier.com/learn/how-to/generate-direct-dropbox-link/">Turning the link into a direct download link</a> by replacing 
+		<code>www.dropbox.com</code> with <code>dl.dropboxusercontent.com</code></a>.</li>
+		<li><a href="UrlEncoder.html">Encoding</a> the direct download link, so the finished URL will be nicely formatted.</li>
+		<li>Adding the encoded link as the src parameter to the URL of the map generator, i.e. adding it the end of this URL:</li>
+			<pre>${PublicUrl_mapGenerator}/index.html?src=</pre>
+
+			Example:<br/>
+			<a style="font-size: 75%" href="${PublicUrl_mapGenerator}/index.html?src=${DropboxDirectLink_example_txt}">${PublicUrl_mapGenerator}/index.html?src=<span style="color:green;">${DropboxDirectLink_example_txt}</span></a>
+		</li>
+		</ol>
+		<br/>
+		
+		
 		<p><span class="note">(Dropbox allows cross-origin resource sharing, so putting your Dropbox URL onto the end of the Google Drive URL 
 		above works fine - you don't need to have a Google Drive account)</span></p>
-		
+
+		<!--
 		<h3>Tip</h3>
 		<p><a href="UrlEncoder.html">Encode your Dropbox URL</a> before adding it to the map URL, to keep the finished URL nicely formatted.</p>
+		-->
 		
 				
-				
+		<!-- Hosting on Dropbox is no longer possible without hacks - see https://web.archive.org/web/20180222181255/https://www.dropbox.com/help/files-folders/public-folder
+		
 		<h2><a id="Visibility"></a>Hosting your own copy of the map generator from Dropbox</h2>
 				
 		<div style="float: right"> 
@@ -81,7 +124,7 @@
 
 		<p>See option 4 on <a href="http://www.maketecheasier.com/4-ways-to-host-your-website-on-dropbox/">this instructions page</a> for
 		where to put the contents of this zip file.</p>
-		
+		-->
 		
 		<p><a href="index.html">&#8617; Return to main map-making instructions</a></p>
 		
