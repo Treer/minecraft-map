@@ -1,3 +1,7 @@
+v1.73 - Maintenance release - 2018-03-04
+========================================
+* Fixes issue where custom icons could not be loaded cross-domain.
+
 v1.72 - Poster release - 2015-03-16
 ===================================
 * Adds print icon at bottom left, which allows generation of poster-sized

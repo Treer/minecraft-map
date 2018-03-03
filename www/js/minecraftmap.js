@@ -434,13 +434,15 @@ var MinecraftMap;
         //    they are removed and .always is set to true.
         SuppressableLabel.parse = function (markedupLabel) {
             var result = new SuppressableLabel(markedupLabel);
-            var trimLabelStr = MinecraftMap.trim(markedupLabel);
-            if (trimLabelStr.length >= 2) {
-                if (trimLabelStr[0] == MinecraftMap.cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_DontDrawChar) {
-                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
-                }
-                else if (trimLabelStr[0] == MinecraftMap.cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_AlwaysDrawChar) {
-                    result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
+            if (MinecraftMap.isString(markedupLabel)) {
+                var trimLabelStr = MinecraftMap.trim(markedupLabel);
+                if (trimLabelStr.length >= 2) {
+                    if (trimLabelStr[0] == MinecraftMap.cLabel_DontDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_DontDrawChar) {
+                        result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.suppress);
+                    }
+                    else if (trimLabelStr[0] == MinecraftMap.cLabel_AlwaysDrawChar && trimLabelStr[trimLabelStr.length - 1] == MinecraftMap.cLabel_AlwaysDrawChar) {
+                        result = new SuppressableLabel(trimLabelStr.substring(1, trimLabelStr.length - 1), LabellingStyleOverride.always);
+                    }
                 }
             }
             return result;
@@ -1932,7 +1934,7 @@ var MinecraftMap;
                     deferreds.push(loadingOceanMap_deferredObj);
                 }
                 if (loadingCustomIcons_deferredObj == null) {
-                    // The ocean map hasn't been loaded yet, perhaps the configFromAjax
+                    // The custom icons image hasn't been loaded yet, perhaps the configFromAjax
                     // has provided a URL to load it from, or the HTML has loaded it.
                     loadingCustomIcons_deferredObj = loadCustomIcons_Async(mapConfig, true);
                 }
@@ -2015,18 +2017,18 @@ var MinecraftMap;
             MinecraftMap.gCustomIcons = returned.image;
             return returned.waitObj;
         }
-        // Loads the oceanmap into the global variable gOceanMapImage. If
-        // the config contains an OceanMapUri then the load is attempted from
-        // the Uri, otherwise attempts to load from the "oceanmask" img tag in the HTML.
+        // Loads an image asynchronously. If a URI is provided then load is attempted 
+        // from the URI, otherwise it attempts to use the image from an image tag in 
+        // the HTML with the id specified by tryImgId.
         //
-        // Returns null if there was nothing to load, or a jquery Deferred object
-        // which will be resolved when the oceanmap is loaded
+        // Returns an iLoadImageAsyncResult with a null waitObj if there was nothing 
+        // to load, or a jquery Deferred object which will be resolved when the image
+        // is loaded.
         function loadImage_Async(uri, tryImgId, purposeDesc) {
             var result = {
                 image: null,
                 waitObj: $.Deferred()
             };
-            // Load the ocean map
             if (!MinecraftMap.isEmpty(uri)) {
                 // I'm getting the impression there is no reliable way to wait for
                 // an image to load, see caveats in http://api.jquery.com/load-event/
@@ -2034,7 +2036,7 @@ var MinecraftMap;
                 // browsers with broken onload event.
                 result.image = new Image();
                 var loadHandler = function () {
-                    // Excellent, ocean mask is loaded
+                    // Excellent, image is loaded
                     result.waitObj.resolve();
                 };
                 var errorHandler = function (err) {
@@ -2059,14 +2061,14 @@ var MinecraftMap;
                         loadHandler();
                 }
                 catch (e) {
-                    console.log('Failed to load img: ' + JSON.stringify(e));
+                    console.log('Failed to load ' + purposeDesc + ' image.src: ' + JSON.stringify(e));
                 }
             }
             else if (MinecraftMap.isNotEmptyString(tryImgId)) {
-                // Oceanmap wasn't specified in settings, but might have been loaded in an img tag in index.html
+                // The image wasn't specified in settings, but might have been loaded in an img tag in index.html
                 result.image = document.getElementById(tryImgId);
                 if (result.image != null) {
-                    // The "oceanmask" img appears to be present in the HTML
+                    // The img appears to be present in the HTML (probably in the resources div)
                     // (It feels wrong to assign an error handler in the html just to figure out if the image is good,
                     // so I'm going with isImageOk() instead, unless it turns out to be less cross-browser compatible)
                     if (!MinecraftMap.isImageOk(result.image)) {
@@ -2081,13 +2083,13 @@ var MinecraftMap;
                     }
                 }
                 else {
-                    // The oceanmask tag is commented out, or otherwise missing.
-                    // return null to indicate the map is not loading
+                    // The image tag is commented out, or otherwise missing.
+                    // return null to indicate the image is not loading
                     result.waitObj = null;
                 }
             }
             else {
-                // Oceanmap wasn't specified in settings, and the value of tryImgTag says not to bother checking the img tag in index.html
+                // An image uri wasn't specified, and the value of tryImgId says not to bother checking for an img tag in index.html
                 // return null to indicate the map is not loading
                 result.waitObj = null;
             }

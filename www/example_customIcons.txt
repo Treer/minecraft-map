@@ -1,0 +1,124 @@
+// This example map is taken from a real server with some names and 
+// image-links changed to hide the innocent.
+//
+// Real data helps show how messy a map gets - why zoom is needed, and 
+// how labels sometimes still need a little formatting.
+
+
+// Custom icons url
+// ================
+// Icons borrowed from cereth (http://www.cartographersguild.com/showthread.php?t=16139) and Enlight (http://opengameart.org/content/seven-kingdoms)
+icons = https://i.imgur.com/hB0fcnR.png
+
+// Map settings:
+// =============
+range = 6400
+showcoordinates = true
+
+
+// Map locations:
+// ==============
+//
+// Format:
+// Type        , x    ,  z    , Description     , Owner     , href      , IconIndex
+
+Forest         ,-934  , -4676 , "!\n\nLeaDassassin's forest!", LeaDassassin,                                          , 67                             
+Forest         ,-1700 , -700  , "Dark oak forest" ,                , http://minecraft.gamepedia.com/Roofed_forest , 27 
+Forest         , 1439 ,  3233 , "Dark oak forest" ,                , http://minecraft.gamepedia.com/Roofed_forest , 27 
+Forest         , 1268 , -2410 , "Fairy forest"    , "ecchymotic & aeduna", -
+FlowerForest   , 2146 ,  4144
+FlowerForest   , 4800 ,	-1500
+
+// Two flower forests and about 5 herds of horses on the same island!
+FlowerForest   , 4275 , -2813 , ~Flower forests on Equine Island~
+Horse          , 4250 , -2500 , "~Equine Island~", "~Black horses, other horses, donkeys, and lots of flowers~" 
+IslandOverlay  , 4250 , -2500 , "Equine Island"
+
+MushroomIsland , 3560 ,  2460
+IslandOverlay  , 3560 ,  2460
+Horse          , 1153 ,  4739 , "~Black\nhorses~" , , , 
+Horse          ,-3468 , -4721 , "~White\nhorses~" , , , 
+Horse          , 3222 , -4904 , ~Donkeys~         , , http://minecraft.gamepedia.com/Donkey , 
+Wolf           , -863 , -2523 , ~Wolves~        , , , 
+PlayerStructure , 3120 , 240   , "Serenity City"                    ,                         
+PlayerHouse     , 1850 , -1344 ,                             , drakeM                     
+PlayerHouse     , 1495 , -1825 , "Sir Colling of Woodaswel"  , "Sir Colling of Woodaswel"      , "https://imgur.com/B1JmxCl" , 33
+PlayerHouse     , 1112 , -2887 , "Horfett Manor"             , aeduna                          , "https://imgur.com/TPTMozY" ,  
+PlayerHouse     , 1445 , -1324 , "Temple of Tempest"         , WebSeer                         , "https://imgur.com/Z0SDIeG" , 20
+PlayerHouse     , 84   , -903  , "Small    \nLighthouse    " , lex86                           , "https://imgur.com/a/0fond" ,  
+PlayerCastle    , 86   ,  610  , "Outpost Exile"             , SoulessExile                    , "https://imgur.com/a/3wkKN" ,  
+PlayerHouse     , 1017 ,  324  , "Dr.Frankenstone's    \nhovel"     , Dr.Frankenstone
+PlayerHouse     ,-800  , -1800 , "\nDr.Frankenstone's\nmountain lair" , Dr.Frankenstone          ,                             ,71
+IcePlainsSpikes ,-1643 ,  1810 , "Dr.Frankenstone's\nwinter resort" , Dr.Frankenstone          , -
+PlayerHouse     ,-1048 ,  687  ,                             , Crovexius                       , "https://imgur.com/a/2coEH" 
+PlayerStructure , 1480 , -1186 , "Seaspray City"             , WebSeer                         , "https://imgur.com/a/tfp5R"                                                                    ,  
+PlayerStructure ,-1667 ,  781  , "Ender Cathedral"           , Crovexius                       ,                                                                               
+PlayerStructure ,-1168 ,  835  , "Eye of Ender"              , Crovexius                       , "https://imgur.com/a/4WXVy" , 21
+PlayerStructure , 3529 ,  4706 , "Portower"                  , aeduna                          ,                                                                               
+PlayerHouse     , 1200 , -4400 , "Ogdenville"                , aeduna                          , "https://imgur.com/zfYToru" 
+PlayerStructure , 1148 , -72   , "Map\nroom"                 , ~cobaltofdestiny~                  ,                                                                               
+PlayerHouse     , 846  ,  86   ,                             ,                                 ,                                                                               
+PlayerCastle    , 151  ,  278  , "Obsidian   \nTower   "     ,                               ,                             ,
+PlayerHouse     , 2038 , -1442 ,                             , "Flu0xetine"                    ,                                                                               
+PlayerCastle    , 1954 ,   860 , "\nSwamp Tower"             , "WebSeer"                       ,                             , 65
+PlayerCastle    , 1391 ,   900 , "Burning\nruins"            ,                                 ,                                                                               
+DesertVillage   , 2244 , -1271 ,                                   
+DesertVillage   ,  797 ,   153 ,                                   
+DesertVillage   ,-3500 ,  -850 ,                                   
+DesertVillage   , -207 ,   881 ,                                   
+DesertVillage   ,-2900 ,  4410 ,                                   
+DesertVillage   , 4734 ,   805 ,                                   
+DesertVillage   , 4688 , -1516 ,                                   
+DesertVillage   , 1070 ,  -270 , "yurple's\nadopted village" , yurple  
+Village         ,-3430 ,  4321 ,                                   
+Village         , 525  ,   537 ,                                   
+Village         ,-870  , -4489 ,                                   
+Village         , 1236 ,   353 , "aeduna's\nreanimated\nvillage" , aeduna   
+Village         , 245  ,   350 , "\nGhost town"                    
+Village         ,-860  ,  4932 , "~Crevasse Village~" , , http://imgur.com/xO3W9jT       
+Village         ,-4383 ,    66 , "Tiny  Village"                   
+Village         , 2589 , -2980 , "World's smallest village"        
+Village         ,-3281 , -1650 , "town of\nWhitehorse" 
+Village         ,-1952 , -1375 , "\ntown of Godsneedle"  ,                                 ,                                     , 64
+Village         ,-2319 , -1787 , "town of\nRedhorse"
+SavannahVillage , 3203 , -2023 ,                                   
+DesertTemple    ,-4056 , -2487 ,                                   
+DesertTemple    , 332  ,   186 ,                                   
+DesertTemple    , 4410 ,  2872 ,                                   
+DesertTemple    , 4680 ,  1281 , Buried temple 
+WitchHut        ,-3391 ,  1552 ,                                   
+WitchHut        ,-3903 , -4393 ,                                   
+WitchHut        , 1555 ,  3813 ,                                   
+PlayerHouse     , 949  ,    45 ,                               , "     SoundLight" , 
+Spawn           , 966  , -1090 , "Spawn"                       ,                           , "https://imgur.com/a/54hwO" , 41
+PlayerHouse     ,-4000 , 2000  , "Orthanc"                     , "Malthrax"
+PlayerStructure ,   -0 , 5000  , "Ozymandias"                  , "aeduna & ecchymotic"     ,                             , 22
+PlayerHouse     , 1068 , -3290 , "Richard's Mountain Fortress" , "r1chardj0n3s"            ,                             , 32
+PlayerHouse     , 3427 ,   562 , "Bag End"                     , "Malthrax"                ,                             ,  
+PlayerHouse     , 3041 ,  1587 , "Villa"                       , "aeduna"                  ,                             ,  
+PlayerStructure ,-3081 ,  339  , "Atlantis"                    , cobaltofdestiny ,  ,  
+PlayerCastle    ,  170 ,  2631 , "\n\nSneakythief's castle"    , "Sneakythief"             ,                             , 66 
+PlayerStructure ,  552 , -1053 , "Floating\nIsland"            , "Malthrax"                , "https://imgur.com/a/b4mYB"
+PlayerCastle    ,  339 , -1173 , "River castle"                , "Malthrax"                , "https://imgur.com/a/mnW5v"
+PlayerCastle    ,  176 , -960  , "    Fortified\n     village" , "~Lex86~"                 ,                             ,  
+PlayerStructure ,-2163 , -1537 , "Colliseum"                   , "Malthrax"                ,                             ,  
+PlayerStructure , 1901 ,  -208 , Ayutthaya                     , aeduna                    , "https://imgur.com/v86bbWZ"
+PlayerHouse     ,-2850 , -3700 , Tudor House                   , aeduna & ecchymotic       , "https://imgur.com/a/lN8AQ"
+PlayerStructure ,  100 , -4000 , , , , 22
+IslandOverlay   ,  100 , -4000 , "Big Bunny"                   , drakeM 
+PlayerHouse     , 2300 , -1900 , Woodland Mansion              , Tark
+PlayerHouse     , 2073 ,  -685 ,                               , Muizartes
+Dragon          , -761 ,    62 , "", "", "", , (here be dragons, also math says there's also a stronghold around here somewhere)
+Ship            , 5000 ,     0
+Label           ,    0 ,     0 , "\nOrigin", "", https://imgur.com/a/VcUGa
+Label           , 1944 , -1073 , Lava Pool
+NetherPortal    , 512  ,  1024 , ~Portal to the Nether (Click to travel)~ ,,_self_?src=example_nether.txt&x=64&z=128
+NetherPortal    ,   0  , -3002 , ~Portal to the Nether (Click to travel)~ ,,_self_?src=example_nether.txt&x=0&z=-375
+SeaMonster      ,  -400,  -350
+
+
+// The following are some fake locations because I don't know where all the monuments on this server are
+SeaMonster      ,  2700,  2600 
+SeaMonster      ,  2000,  2200
+SeaMonster      , -1000,  1100  
+Ship            ,  2500,  1800
