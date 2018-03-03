@@ -139,11 +139,6 @@
         <section id="main-content">
 
 		
-	<span style="color:red; font-weight: bold">
-	<p>Google Drive <a href="https://techcrunch.com/2015/08/31/google-starts-deprecating-web-hosting-support-in-google-drive/" style="color:red; font-weight: bold; text-decoration: underline">have turned off support for web hosting</a> :-(</p>
-	<p>The map works fine, but it means you should ignore any instructions or tips on this page that involve Google.</p>
-	</span>		
-		
 		
     <div style="float:right;">
 
@@ -212,14 +207,19 @@
 
       <p>To create your own map you take the URL of the Ink &amp; Parchment map generator and add your own settings to the end of it. One of
       the settings you will add is a URL for a file or page which contains all the locations you want displayed on your map,
-      this file could be in your Dropbox, it could a wiki-page, or a webpage. You could even use your User Page on Wikipedia, but I don't recommend that.</p>
+      this file could be in your Dropbox, it could a wiki-page, or a webpage. </p>
 
       <p>More details of <a href="#settings_src_heading">how to specify the URL of the locations file</a></p>
 
-      <p>If you're going to collaboratively build the map with others, then a shared editable file on Google Drive or a wiki page are good
+      <p>If you're going to collaboratively build the map with others, then a shared editable file like a wiki page is good
       places to keep the list of locations - that way everyone can edit the list and the map generator can read the locations directly from it.
-      The locations list can be in either html format or txt format (but not Google-Doc format). By default, Google Drive will view .txt files but not edit them, you can
-      change this by adding a notepad app - in Google Drive go to <span class="menuoptions">Options &rarr; Manage apps</span>.</p>
+      The locations list can be in either html format or txt format.</p>
+	  
+	  <p>
+	  Often sites will block "cross-origin resource sharing", which is where one site, such as buildingwithblocks.info, is prevented by
+	  your browser from loading data from a different site, such as wikipedia.org. This can reduce mischief on the web, but also limits your 
+	  options for where the locations file can be loaded from if you don't wish to host the map generator yourself. See the next section for more details.
+	  </p>
 
     <!--        </div>
 -->
@@ -243,7 +243,7 @@
             </a>
       </div>
 
-      <p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website or GoogleDrive/Dropbox account.</p>
+      <p>You can download your own copy of the map generator and run it locally straight off your computer. Or host a copy on your own website.</p>
 
       <p>Obviously though, I intend to keep it available from this website.</p>
 
@@ -251,8 +251,8 @@
       For <a href="https://en.wikipedia.org/wiki/Same_origin_policy">security reasons</a>, browsers won't allow
       the map generator to access your locations list unless both their addresses share the same domain, so...</p>
 
-      <p class="highlight">that means <span style="font-weight: bold;">if you don't want to host the map generator yourself, and just want to use the one already on Google Drive,
-      then you must also create you locations list on Google Drive itself, or on a site such as Dropbox</span> which allows cross-origin resource sharing.</p>
+      <p class="highlight">that means <span style="font-weight: bold;">if you don't want to host the map generator yourself, and just want to use the one already hosted here,
+      then you must create your locations list on a site  which allows cross-origin resource sharing</span>, such as Dropbox.</p>
 
       <p>I haven't mentioned other cloud file/hosting services as I've not tried them, they probably work fine though.</p>
 
@@ -490,24 +490,20 @@ range = 6400</pre>
 
         <a id="settings_src_heading" href="index_expanded.html#settings_src_heading" class="headerhref" rel="toggle[settings_src]">
             <div class="header-collapsed">
-              <div class="expander-content"><h3>Required URL setting: <span class="setting">src</span> or <span class="setting">googlesrc</span></h3></div>
+              <div class="expander-content"><h3>Required URL setting: <span class="setting">src</span></h3></div>
               <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
             </div>
         </a>
         <div id="settings_src" style="display:none">
 
 
-    <p>The URL must always<sup>*</sup> include either the <span class="setting">src</span> or <span class="setting">googlesrc</span> setting, and neither
-    <span class="setting">src</span> nor <span class="setting">googlesrc</span> can be specified in the location-list file.</p>
+    <p>The URL must always<sup>*</sup> include the <span class="setting">src</span> setting. The
+    <span class="setting">src</span> setting cannot be specified in the location-list file.</p>
 
     <p>There are no other required settings.</p>
 
     <p><span class="setting">src</span> tells the map generator where to get the location-list file, or webpage. It can be a relative or absolute URL, and you
     should <a href="UrlEncoder.html">encode its value</a> to help keep the map URL nicely formatted.</p>
-
-    <p><span class="setting">googlesrc</span> is a shorthand replacement for <span class="setting">src</span> to save you having to specify a full googledrive URL.
-    If your locations file is on Google Drive then you can set <span class="setting">googlesrc</span> to the <a href="googledrive.html#GoogleId">file's unique code</a>
-    instead of using <span class="setting">src</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
 
 	<p><sup>*</sup> This setting <a href="#ExtraFeatures_defaultsrc_heading">can be hard-coded into the html file</a> if you are hosting it yourself. This avoids requiring it on the URL.</p>
 
@@ -634,7 +630,7 @@ range = 6400</pre>
         </div>
         <a id="settings_icons_heading" href="index_expanded.html#settings_icons_heading" class="headerhref" rel="toggle[settings_icons]">
             <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="setting">icons</span> or <span class="setting">googleicons</span></h3></div>
+              <div class="expander-content"><h3><span class="setting">icons</span></h3></div>
               <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
             </div>
         </a>
@@ -649,14 +645,11 @@ range = 6400</pre>
       <p>The <span class="setting">icons</span> setting can be a relative or absolute URL. Remember if you are specifying it from the URL to <a href="UrlEncoder.html">encode the value</a> to
       help keep the map URL nicely formatted - you don't need to encode it when you're setting <span class="setting">icons</span> from within the location-list file, which is the normal way of doing it.</p>
 
-      <p>If your .png file is on Google Drive then you can use the <span class="setting">googleicons</span> setting instead
-      and specify the file's unique code instead of the URL.</p>
-
 
         </div>
         <a id="settings_oceansrc_heading" href="index_expanded.html#settings_oceansrc_heading" class="headerhref" rel="toggle[settings_oceansrc]">
             <div class="header-collapsed">
-              <div class="expander-content"><h3><span class="setting">oceansrc</span> or <span class="setting">oceangooglesrc</span></h3></div>
+              <div class="expander-content"><h3><span class="setting">oceansrc</span></h3></div>
               <div class="expander" style="font-size: 17.333333333333px"><div class="expander-arrow"></div><div class="expander-bar1"></div><div class="expander-bar2"></div></div>
             </div>
         </a>
@@ -667,11 +660,7 @@ range = 6400</pre>
       <p><span class="setting">oceansrc</span> tells the map generator where to get the ocean map file (aka ocean mask). It can be a relative or absolute URL, and you
     should <a href="UrlEncoder.html">encode its value</a> to help keep the map URL nicely formatted.</p>
 	
-	  <p><span class="setting">oceangooglesrc</span> is a shorthand replacement for <span class="setting">oceansrc</span> to save you having to specify a full googledrive URL.
-    If your locations file is on Google Drive then you can set <span class="setting">oceangooglesrc</span> to the ocean map <a href="googledrive.html#GoogleId">file's unique code</a>
-    instead of using <span class="setting">oceansrc</span>. The unique code is already suitable for a URL and does not need to be further encoded.</p>
-
-	  <p>If you use <span class="setting">oceansrc</span> or <span class="setting">oceangooglesrc</span> then you 
+	  <p>If you use <span class="setting">oceansrc</span> then you 
 	  should also read the section <a href="#AddingOceans_optimizing">Optimizing oceans for faster load times</a>.
 	
 	<p><sup>*</sup> This setting <a href="#ExtraFeatures_defaultoceansrc">can be hard-coded into the html file</a> if you are hosting it yourself. This avoids requiring it on the URL.</p>	
@@ -718,7 +707,7 @@ range = 6400</pre>
 	<li><a href="exportfromseed.html">Use AmidstExporter</a> to export the ocean mask <code>.png</code> file. <span style="font-size: 75%">(<a href="https://buildingwithblocks.info/map173/example-ocean.png">an example of an ocean mask</a>)</span></li>
 	
 	<li>Copy your ocean mask file to the same place as you keep your locations list file, and add an <a href="#settings_oceansrc_heading"><span class="setting">oceansrc</span></a>
-	setting (or <a href="#settings_oceansrc_heading"><span class="setting">oceangooglesrc</span></a>) to the URL &mdash; just like how the <span class="setting">src</span> setting
+	setting to the URL &mdash; just like how the <span class="setting">src</span> setting
 	points to your locations list file.</li>
 		
 	<li>You're done!</li>
@@ -730,7 +719,7 @@ range = 6400</pre>
     <a style="font-size: 75%" href="https://buildingwithblocks.info/map173/index.html?src=example.txt&oceansrc=example-ocean.png">https://buildingwithblocks.info/map173/index.html?src=example.txt&amp;oceansrc=example-ocean.png</a>
 
 	<br/><br/>
-    <a style="font-size: 75%" href="https://buildingwithblocks.info/map173/index.html?src=example.txt&oceansrc=oceanmask.png">https://buildingwithblocks.info/map173/index.html?src=example.txt&amp;oceangooglesrc=oceanmask.png</a>
+    <a style="font-size: 75%" href="https://buildingwithblocks.info/map173/index.html?src=example.txt&oceansrc=oceanmask.png">https://buildingwithblocks.info/map173/index.html?src=example.txt&amp;oceansrc=oceanmask.png</a>
 	
 	
         <a id="AddingOceans_optimizing_heading" href="index_expanded.html#AddingOceans_optimizing_heading" class="headerhref" rel="toggle[AddingOceans_optimizing]">
@@ -1031,7 +1020,7 @@ range = 6400</pre>
 
         <a href="#Settings">Settings</a>
           <ul>
-          <li><a href="#settings_src_heading">src or googlesrc</a></li>
+          <li><a href="#settings_src_heading">src</a></li>
           <li><a href="#settings_range_heading">range</a></li>
           <li><a href="#settings_title_heading">title</a></li>
           <li><a href="#settings_blurb_heading">blurb</a></li>
@@ -1041,8 +1030,8 @@ range = 6400</pre>
           <li><a href="#settings_showcoords_heading">showcoordinates</a></li>
           <li><a href="#settings_hidelabels_heading">hidelabelsabove</a></li>
           <li><a href="#settings_showlabels_heading">showlabelsbelow</a></li>
-          <li><a href="#settings_icons_heading">icons or googleicons</a></li>
-          <li><a href="#settings_oceansrc_heading">oceansrc or oceangooglesrc</a></li>
+          <li><a href="#settings_icons_heading">icons</a></li>
+          <li><a href="#settings_oceansrc_heading">oceansrc</a></li>
           <li><a href="#settings_oceantheme_heading">oceantheme</a></li>
           </ul>
 
